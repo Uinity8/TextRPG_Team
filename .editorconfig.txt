@@ -12,72 +12,9 @@ dotnet_style_namespace_declarations = file-scoped:suggestion
 
 # var 사용 스타일
 dotnet_style_var_for_built_in_types = false:suggestion
-dotnet_style_var_elsewhere = false:suggestion
+dotnet_style_var_elsewhere = true:suggestion
 
-# 'this' 사용 여부
-dotnet_style_qualification_for_field = false:suggestion
-dotnet_style_qualification_for_property = false:suggestion
-dotnet_style_qualification_for_method = false:suggestion
-dotnet_style_qualification_for_event = false:suggestion
-
-# 네이밍 규칙 설정 (C#)
-
-# 1. Private 필드 (camelCase)
+# 네이밍 규칙
+dotnet_naming_rule.private_fields.style = _camelCase
 dotnet_naming_rule.private_fields.symbols = field
-dotnet_naming_rule.private_fields.style = camelCase
 dotnet_naming_rule.private_fields.severity = suggestion
-
-# 2. Public/Protected 필드 (PascalCase)
-dotnet_naming_rule.public_fields.symbols = field
-dotnet_naming_rule.public_fields.style = PascalCase
-dotnet_naming_rule.public_fields.severity = suggestion
-
-# 3. Local 변수 (camelCase)
-dotnet_naming_rule.local_variables.symbols = local
-dotnet_naming_rule.local_variables.style = camelCase
-dotnet_naming_rule.local_variables.severity = suggestion
-
-# 4. Constants (대문자 SNAKE_CASE)
-dotnet_naming_rule.constants.symbols = constant
-dotnet_naming_rule.constants.style = ALL_CAPS
-dotnet_naming_rule.constants.severity = suggestion
-
-# 5. Static Readonly 변수 (PascalCase)
-dotnet_naming_rule.static_readonly_fields.symbols = static readonly
-dotnet_naming_rule.static_readonly_fields.style = PascalCase
-dotnet_naming_rule.static_readonly_fields.severity = suggestion
-
-# 6. Properties (PascalCase)
-dotnet_naming_rule.properties.symbols = property
-dotnet_naming_rule.properties.style = PascalCase
-dotnet_naming_rule.properties.severity = suggestion
-
-# 7. Methods (PascalCase)
-dotnet_naming_rule.methods.symbols = method
-dotnet_naming_rule.methods.style = PascalCase
-dotnet_naming_rule.methods.severity = suggestion
-
-# 8. Interfaces (I + PascalCase)
-dotnet_naming_rule.interfaces.symbols = interface
-dotnet_naming_rule.interfaces.style = prefix_I
-dotnet_naming_rule.interfaces.severity = suggestion
-
-# 9. Enums (PascalCase)
-dotnet_naming_rule.enums.symbols = enum
-dotnet_naming_rule.enums.style = PascalCase
-dotnet_naming_rule.enums.severity = suggestion
-
-# 10. Enum 멤버 (PascalCase)
-dotnet_naming_rule.enum_members.symbols = enum_member
-dotnet_naming_rule.enum_members.style = PascalCase
-dotnet_naming_rule.enum_members.severity = suggestion
-
-# 11. Delegates (PascalCase)
-dotnet_naming_rule.delegates.symbols = delegate
-dotnet_naming_rule.delegates.style = PascalCase
-dotnet_naming_rule.delegates.severity = suggestion
-
-# 12. Generic Type Parameter (T + PascalCase)
-dotnet_naming_rule.generic_type_parameters.symbols = type_parameter
-dotnet_naming_rule.generic_type_parameters.style = prefix_T
-dotnet_naming_rule.generic_type_parameters.severity = suggestion

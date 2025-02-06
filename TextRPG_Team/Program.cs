@@ -1,11 +1,13 @@
 ﻿namespace TextRPG_Team;
-//수정 금지
+using Scenes;
 class Program
 {
     static void Main(string[] args)
     {
-       Game game = new Game();
-       game.Run();
-       game.TestRun();
+        var initialScene = new MainScene(); // 첫 번째 씬 설정
+
+        var sceneManager = new SceneManager(initialScene);
+        sceneManager.StartGame(); // 게임 시작
+
     }
 }

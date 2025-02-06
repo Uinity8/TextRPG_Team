@@ -1,2 +1,0 @@
-# TextRPG_Team
- SpartanTeamProject

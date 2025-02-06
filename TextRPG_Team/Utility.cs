@@ -1,5 +1,6 @@
 namespace TextRPG_Team;
 
+//수정원할시 사전 공지
 static class Utility
 {
     //입력키 확인

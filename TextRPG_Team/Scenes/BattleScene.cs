@@ -138,7 +138,6 @@ public class BattleScene : IScene
 
     private void DisplayBattleState()
     {
-        
         Utility.ColorWriteLine("\nBattle!", ConsoleColor.Yellow);
 
         for (int i = 0; i < battleMonsters.Count; i++)
@@ -151,6 +150,7 @@ public class BattleScene : IScene
             Utility.ColorWriteLine($"{i + 1} Lv.{monster.Level} {monster.Name} {status}", textColor);
             
         }
+        PlayerInfo();
     }
 
      private void DisplayBattleResult()

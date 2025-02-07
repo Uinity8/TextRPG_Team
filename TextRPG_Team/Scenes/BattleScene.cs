@@ -31,10 +31,9 @@ public class BattleScene : IScene
         public float HP { get; private set; }
         public bool IsDead => HP <= 0;
 
-        public Monster(string name, int level, float hp, float attack)
+        public Monster(string name, float hp, float attack)
         {
             Name = name;
-            Level = level;
             MaxHp = hp;
             HP = hp;
             Attack = attack;
@@ -71,14 +70,14 @@ public class BattleScene : IScene
     //         Attack = attack;
     //     }
 
-    //     public void PlayerInfo()
-    //     {
-    //         Console.WriteLine("\n[내정보]");
-    //         Console.WriteLine($"Lv.{Level} {Name} {Class}");
-    //         Console.WriteLine($"HP {Hp}/{MaxHp}");
-    //         Console.WriteLine($"power {Attack}");
-    //     }
-    // }
+        public void PlayerInfo()
+        {
+            Console.WriteLine("\n[내정보]");
+            Console.WriteLine($"Lv. {player.Name}");
+            Console.WriteLine($"HP {player.Health}/{player.GetStats().MaxHp}");
+            Console.WriteLine($"power {player.GetStats().Atk}");
+        }
+    //}
 
      public BattleScene(GameState gameState, Player player)
     {
@@ -108,7 +107,7 @@ public class BattleScene : IScene
             //     monsterPool[random.Next(monsterPool.Count)].Attack
             // ));
             var enemy = enemyList[random.Next(enemyList.Count)];
-            battleMonsters.Add(new Monster(enemy.Name, enemy.Level, enemy.GetStats().MaxHp, enemy.GetStats().Atk));
+            battleMonsters.Add(new Monster(enemy.Name,  enemy.GetStats().MaxHp, enemy.GetStats().Atk));
         }
 
         DisplayBattleState();
@@ -139,6 +138,7 @@ public class BattleScene : IScene
 
     private void DisplayBattleState()
     {
+        
         Utility.ColorWriteLine("\nBattle!", ConsoleColor.Yellow);
 
         for (int i = 0; i < battleMonsters.Count; i++)
@@ -149,6 +149,7 @@ public class BattleScene : IScene
             ConsoleColor textColor = monster.IsDead ? ConsoleColor.DarkGray : ConsoleColor.White;
 
             Utility.ColorWriteLine($"{i + 1} Lv.{monster.Level} {monster.Name} {status}", textColor);
+            
         }
     }
 

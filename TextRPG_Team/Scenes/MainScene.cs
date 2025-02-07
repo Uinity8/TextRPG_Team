@@ -1,7 +1,10 @@
+using TextRPG_Team.Objects;
+
 namespace TextRPG_Team.Scenes;
 
 public class MainScene : IScene
 {
+    private readonly Player _player;
     private readonly GameState _gameState;
     public MainScene(GameState gameState) //DI 의존성 주입
     {
@@ -17,15 +20,15 @@ public class MainScene : IScene
         Console.WriteLine("2.Example Scene");   
     }
 
-    public IScene? GetNextScene()
+     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(1, 2);
+        int input = Utility.GetInput(1, 3);
         return input switch
         {
             1 => this,
             2 => new ExampleScene(_gameState),
+            3 => new BattleScene(_gameState, _player), // BattleScene 호출 추가
             _ => null // 잘못된 입력 시 종료
         };
     }
 }
-

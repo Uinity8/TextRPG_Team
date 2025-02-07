@@ -38,10 +38,10 @@ public class ShopScene : IScene
                 Console.WriteLine("[보유 골드]");
                 Console.WriteLine($"{_gameState.GetPlayer().Gold} G\n");
                 Console.WriteLine("[아이템 목록]");
-                int index = 1;
+                int ShopIndex = 1;
                 foreach (var item in _gameState.itemList)
                 {
-                    Console.WriteLine($"- {index++}. {item.GetIteDisplay()} | {item.GetPricPurchase()}");
+                    Console.WriteLine($"- {ShopIndex++}. {item.GetIteDisplay()} | {item.GetPricPurchase()}");
                 }
                 Console.WriteLine();
                 Console.WriteLine("0. 나가기");
@@ -53,10 +53,10 @@ public class ShopScene : IScene
                 Console.WriteLine("[보유 골드]");
                 Console.WriteLine($"{_gameState.GetPlayer().Gold} G\n");
                 Console.WriteLine("[아이템 목록]");
-                int Index = 1;
+                int IvtIndex = 1;
                 foreach (var item in _gameState.inventoryitemList)
                 {
-                    Console.WriteLine($"- {Index++}. {item.GetIteDisplay()} | {item.GetPricPurchase()}");
+                    Console.WriteLine($"- {IvtIndex++}. {item.GetIteDisplay()} | {item.GetPricPurchase()}");
                 }
                 Console.WriteLine();
                 Console.WriteLine("0. 나가기");
@@ -85,30 +85,28 @@ public class ShopScene : IScene
     public IScene? GetNextScene()
     {
         int input = Utility.GetInput(0, 2);
-       switch(input)   //  C#의 `switch 표현식` 입니다. 필요하신분 찾아 보세요
+        switch (input)   //  C#의 `switch 표현식` 입니다. 필요하신분 찾아 보세요
         {
             case 0:
-                    if(_shopState == ShopState.Normal) return new MainScene(_gameState);
-                    else return new ShopScene(_gameState, ShopState.Normal);
-            case 1:         
+                if (_shopState == ShopState.Normal) return new MainScene(_gameState);
+                else return new ShopScene(_gameState, ShopState.Normal);
+            case 1:
+                int Buyinput = Utility.GetInput(0, (_gameState.itemList.Count));
                 // 아이템을 구매했는지?
                 if (_gameState.itemList[input].itemPurchase)
-                {
-                    Utility.AddLog("이미 구매한 아이템입니다.",ConsoleColor.DarkRed);
-                }
-                // 골드가 부족한지?
-                // else if(_gameState.player.Gold < _gameState.itemList[input].Price) 
-                // {
-                                //}
+                    Utility.AddLog("이미 구매한 아이템입니다.", ConsoleColor.Red);
                 else
                 {
-                    _gameState.inventoryitemList.Add(_gameState.itemList[input]);
-                    //_gameState.itemList[input].itemPurchase = true;
-                    _gameState.GetPlayer().Gold -= _gameState.itemList[input].Price;
+                    _gameState.GetPlayer().Gold -= _gameState.itemList[Buyinput - 1].Price;
+                    _gameState.inventoryitemList.Add(_gameState.itemList[Buyinput - 1]);
+                    _gameState.itemList[Buyinput - 1].itemPurchase = true;
+                    return new ShopScene(_gameState, ShopState.Buy);
                 }
-                return new ShopScene(_gameState, ShopState.Buy);
+                if (_shopState == ShopState.Normal) return new MainScene(_gameState);
+                else return new ShopScene(_gameState, ShopState.Normal);
 
-            case 2 :
+                
+            case 2:
                 // 아이템을 장착중인가?
                 if (_gameState.inventoryitemList[input].itemEquip)
                 {
@@ -117,7 +115,7 @@ public class ShopScene : IScene
                 // 골드가 부족한지?
                 // else if(_gameState.player.Gold < _gameState.itemList[input].price) 
                 // {
-                
+
                 //}
                 else
                 {
@@ -126,8 +124,6 @@ public class ShopScene : IScene
                 return new ShopScene(_gameState, ShopState.SaleI);
             default:
                 return new MainScene(_gameState);
-
-
         }
 
     }

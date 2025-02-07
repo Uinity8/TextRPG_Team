@@ -44,10 +44,11 @@ public class Player : ICharacter
             {
                 if (value < 0)
                     TryBuyAction?.Invoke("골드가 부족합니다.", ConsoleColor.Red);
-                else
+                else { 
                     TryBuyAction?.Invoke("구매에 성공했습니다.", ConsoleColor.Blue);
+                    _gold = value;
+                }
             }
-            _gold = value; // 항상 골드 값을 설정
         }
     }
 

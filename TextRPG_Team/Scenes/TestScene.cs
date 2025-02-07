@@ -4,22 +4,23 @@
 namespace TextRPG_Team.Scenes;
 
 using Objects;
+using TextRPG_Team.Manager;
 
 public class TestScene : IScene
 {
     private readonly GameState _gameState;
     private readonly Player _player = new Player("Payer", new Stats(100, 10, 5));
-    readonly List<Player> _enemies = new List<Player>(); //예제를 위해 플레이어 클래스로 적들 생성
+    readonly List<Enemy> _enemies = new List<Enemy>();
     
     public TestScene(GameState gameState) //DI 의존성 주입
     {
         _gameState = gameState;
-        
-        //테스트 적들 추가
-        _enemies.Add(new Player("빵빵이", new Stats(100, 10, 5)));
-        _enemies.Add(new Player("옥지", new Stats(100, 10, 5)));
-        
-        
+
+        // EnemySpawner 인스턴스를 생성하고 적을 가져옵니다.
+        EnemySpawner enemySpawner = new EnemySpawner();
+        _enemies.AddRange(enemySpawner.GetEnemies());  // EnemySpawner에서 적들을 _enemies에 추가
+
+
         //플레이어,적 어택 액션에 서로의 TakeDamage등록
         foreach (var enemy in _enemies)
         {
@@ -40,11 +41,12 @@ public class TestScene : IScene
         //예제 로직
         // 현재 씬에 대한 이름 출력
         Console.WriteLine("TestScene.\n");
-
-        Console.WriteLine("1. 빵빵이");
-        Console.WriteLine("2. 옥지");
-        Console.WriteLine("");
         
+        foreach (var enemy in _enemies)
+        {
+            enemy.ShowInfo();  // 각 적의 정보를 출력
+        }
+
         // 모든 Log 출력
         Utility.PrintLogs(_gameState.Logs, ConsoleColor.Blue);
     }
@@ -56,12 +58,12 @@ public class TestScene : IScene
         switch (input)
         {
             case 1:
+                return this;  // 현재 씬 유지
             case 2:
-                AttackTest(input);
-                return this;
+                return new MainScene(_gameState);  // 다른 씬으로 전환
+            default:
+                return null;  // 잘못된 입력 시 종료
         }
-
-        return null;
     }
 
     //공격 테스트
@@ -69,8 +71,6 @@ public class TestScene : IScene
     {
         _player.Attack(_enemies[input - 1]); //플레이어가 적을 때림
 
-        //int rand = new Random().Next(0, 2); // 0~1 사이의 랜덤 값
-        // _enemies[rand].Attack(_player); //옥지나 빵빵이가 랜덤으로 플레이어를 때림
     }
 
     //Attack Log

@@ -62,11 +62,11 @@ static class Utility
     /// </summary>
     /// <param name="logs">_gameState.Logs</param>
     /// <param name="color">컬러값 ex)Console.Color.Red</param>
-    public static void PrintLogs(Queue<string> logs, ConsoleColor color)
+    public static void PrintLogs(Queue<(string, ConsoleColor)> logs)
     {
         while (logs.Count > 0)
         {
-            var log = logs.Dequeue();
+            var (log, color) = logs.Dequeue();
             ColorWriteLine(log, color);
         }
     }

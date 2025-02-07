@@ -19,8 +19,8 @@ namespace TextRPG_Team
         public int Value { get; } // 능력치 값
         public string Info { get; } // 아이템 정보
         public int Price { get; } // 가격
-        public bool Purchase { get; set; } // 구매 여부
-        public bool Equip { get; set; } // 장착 여부
+        public bool itemPurchase { get; set; } // 아이템 구매 여부
+        public bool itemEquip { get; set; } // 아이템 장착 여부
 
         public Item(string name, ItemType type, int value, string info, int price)
         {
@@ -29,25 +29,25 @@ namespace TextRPG_Team
             Value = value;
             Info = info;
             Price = price;
-            Purchase = false;
-            Equip = false;
+            itemPurchase = false;
+            itemEquip = false;
         }
-        public string GetItemEffect() // 장착중 표시
+        public string GetIteDisplay() // 장착여부 표시
         {
-            string str = Equip ? "[E]" : ""; // 장착중이면 : "[E]" / 아니면 : "" 출력
-            str += $"{Name} | {GetTypeEffect()} | {Info}";
+            string str = itemEquip ? "[E]" : ""; // 장착중이면 : "[E]" / 아니면 : "" 출력
+            str += $"{Name} | {GetTypeValue()} | {Info}";
             return str;
         }
 
-        public string GetTypeEffect() // 아이템 능력치 표시
+        public string GetTypeValue() // 아이템 능력치 표시 ( 공격력 || 방어력 )
         {
             string str = (Type == ItemType.Weapon ? $"공격력 +{Value}" : $"방어력 +{Value}"); // 타입이 무기면 공격력 / 아니면 방어력 출력
             return str;
         }
 
-        public string GetPriceEffect() // 아이템 가격 표시
+        public string GetPricPurchase() // 구매여부 || 아이템 가격 표시
         {
-            string str = Purchase ? "구매완료" : $"{Price}"; // 구매했으면 "구매완료" / 아니면 가격 출력
+            string str = itemPurchase ? "구매완료" : $"{Price}"; // 구매했으면 "구매완료" / 아니면 가격 출력
             return str;
         }
 

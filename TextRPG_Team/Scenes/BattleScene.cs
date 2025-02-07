@@ -70,14 +70,14 @@ public class BattleScene : IScene
     //         Attack = attack;
     //     }
 
-    //     public void PlayerInfo()
-    //     {
-    //         Console.WriteLine("\n[내정보]");
-    //         Console.WriteLine($"Lv.{Level} {Name} {Class}");
-    //         Console.WriteLine($"HP {Hp}/{MaxHp}");
-    //         Console.WriteLine($"power {Attack}");
-    //     }
-    // }
+        public void PlayerInfo()
+        {
+            Console.WriteLine("\n[내정보]");
+            Console.WriteLine($"Lv. {player.Name}");
+            Console.WriteLine($"HP {player.Health}/{player.GetStats().MaxHp}");
+            Console.WriteLine($"power {player.GetStats().Atk}");
+        }
+    //}
 
      public BattleScene(GameState gameState, Player player)
     {
@@ -138,6 +138,7 @@ public class BattleScene : IScene
 
     private void DisplayBattleState()
     {
+        
         Utility.ColorWriteLine("\nBattle!", ConsoleColor.Yellow);
 
         for (int i = 0; i < battleMonsters.Count; i++)
@@ -148,6 +149,7 @@ public class BattleScene : IScene
             ConsoleColor textColor = monster.IsDead ? ConsoleColor.DarkGray : ConsoleColor.White;
 
             Utility.ColorWriteLine($"{i + 1} Lv.{monster.Level} {monster.Name} {status}", textColor);
+            
         }
     }
 

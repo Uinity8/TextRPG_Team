@@ -176,6 +176,7 @@ public class BattleScene : IScene
             // 공격 후 출력
             Console.WriteLine($"Lv.{monster.Level} {monster.Name} 의 공격! [데미지: {damage}]");
         }
+        
 
         // 플레이어 HP가 갱신된 후 출력
         Console.WriteLine($"Lv.{player.Level} {player.Name} HP {oldHp} -> {player.Hp}");

@@ -1,5 +1,13 @@
 namespace TextRPG_Team.Scenes;
 using System.Collections.Generic;
+using System.Linq;
+using TextRPG_Team.Objects;
+
+public enum Turn
+{
+    Player,
+    Enemy
+}
 
 public class BattleScene : IScene
 {
@@ -7,6 +15,7 @@ public class BattleScene : IScene
     private readonly GameState _gameState;
     private List<Monster> battleMonsters = new List<Monster>();
     private Player player = new Player("Chad", "전사", 1, 100, 10);
+    private Turn currentTurn = Turn.Player;
 
     class Monster
     {
@@ -26,7 +35,6 @@ public class BattleScene : IScene
             Attack = attack;
         }
 
-        // 🔹 HP를 변경하는 메서드 추가
         public void TakeDamage(int damage)
         {
             HP = Math.Max(0, HP - damage);
@@ -67,7 +75,7 @@ public class BattleScene : IScene
         }
     }
 
-    public BattleScene(GameState gameState)//파라미터 추가해서 true 플레이어턴 false 적턴 or Enum 사용
+    public BattleScene(GameState gameState)
     {
         _gameState = gameState;
     }
@@ -75,11 +83,6 @@ public class BattleScene : IScene
     public void Run()
     {
         Console.Clear();
-
-        Console.WriteLine("배틀 씬 입니다");
-        Console.WriteLine("1. 유지");
-        Console.WriteLine("2. 배틀");
-
         List<Monster> monsterPool = new List<Monster>
         {
             new Monster("미니언", 2, 15, 5),
@@ -101,51 +104,96 @@ public class BattleScene : IScene
         }
 
         DisplayBattleState();
-        PlayerTurn();
+        NextTurn();
     }
 
-   private void DisplayBattleState()
-{
-    Utility.ColorWriteLine("\nBattle!", ConsoleColor.Yellow);
-
-    for (int i = 0; i < battleMonsters.Count; i++)
+    private void NextTurn()
     {
-        var monster = battleMonsters[i];
-        string status = monster.IsDead ? "Dead" : $"HP {monster.HP}";
-        
-        ConsoleColor textColor = monster.IsDead ? ConsoleColor.DarkGray : ConsoleColor.White;
+         // 모든 몬스터가 죽었는지 확인
+        if (battleMonsters.All(m => m.IsDead))
+        {
+            DisplayBattleResult();
+            return;
+        }
+        if (currentTurn == Turn.Player)
+        {
+            currentTurn = Turn.Enemy;
+            PlayerTurn();
+        }
+        else
+        {
+            Console.Clear();
+            currentTurn = Turn.Player;
+            EnemyTurn();
+        }
 
-        Utility.ColorWriteLine($"{i + 1} Lv.{monster.Level} {monster.Name} {status}", textColor);
     }
-}
 
-private void EnemyPhase()
-{
-    Console.Clear();
-    Utility.ColorWriteLine("\nEnemy Phase!", ConsoleColor.Red);
-
-    foreach (var monster in battleMonsters)
+    private void DisplayBattleState()
     {
-        if (monster.IsDead) continue;
-        
-        int damage = monster.Attack;
-        player.Hp -= damage;
-        
-        Console.WriteLine($"Lv.{monster.Level} {monster.Name} 의 공격! [데미지: {damage}]");
+        Utility.ColorWriteLine("\nBattle!", ConsoleColor.Yellow);
+
+        for (int i = 0; i < battleMonsters.Count; i++)
+        {
+            var monster = battleMonsters[i];
+            string status = monster.IsDead ? "Dead" : $"HP {monster.HP}";
+
+            ConsoleColor textColor = monster.IsDead ? ConsoleColor.DarkGray : ConsoleColor.White;
+
+            Utility.ColorWriteLine($"{i + 1} Lv.{monster.Level} {monster.Name} {status}", textColor);
+        }
     }
 
-    if (player.Hp <= 0)
+    private void DisplayBattleResult()
     {
-        Utility.ColorWriteLine("\n당신은 쓰러졌습니다...", ConsoleColor.Red);
-        return;
+        int deadMonsters = battleMonsters.Count(m => m.IsDead); // 죽은 몬스터 수 계산
+        Console.Clear();
+        Utility.ColorWriteLine($"Battle! - Result", ConsoleColor.DarkCyan);
+        Utility.ColorWriteLine("Victory", ConsoleColor.Green);
+
+        Console.WriteLine($"Lv.{player.Level} {player.Name}");
+        Console.WriteLine($"HP {player.MaxHp} -> {player.Hp}");
+        Console.WriteLine($"몬스터 {deadMonsters}마리 잡았음");
+
+        Console.WriteLine("\n0. 다음");
+        while (Console.ReadLine() != "0") { }
     }
 
-    Console.WriteLine("\n0. 다음");
-    while (Console.ReadLine() != "0") { }
+    private void EnemyTurn()
+    {
+        Utility.ColorWriteLine("\nEnemy Turn!", ConsoleColor.Red);
 
-    DisplayBattleState();
-    PlayerTurn();
-}
+        int oldHp = player.Hp;
+
+        foreach (var monster in battleMonsters)
+        {
+            if (monster.IsDead) continue;
+
+            // 적이 플레이어에게 공격
+            int damage = monster.Attack;
+            player.Hp -= damage;
+
+            // 공격 후 출력
+            Console.WriteLine($"Lv.{monster.Level} {monster.Name} 의 공격! [데미지: {damage}]");
+        }
+
+        // 플레이어 HP가 갱신된 후 출력
+        Console.WriteLine($"Lv.{player.Level} {player.Name} HP {oldHp} -> {player.Hp}");
+
+        // 플레이어가 쓰러졌다면 전투 종료
+        if (player.Hp <= 0)
+        {
+            Utility.ColorWriteLine("\n당신은 쓰러졌습니다...", ConsoleColor.Red);
+            return; // 전투 종료
+        }
+
+        Console.WriteLine("\n0. 다음");
+        while (Console.ReadLine() != "0") { }
+
+        // 전투 상태 출력
+        DisplayBattleState();
+        NextTurn();
+    }
 
     private void PlayerTurn()
     {
@@ -175,25 +223,25 @@ private void EnemyPhase()
             }
         }
     }
-    
-   private void AttackMonster(Monster target)
-{
-    int attackPower = ApplyAttackVariation(player.Attack);
-    int oldHP = target.HP;
-    target.TakeDamage(attackPower);
 
-    Console.WriteLine("\nChad 의 공격!");
-    Console.WriteLine($"Lv.{target.Level} {target.Name} 을(를) 맞췄습니다. [데미지 : {attackPower}]");
-    Console.WriteLine($"Lv.{target.Level} {target.Name}");
-    Console.WriteLine($"HP {oldHP} -> {(target.IsDead ? "Dead" : target.HP.ToString())}\n");
+    private void AttackMonster(Monster target)
+    {
+        Console.Clear();
+        int attackPower = ApplyAttackVariation(player.Attack);
+        int oldHP = target.HP;
+        target.TakeDamage(attackPower);
 
-    Console.WriteLine("0. 다음");
-    while (Console.ReadLine() != "0") { }
+        Console.WriteLine("\nChad 의 공격!");
+        Console.WriteLine($"Lv.{target.Level} {target.Name} 을(를) 맞췄습니다. [데미지 : {attackPower}]");
+        Console.Write($"Lv.{target.Level} {target.Name}");
+        Console.WriteLine($"HP {oldHP} -> {(target.IsDead ? "Dead" : target.HP.ToString())}\n");
 
-    DisplayBattleState();
-    EnemyPhase();
-}
+        Console.WriteLine("0. 다음");
+        while (Console.ReadLine() != "0") { }
 
+        DisplayBattleState();
+        NextTurn();
+    }
 
     private int ApplyAttackVariation(int baseAttack)
     {

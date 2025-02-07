@@ -55,7 +55,7 @@ public class TestScene : IScene
 
     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(1, 2);
+        int input = Utility.GetInput(1, 3);
 
         switch (input)
         {
@@ -64,6 +64,8 @@ public class TestScene : IScene
                 AttackTest(input);
                 return this;
                 break;
+            case 3:
+                return new BattleScene(_gameState); // 배틀씬으로 이동
         }
 
         return null;

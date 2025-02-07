@@ -4,11 +4,11 @@ namespace TextRPG_Team;
 
 public class GameState
 {
-    //씬전환간에 필요한 인스터스들
+    //씬전환간에 필요한 인스턴스들
     
     //Objects
     readonly Player  _player = new Player("Payer", new Stats(100, 10, 5), 1000);
-    public Player GetPlayer() => _player;
+    public Player GetPlayer() => _player; //플레이어 인스턴스입니다.
     public Queue<string> Logs { get; } = new(); //Log Info를 저장할 Queue입니다.; 
 
     public readonly List<Item> inventoryitemList = new List<Item>();

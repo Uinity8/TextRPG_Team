@@ -30,25 +30,24 @@ public struct Stats // 체,공,방
 public class Player : ICharacter
 {
     // 필드
-    private float _gold;
+    private int _gold;
 
     // 속성
     public string Name { get; private set; } //이름
 
-    public float Gold //골드 그냥 골드에 값만 대입하시면 자동으로 로그뜹니다.
+    public int Gold //골드 그냥 골드에 값만 대입하시면 자동으로 로그뜹니다.
     {
         get => _gold;
         set
         {
-            if (value < 0) // 골드가 부족하면 메시지를 로그에 추가
+            if (value < _gold) // 골드가 줄어들 때만 메시지 출력
             {
-                TryBuyAction?.Invoke("골드가 부족합니다.", ConsoleColor.Red);
+                if (value < 0)
+                    TryBuyAction?.Invoke("골드가 부족합니다.", ConsoleColor.Red);
+                else
+                    TryBuyAction?.Invoke("구매에 성공했습니다.", ConsoleColor.Blue);
             }
-            else
-            {
-                _gold = value; // 정상적으로 골드를 설정
-                TryBuyAction?.Invoke("구매에 성공했습니다.", ConsoleColor.Blue); // 이벤트 호출
-            }
+            _gold = value; // 항상 골드 값을 설정
         }
     }
 
@@ -68,7 +67,7 @@ public class Player : ICharacter
 
 
     // 생성자
-    public Player(string name, Stats stats, float gold)
+    public Player(string name, Stats stats, int gold)
     {
         Name = name;
         PlayerStats = stats;
@@ -89,4 +88,13 @@ public class Player : ICharacter
     }
 
     public bool IsDead() => Health <= 0f;
+
+    public override string ToString()   //플레이어 정보
+    {
+        return $"Lv.{GetStats().Lv} : {Name} " + 
+               $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "")+
+               $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "")+
+               $"방어력 : {GetStats().Def}"+ (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "")+
+               $"Gold : {Gold} G";
+    }
 }

@@ -53,7 +53,7 @@ public class TestScene : IScene
 
     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(1, 2);
+        int input = Utility.GetInput(1, 3);
 
         switch (input)
         {

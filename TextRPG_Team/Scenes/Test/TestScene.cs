@@ -15,12 +15,10 @@ public class TestScene : IScene
     public TestScene(GameState gameState) //DI 의존성 주입
     {
         _gameState = gameState;
-
         
         EnemySpawner enemySpawner = new EnemySpawner();
         _enemies.AddRange(enemySpawner.GetEnemies());  // EnemySpawner에서 적들을 _enemies에 추가
-
-
+        
         //플레이어,적 어택 액션에 서로의 TakeDamage등록
         foreach (var enemy in _enemies)
         {

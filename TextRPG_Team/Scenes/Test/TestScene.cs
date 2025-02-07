@@ -25,7 +25,7 @@ public class TestScene : IScene
             {
                 enemy.TakeDamage(damage); ;
                 var log = AttackLog(attacker, enemy, damage);   //Log에 AttackLog 추가
-                _gameState.Logs.Enqueue((log, ConsoleColor.Blue)); //Log에 AttackLog 추가
+                Utility.AddLog(log, ConsoleColor.Blue); //Log에 AttackLog 추가
             };
             
         }
@@ -45,7 +45,7 @@ public class TestScene : IScene
         }
         
         // 모든 Log 출력
-        Utility.PrintLogs(_gameState.Logs);
+        Utility.PrintLogs();
 
         _gameState.GetPlayer().Gold -= 100;
     }

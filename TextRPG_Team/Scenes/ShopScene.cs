@@ -1,12 +1,10 @@
-// ExampleScene.cs 
-// 씬 예제 파일 입니다. 새로운 씬 만들때 해당 파일 복사해서 이름만 바꾸세요!
 namespace TextRPG_Team.Scenes;
 
-public class ExampleScene : IScene
+public class ShopScene : IScene
 {
     private readonly GameState _gameState;
 
-    public ExampleScene(GameState gameState) //DI 의존성 주입
+    public ShopScene(GameState gameState) //DI 의존성 주입
     {
         _gameState = gameState;
     }
@@ -17,7 +15,7 @@ public class ExampleScene : IScene
         
         //예제 로직
         // 현재 씬에 대한 이름 출력
-        Console.WriteLine("ExampleScene.");      
+        Console.WriteLine("ShopScene Logic.....");      
     }
 
     public IScene? GetNextScene()

@@ -4,6 +4,7 @@ namespace TextRPG_Team.Scenes;
 
 public class MainScene : IScene
 {
+    private readonly Player _player;
     private readonly GameState _gameState;
 
 
@@ -21,9 +22,9 @@ public class MainScene : IScene
         Console.WriteLine("2.Shop Scene");   
     }
 
-    public IScene? GetNextScene()
+     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(1, 2);
+        int input = Utility.GetInput(1, 3);
         return input switch
         {
             1 => this,
@@ -32,4 +33,3 @@ public class MainScene : IScene
         };
     }
 }
-

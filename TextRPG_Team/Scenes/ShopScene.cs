@@ -25,7 +25,7 @@ public class ShopScene : IScene
     {
         Console.Clear(); //처음 진입시 화면 지우기
         ShowScreen();
-
+        Utility.PrintLogs();
     }
 
     private void ShowScreen()
@@ -94,7 +94,7 @@ public class ShopScene : IScene
                 // 아이템을 구매했는지?
                 if (_gameState.itemList[input].itemPurchase)
                 {
-
+                    Utility.AddLog("이미 구매한 아이템입니다.",ConsoleColor.DarkRed);
                 }
                 // 골드가 부족한지?
                 // else if(_gameState.player.Gold < _gameState.itemList[input].Price) 

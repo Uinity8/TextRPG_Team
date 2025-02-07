@@ -9,7 +9,6 @@ using TextRPG_Team.Manager;
 public class TestScene : IScene
 {
     private readonly GameState _gameState;
-    private readonly Player _player = new Player("Payer", new Stats(100, 10, 5));
     readonly List<Enemy> _enemies = new List<Enemy>();
     
     public TestScene(GameState gameState) //DI 의존성 주입
@@ -22,11 +21,11 @@ public class TestScene : IScene
         //플레이어,적 어택 액션에 서로의 TakeDamage등록
         foreach (var enemy in _enemies)
         {
-            _player.AttackAction = (attacker, damage) =>
+            _gameState.GetPlayer().AttackAction = (attacker, damage) =>
             {
                 enemy.TakeDamage(damage); ;
                 var log = AttackLog(attacker, enemy, damage);   //Log에 AttackLog 추가
-                _gameState.Logs.Enqueue(log); //Log에 AttackLog 추가
+                Utility.AddLog(log, ConsoleColor.Blue); //Log에 AttackLog 추가
             };
             
         }
@@ -44,9 +43,11 @@ public class TestScene : IScene
         {
             enemy.ShowInfo();  // 각 적의 정보를 출력
         }
-
+        
         // 모든 Log 출력
-        Utility.PrintLogs(_gameState.Logs, ConsoleColor.Blue);
+        Utility.PrintLogs();
+
+        _gameState.GetPlayer().Gold -= 100;
     }
 
     public IScene? GetNextScene()
@@ -67,7 +68,7 @@ public class TestScene : IScene
     //공격 테스트
     public void AttackTest(int input)
     {
-        _player.Attack(_enemies[input - 1]); //플레이어가 적을 때림
+        _gameState.GetPlayer().Attack(_enemies[input - 1]); //플레이어가 적을 때림
 
     }
 

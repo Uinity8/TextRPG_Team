@@ -3,6 +3,8 @@ namespace TextRPG_Team;
 //수정원할시 사전 공지
 static class Utility
 {
+    private static Queue<(string, ConsoleColor)> Logs { get; } = new(); //Log Info를 저장할 Queue입니다.
+
     /// <summary>
     /// 플레이어의 입력값(정수) 받는 함수
     /// </summary>
@@ -23,16 +25,18 @@ static class Utility
                 return input;
 
             // 잘못된 입력이므로 메시지를 수정
-            Console.SetCursorPosition(0, cursorTop); // 이전 메시지가 있던 위치로 커서 이동
-            Console.Write(new string(' ', Console.WindowWidth)); // 공백으로 채우기("원하시는 행동을 입력해주세요.")
-            Console.Write(new string(' ', Console.WindowWidth)); // 공백으로 채우기(">>")
+            for (int i = 0; i < 2; i++)
+            {
+                Console.SetCursorPosition(0, cursorTop + i); // 이전 메시지가 있던 위치로 커서 이동
+                Console.Write(new string(' ', Console.WindowWidth)); // 공백으로 채우기
+            }
 
-            ColorWriteLine("잘못된 입력입니다. 다시 입력해주세요", ConsoleColor.Red);   //경고 메세지 출력
-            
+            ColorWrite("잘못된 입력입니다. 다시 입력해주세요", ConsoleColor.Red); //경고 메세지 출력
+
             Console.SetCursorPosition(0, cursorTop); // 커서를 다시 이동
         }
     }
-    
+
     /// <summary>
     /// 컬러로 문자열 작성하는 코드(줄바꿈X)
     /// </summary>
@@ -44,7 +48,7 @@ static class Utility
         Console.Write(str);
         Console.ResetColor();
     }
-    
+
     /// <summary>
     /// 컬러로 문자열 작성하는 코드(줄바꿈O)
     /// </summary>
@@ -60,15 +64,22 @@ static class Utility
     /// <summary>
     /// 전 씬에서 발생한 모든 로그들을 출력하는 함수
     /// </summary>
-    /// <param name="logs">_gameState.Logs</param>
-    /// <param name="color">컬러값 ex)Console.Color.Red</param>
-    public static void PrintLogs(Queue<string> logs, ConsoleColor color)
+    public static void PrintLogs()
     {
-        while (logs.Count > 0)
+        while (Logs.Count > 0)
         {
-            var log = logs.Dequeue();
+            var (log, color) = Logs.Dequeue();
             ColorWriteLine(log, color);
         }
     }
 
+    /// <summary>
+    /// 로그(Log)에 문자열 추가하는 함수입니다
+    /// </summary>
+    /// <param name="log">추가할 문자열</param>
+    /// <param name="color">색상</param>
+    public static void AddLog(string log, ConsoleColor color)
+    {
+        Logs.Enqueue((log, color));
+    }
 }

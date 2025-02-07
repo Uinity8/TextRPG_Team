@@ -6,7 +6,7 @@ namespace TextRPG_Team.Objects
     public class Enemy : ICharacter
     {
         public string Name { get; private set; }
-        public int Level { get; private set; } 
+        //삭제 부탁(Stat 구조체로 이동)public int Level { get; private set; } //삭제 부탁(Stat 구조체로 이동)
         public float Health { get; private set; }
         public Action<ICharacter, float>? AttackAction { get; set; } // 공격 시 동작을 정의하는 액션
         
@@ -18,7 +18,7 @@ namespace TextRPG_Team.Objects
         {
             Name = name;
             EnemyStats = stats;
-            Level = level;  // 레벨 설정
+            //삭제 부탁(Stat 구조체로 이동) Level = level;  // 삭제 부탁
             Health = EnemyStats.MaxHp;  // 최대 체력 초기화
         }
 
@@ -42,7 +42,7 @@ namespace TextRPG_Team.Objects
         public void ShowInfo()
         {
             // 레벨, 이름, 체력
-            Console.WriteLine($"Lv.{Level} {Name} \nHP {Health} \n");
+            Console.WriteLine($"Lv.{GetStats().Lv} {Name} \nHP {Health} \n");
         }
     }
 }

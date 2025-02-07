@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TextRPG_Team.Objects
 {
-    internal class Enemy
+    public class Enemy
     {
         //적 속성
 

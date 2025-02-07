@@ -4,12 +4,12 @@ using TextRPG_Team.Objects;
 
 namespace TextRPG_Team.Manager
 {
-    public class EnemySpowner
+    public class EnemySpawner
     {
         private List<Enemy> enemy = new List<Enemy>();  // 적 리스트
         private Random random = new Random();
 
-        private EnemySpowner() 
+        private EnemySpawner() 
         {
             enemy.Add(new Enemy(2, "슬라임", 20, 5));
             enemy.Add(new Enemy(5, "폭탄병", 30, 15));

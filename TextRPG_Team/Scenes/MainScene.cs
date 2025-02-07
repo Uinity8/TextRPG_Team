@@ -5,8 +5,6 @@ namespace TextRPG_Team.Scenes;
 public class MainScene : IScene
 {
     private readonly GameState _gameState;
-    private readonly Player _player = new Player("Payer1", 100f, 10f);
-    readonly List<Player> _enemies = new List<Player>(); //예제를 위해 플레이어 클래스로 적들 생성
 
 
     public MainScene(GameState gameState) //DI 의존성 주입

@@ -8,17 +8,10 @@ using TextRPG_Team.Manager;
 
 public class TestScene : IScene
 {
-<<<<<<< HEAD:TextRPG_Team/Scenes/TestScene.cs
-    private readonly GameState _gameState; 
-    private readonly Player _player = new Player("Payer1", 100f, 10f);
-    readonly List<Player> _enemies = new List<Player>(); //예제를 위해 플레이어 클래스로 적들 생성
-
-=======
     private readonly GameState _gameState;
     private readonly Player _player = new Player("Payer", new Stats(100, 10, 5));
     readonly List<Enemy> _enemies = new List<Enemy>();
     
->>>>>>> Dev:TextRPG_Team/Scenes/Test/TestScene.cs
     public TestScene(GameState gameState) //DI 의존성 주입
     {
         _gameState = gameState;

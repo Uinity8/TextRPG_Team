@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using TextRPG_Team.Objects;
 
@@ -23,7 +24,6 @@ public class ShopScene : IScene
 
     public void Run()
     {
-        
         Console.Clear(); //처음 진입시 화면 지우기
 
         // 현재 씬에 대한 이름 출력
@@ -45,12 +45,16 @@ public class ShopScene : IScene
         if (_shopState == ShopState.Buy)
         {
             BuyScreen();
+            _shopState = ShopState.Normal;
+            Run();
         }
         else if (_shopState == ShopState.SaleI)
         {
             SaleScreen();
+            _shopState = ShopState.Normal;
+            Run();
         }
-
+        
     }
 
     public void BuyScreen()
@@ -75,27 +79,37 @@ public class ShopScene : IScene
         int input = Utility.GetInput(0, index);
         switch (input)
         {
-            case 0 :
+            case 0:
                 break;
 
             default:
-
                 Buyitem(input-1);
                 BuyScreen();
                 break;
         }
+        new ShopScene(_gameState, ShopState.Normal);
     }
 
     public void Buyitem(int input)
     {
-        // 골드가 있는지? , 아이템을 구매했는지?
-        if (_gameState.itemList[input].itemPurchase = true)
+        // 아이템을 구매했는지?
+        if (_gameState.itemList[input].itemPurchase)
         {
             Utility.ColorWriteLine("이미 구매한 아이템입니다.", ConsoleColor.Red);
             Console.ReadKey();
         }
-        // else if(_gameState.player.Gold) Utility.ColorWriteLine("골드가 부족합니다.", ConsoleColor.Red);
-        else _gameState.itemList[input].itemPurchase = true;
+        // 골드가 부족한지?
+        // else if(_gameState.player.Gold < _gameState.itemList[input].Price) 
+        // {
+        //  Utility.ColorWriteLine("골드가 부족합니다.", ConsoleColor.Red);
+        //  Console.ReadKey();
+        //}
+        else
+        {
+            _gameState.inventoryitemList.Add(_gameState.itemList[input]);
+            _gameState.itemList[input].itemPurchase = true;
+            //_gameState.player.Gold -= _gameState.itemList[input].Price;
+        }
 
     }
 
@@ -111,13 +125,42 @@ public class ShopScene : IScene
         Console.WriteLine();
         Console.WriteLine("[아이템 목록]");
         int Index = 1;
-        foreach (var item in _gameState.itemList)
+        foreach (var item in _gameState.inventoryitemList)
         {
             Console.WriteLine($"- {Index++}. {item.GetIteDisplay()} | {item.GetPricPurchase()}");
         }
         Console.WriteLine();
         Console.WriteLine("0. 나가기");
         int input = Utility.GetInput(0, Index);
+        switch (input)
+        {
+            case 0:
+                break;
+
+            default:
+                Saleitem(input - 1);
+                BuyScreen();
+                break;
+        }
+    }
+    public void Saleitem(int input)
+    {
+        // 아이템을 장착중인가?
+        if (_gameState.inventoryitemList[input].itemEquip)
+        {
+            
+        }
+        // 골드가 부족한지?
+        // else if(_gameState.player.Gold < _gameState.itemList[input].price) 
+        // {
+        //  Utility.ColorWriteLine("골드가 부족합니다.", ConsoleColor.Red);
+        //  Console.ReadKey();
+        //}
+        else
+        {
+            _gameState.itemList[input].itemPurchase = true;
+        }
+
     }
 
     public IScene? GetNextScene()
@@ -126,7 +169,7 @@ public class ShopScene : IScene
        switch(input)   //  C#의 `switch 표현식` 입니다. 필요하신분 찾아 보세요
         {
             case 1 :
-                return new ShopScene(_gameState, ShopState.Buy );
+                return new ShopScene(_gameState, ShopState.Buy);
             case 2 :
                 return new ShopScene(_gameState, ShopState.SaleI);
             default:

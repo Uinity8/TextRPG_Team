@@ -6,19 +6,21 @@ namespace TextRPG_Team.Manager
 {
     public class EnemySpawner
     {
-        private List<Enemy> enemy = new List<Enemy>();  // 적 리스트
-        private Random random = new Random();
+        private List<Enemy> enemies = new List<Enemy>();  // 적 리스트
 
-        private EnemySpawner() 
+        // 생성자에서 적을 추가
+        public EnemySpawner()
         {
-            enemy.Add(new Enemy(2, "슬라임", 20, 5));
-            enemy.Add(new Enemy(5, "폭탄병", 30, 15));
+            // 예시:설정에 따라 이름, 공격력 바뀔 수 있듬
+            enemies.Add(new Enemy("미니언", new Stats(15, 5, 0), 2));  // Lv 2
+            enemies.Add(new Enemy("공허충", new Stats(10, 9, 0), 3));  // Lv 3
+            enemies.Add(new Enemy("대포미니언", new Stats(25, 8, 0), 5));  // Lv 5
         }
 
-        public Enemy GetRandomEnemy()
+        
+        public List<Enemy> GetEnemies() // 외부에서 적 리스트를 가져올 수 있도록 추가
         {
-            int index = random.Next(enemy.Count); // 0 ~ (적군 개수 - 1) 사이의 랜덤 값
-            return enemy[index];
+            return enemies;
         }
     }
 }

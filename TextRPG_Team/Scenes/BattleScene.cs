@@ -31,10 +31,9 @@ public class BattleScene : IScene
         public float HP { get; private set; }
         public bool IsDead => HP <= 0;
 
-        public Monster(string name, int level, float hp, float attack)
+        public Monster(string name, float hp, float attack)
         {
             Name = name;
-            Level = level;
             MaxHp = hp;
             HP = hp;
             Attack = attack;
@@ -108,7 +107,7 @@ public class BattleScene : IScene
             //     monsterPool[random.Next(monsterPool.Count)].Attack
             // ));
             var enemy = enemyList[random.Next(enemyList.Count)];
-            battleMonsters.Add(new Monster(enemy.Name, enemy.Level, enemy.GetStats().MaxHp, enemy.GetStats().Atk));
+            battleMonsters.Add(new Monster(enemy.Name,  enemy.GetStats().MaxHp, enemy.GetStats().Atk));
         }
 
         DisplayBattleState();

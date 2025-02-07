@@ -56,4 +56,19 @@ static class Utility
         Console.WriteLine(str);
         Console.ResetColor();
     }
+
+    /// <summary>
+    /// 전 씬에서 발생한 모든 로그들을 출력하는 함수
+    /// </summary>
+    /// <param name="logs">_gameState.Logs</param>
+    /// <param name="color">컬러값 ex)Console.Color.Red</param>
+    public static void PrintLogs(Queue<string> logs, ConsoleColor color)
+    {
+        while (logs.Count > 0)
+        {
+            var log = logs.Dequeue();
+            ColorWriteLine(log, color);
+        }
+    }
+
 }

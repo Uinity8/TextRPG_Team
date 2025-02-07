@@ -16,7 +16,7 @@ public class TestScene : IScene
     {
         _gameState = gameState;
 
-        // EnemySpawner 인스턴스를 생성하고 적을 가져옵니다.
+        
         EnemySpawner enemySpawner = new EnemySpawner();
         _enemies.AddRange(enemySpawner.GetEnemies());  // EnemySpawner에서 적들을 _enemies에 추가
 
@@ -30,7 +30,7 @@ public class TestScene : IScene
                 var log = AttackLog(attacker, enemy, damage);   //Log에 AttackLog 추가
                 _gameState.Logs.Enqueue(log); //Log에 AttackLog 추가
             };
-            //enemy.AttackAction = (attacker, damage) => { _player.TakeDamage(damage); };
+            
         }
     }
 

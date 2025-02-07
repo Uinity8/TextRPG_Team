@@ -18,8 +18,6 @@ public class BattleScene : IScene
     //private Player player = new Player("Chad", "전사", 1, 100, 10);
 
     private EnemySpawner enemySpawner = new EnemySpawner();
-
-    private Player player;
     private Turn currentTurn = Turn.Player;
 
     private class Monster
@@ -73,16 +71,15 @@ public class BattleScene : IScene
         public void PlayerInfo()
         {
             Console.WriteLine("\n[내정보]");
-            Console.WriteLine($"Lv. {player.Name}");
-            Console.WriteLine($"HP {player.Health}/{player.GetStats().MaxHp}");
-            Console.WriteLine($"power {player.GetStats().Atk}");
+            Console.WriteLine($"Lv. {_gameState.GetPlayer().Name}");
+            Console.WriteLine($"HP {_gameState.GetPlayer().Health}/{_gameState.GetPlayer().GetStats().MaxHp}");
+            Console.WriteLine($"power {_gameState.GetPlayer().GetStats().Atk}");
         }
     //}
 
-     public BattleScene(GameState gameState, Player player)
+     public BattleScene(GameState gameState)
     {
         _gameState = gameState;
-        this.player = player;
     }
 
     public void Run()
@@ -160,8 +157,8 @@ public class BattleScene : IScene
         Utility.ColorWriteLine($"Battle! - Result", ConsoleColor.DarkCyan);
         Utility.ColorWriteLine("Victory", ConsoleColor.Green);
 
-        Console.WriteLine($"Lv.{player.GetStats().MaxHp} {player.Name}");
-        Console.WriteLine($"HP {player.GetStats().MaxHp} -> {player.Health}");
+        Console.WriteLine($"Lv.{_gameState.GetPlayer().GetStats().MaxHp} {_gameState.GetPlayer().Name}");
+        Console.WriteLine($"HP {_gameState.GetPlayer().GetStats().MaxHp} -> {_gameState.GetPlayer().Health}");
         Console.WriteLine($"몬스터 {deadMonsters}마리 잡았음");
 
         Console.WriteLine("\n0. 다음");
@@ -173,22 +170,22 @@ public class BattleScene : IScene
     {
         Utility.ColorWriteLine("\nEnemy Turn!", ConsoleColor.Red);
 
-        float oldHp = player.Health;
+        float oldHp = _gameState.GetPlayer().Health;
 
         foreach (var monster in battleMonsters)
         {
             if (monster.IsDead) continue;
             float damage = monster.Attack;
-            player.TakeDamage(damage);
+            _gameState.GetPlayer().TakeDamage(damage);
             // 공격 후 출력
             Console.WriteLine($"Lv.{monster.Level} {monster.Name} 의 공격! [데미지: {damage}]");
         }
 
         // 플레이어 HP가 갱신된 후 출력
-        Console.WriteLine($"Lv.{player.GetStats().MaxHp} {player.Name} HP {oldHp} -> {player.Health}");
+        Console.WriteLine($"Lv.{_gameState.GetPlayer().GetStats().MaxHp} {_gameState.GetPlayer().Name} HP {oldHp} -> {_gameState.GetPlayer().Health}");
 
         // 플레이어가 쓰러졌다면 전투 종료
-        if (player.IsDead())
+        if (_gameState.GetPlayer().IsDead())
         {
             Utility.ColorWriteLine("\n당신은 쓰러졌습니다...", ConsoleColor.Red);
             return; // 전투 종료
@@ -233,7 +230,7 @@ public class BattleScene : IScene
     private void AttackMonster(Monster target)
     {
         Console.Clear();
-        float attackPower = player.Power;
+        float attackPower = _gameState.GetPlayer().Power;
         float oldHP = target.HP;
         target.TakeDamage(attackPower);
 

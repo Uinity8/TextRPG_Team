@@ -27,7 +27,7 @@ public class MainScene : IScene
         {
             1 => this,
             2 => new ExampleScene(_gameState),
-            3 => new BattleScene(_gameState, _player), // BattleScene 호출 추가
+            3 => new BattleScene(_gameState), // BattleScene 호출 추가
             _ => null // 잘못된 입력 시 종료
         };
     }

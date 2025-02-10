@@ -19,6 +19,7 @@ public class GameState
         new Item("청동 도끼", ItemType.Weapon, 10, "어디선가 사용됐던거 같은 도끼입니다. ", 1500, 5),
         new Item("스파르타의 창", ItemType.Weapon, 20, "스파르타의 전사들이 사용했다는 전설의 창입니다. ", 2500, 6)
     };
+    public readonly Player Player = new Player("Chad", new Stats(100, 10, 5), 1500, "Job");
     public readonly Player Player = new Player("Chad", new Stats(100, 10, 5), 1500);
     public readonly EnemySpawner Spawner = new EnemySpawner();
 }

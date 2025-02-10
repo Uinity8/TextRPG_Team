@@ -1,4 +1,6 @@
-﻿using TextRPG_Team.Objects;
+﻿using System;
+using System.Collections.Generic;
+using TextRPG_Team.Objects;
 
 namespace TextRPG_Team.Manager
 {

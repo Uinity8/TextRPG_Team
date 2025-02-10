@@ -48,9 +48,9 @@ public class Player : ICharacter
 
     public bool TryBuy(int price)   //아이템 구매여부 확인
     {
-        if (_gold >= price)
+        if (Gold >= price)
         {
-            _gold -= price;
+            Gold -= price;
             return true;
         }
         return false;

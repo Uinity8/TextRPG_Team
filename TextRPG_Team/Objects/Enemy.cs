@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TextRPG_Mockup.Objects
+namespace TextRPG_Team.Objects
 {
     public class Enemy : ICharacter
     {

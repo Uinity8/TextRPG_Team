@@ -40,7 +40,7 @@ public class BattleScene : IScene
 
     public void PlayerInfo()
     {
-        var player = _gameState.GetPlayer();
+        var player = _gameState.Player;
         Console.WriteLine("\n[내 정보]");
         Console.WriteLine(player.ToString());//Player클래스 ToString() 메서드 호출
     }
@@ -104,7 +104,7 @@ public class BattleScene : IScene
         Utility.ColorWriteLine($"Battle! - Result", ConsoleColor.DarkCyan);
         Utility.ColorWriteLine("Victory", ConsoleColor.Green);
 
-        var player = _gameState.GetPlayer();
+        var player = _gameState.Player;
         Console.WriteLine($"Lv.{player.GetStats().Lv} {player.Name}");
         Console.WriteLine($"HP {player.GetStats().MaxHp} -> {player.Health}");
         Console.WriteLine($"몬스터 {deadEnemies}마리 잡았음");
@@ -117,19 +117,19 @@ public class BattleScene : IScene
     {
         Utility.ColorWriteLine("\nEnemy Turn!", ConsoleColor.Red);
 
-        float oldHp = _gameState.GetPlayer().Health;
+        float oldHp = _gameState.Player.Health;
 
         foreach (var enemy in battleEnemies)
         {
             if (enemy.IsDead()) continue;
             float damage = enemy.Power;
-            _gameState.GetPlayer().TakeDamage(damage);
+            _gameState.Player.TakeDamage(damage);
             Console.WriteLine($"Lv.{enemy.GetStats().Lv} {enemy.Name} 의 공격! [데미지: {damage}]");
         }
 
-        Console.WriteLine($"Lv.{_gameState.GetPlayer().GetStats().Lv} {_gameState.GetPlayer().Name} HP {oldHp} -> {_gameState.GetPlayer().Health}");
+        Console.WriteLine($"Lv.{_gameState.Player.GetStats().Lv} {_gameState.Player.Name} HP {oldHp} -> {_gameState.Player.Health}");
 
-        if (_gameState.GetPlayer().IsDead())
+        if (_gameState.Player.IsDead())
         {
             Utility.ColorWriteLine("\n당신은 쓰러졌습니다...", ConsoleColor.Red);
             return;
@@ -181,7 +181,7 @@ public class BattleScene : IScene
     private void AttackEnemy(Enemy target)
     {
         Console.Clear();
-        var player = _gameState.GetPlayer();  // player 객체를 여기에 할당
+        var player = _gameState.Player;  // player 객체를 여기에 할당
         float attackPower = player.Power;     // 공격력
         float oldHP = target.Health;         // 공격 전 적 HP
     

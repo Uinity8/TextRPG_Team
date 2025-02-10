@@ -17,6 +17,7 @@ namespace TextRPG_Team.Objects
         /// <summary>최종 공격력 (스탯 기반, 치명타 미적용)</summary>
         public float Power => GetStats().Atk;
 
+
         /// <summary>소유 아이템 목록</summary>
         public List<Item> Inventory { get; }
 
@@ -87,6 +88,7 @@ namespace TextRPG_Team.Objects
         public void BuyItem(Item item)
         {
             if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
+
             {
                 Utility.AddLog("이미 보유한 아이템 입니다.", ConsoleColor.Red);
             }
@@ -110,6 +112,7 @@ namespace TextRPG_Team.Objects
             equpItem.itemEquip = !equpItem.itemEquip;
             CalculateAddStats();
         }
+
 
         /// <summary>아이템 판매 처리 메서드</summary>
         /// <param name="item">판매할 아이템</param>
@@ -169,6 +172,7 @@ namespace TextRPG_Team.Objects
                    $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
                    $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
                    $"방어력 : {GetStats().Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
+
                    $"Gold : {Gold} G";
         }
     }

@@ -21,8 +21,10 @@ namespace TextRPG_Team
         public int Price { get; } // 가격
         public bool itemPurchase { get; set; } // 아이템 구매 여부
         public bool itemEquip { get; set; } // 아이템 장착 여부
+        
+        public int Id {get; set;}   //아이템 ID
 
-        public Item(string name, ItemType type, int value, string info, int price)
+        public Item(string name, ItemType type, int value, string info, int price, int id)
         {
             Name = name;
             Type = type;
@@ -31,8 +33,9 @@ namespace TextRPG_Team
             Price = price;
             itemPurchase = false;
             itemEquip = false;
+            Id = id;
         }
-        public string GetIteDisplay() // 장착여부 표시
+        public string GetItemDisplay() // 장착여부 표시
         {
             string str = itemEquip ? "[E]" : ""; // 장착중이면 : "[E]" / 아니면 : "" 출력
             str += $"{Name} | {GetTypeValue()} | {Info}";
@@ -53,4 +56,3 @@ namespace TextRPG_Team
 
     }
 }
-

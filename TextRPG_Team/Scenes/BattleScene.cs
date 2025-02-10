@@ -1,5 +1,5 @@
+using System.Diagnostics;
 using TextRPG_Team.Manager;
-using TextRPG_Team.Objects;
 
 namespace TextRPG_Team.Scenes;
 
@@ -12,19 +12,10 @@ public class BattleScene : IScene
         PlayerResult, // 플레이어의 공격 결과
         EnemyPhase // 적의 차례
     }
-    public enum Turn
-    {
-        Player,
-        Enemy
-    }
 
-    static Random random = new Random();
-    private Player player;
-    private List<Enemy> battleEnemies = new List<Enemy>();
-    private EnemySpawner enemySpawner = new EnemySpawner();
-    private Turn currentTurn = Turn.Player;
     private State _state; // 현재 상태
     private readonly GameState _gameState; // 게임 상태 공유
+    
 
     public BattleScene(GameState gameState, State state = State.Default)
     {
@@ -34,177 +25,163 @@ public class BattleScene : IScene
 
     public void Run()
     {
-        Console.Clear();
-        ShowScreen();
+        Console.Clear(); // 화면 초기화
+        ShowScreen(); // 현재 상태에 맞는 화면 출력
     }
 
-    public void PlayerInfo()
+    public IScene? GetNextScene()
     {
-        var player = _gameState.Player;
-        Console.WriteLine("\n[내 정보]");
-        Console.WriteLine(player.ToString());//Player클래스 ToString() 메서드 호출
+        return _state switch
+        {
+            State.Default => GetInputForDefault(),
+            State.PlayerPhase => GetInputForPlayerPhase(),
+            State.PlayerResult => GetInputForPlayerResult(),
+            State.EnemyPhase => GetInputForEnemyPhase(),
+            _ => null
+        };
+    }
+
+    private IScene? GetInputForDefault()
+    {
+        int input = Utility.GetInput(1, 1); // 사용자 입력 받음
+        return input switch
+        {
+            1 => new BattleScene(_gameState, State.PlayerPhase), // 플레이어 턴으로 이동
+            _ => null
+        };
+    }
+
+    private IScene? GetInputForPlayerPhase()
+    {
+        int input = Utility.GetInput(0, 3);
+        switch (input)
+        {
+            case 0:
+                return new BattleScene(_gameState); // 취소 시 기본 상태로 복귀
+            default:
+                PlayerAttack(input - 1); // 특정 적 공격
+                return new BattleScene(_gameState, State.PlayerResult); // 결과 화면으로 이동
+        }
+    }
+
+    private IScene? GetInputForPlayerResult()
+    {
+        int input = Utility.GetInput(0, 0);
+        return input switch
+        {
+            0 => new BattleScene(_gameState, State.EnemyPhase), // 적의 턴으로 이동
+            _ => null
+        };
+    }
+
+    private IScene? GetInputForEnemyPhase()
+    {
+        return new ResultScene(_gameState, ResultScene.State.Victory); // 실제론 GetNextScene에서 체크해야합니다.
+        //return new BattleScene(_gameState); // BattleScene 초기 화면으로 이동
     }
 
     private void ShowScreen()
     {
-        Console.Clear();
-        var enemyList = enemySpawner.GetEnemies();
-        int enemyCount = random.Next(1, 5);  // 생성할 적의 수
-        battleEnemies.Clear();
-
-        for (int i = 0; i < enemyCount; i++)
+        switch (_state)
         {
-            var enemy = enemyList[random.Next(enemyList.Count)];
-            battleEnemies.Add(new Enemy(enemy.Name, enemy.GetStats(), enemy.GetStats().Lv));
+            case State.Default:
+                DefaultScreen();
+                break;
+            case State.PlayerPhase:
+                PlayerPhaseScreen();
+                break;
+            case State.PlayerResult:
+                PlayerResultScreen();
+                break;
+            case State.EnemyPhase:
+                EnemyPhaseScreen();
+                break;
         }
-
-        DisplayBattleState();
-        NextTurn();
     }
 
-    private void NextTurn()
+    private void DefaultScreen()
     {
-        if (battleEnemies.All(m => m.IsDead()))
+        Utility.ColorWriteLine("Battle!!\n", ConsoleColor.Yellow);
+
+        // 적 정보 표시
+        var enemies = _gameState.EnemySpawner.GetEnemies();
+        foreach (var enemy in enemies)
         {
-            DisplayBattleResult();
-            return;
+            Console.WriteLine(enemy.ToString());
         }
 
-        if (currentTurn == Turn.Player)
+        Console.WriteLine();
+
+        // 플레이어 정보 표시
+        Console.WriteLine("[내정보]");
+        Console.WriteLine("Lv.1 Chad (전사)");
+        Console.WriteLine("HP: 100/100\n");
+
+        Console.WriteLine("1. 공격");
+    }
+
+    private void PlayerPhaseScreen()
+    {
+        Utility.ColorWriteLine("Battle!! - 플레이어 공격\n", ConsoleColor.Yellow);
+
+        // 적 선택 목록 표시
+        var enemies = _gameState.EnemySpawner.GetEnemies();
+        for (int i = 0; i < enemies.Count; i++)
         {
-            currentTurn = Turn.Enemy;
-            PlayerTurn();
+            Console.WriteLine($"{i + 1}. {enemies[i]}");
         }
-        else
+
+        Console.WriteLine();
+
+        // 플레이어 정보 표시
+        var player = _gameState.Player;
+        Console.WriteLine("[내정보]");
+        Console.WriteLine($"{player.GetStats().Lv: player.Name}");
+        Console.WriteLine($"{player.Health/player.GetStats().MaxHp}\n");
+
+        Console.WriteLine("0. 취소");
+    }
+
+    private void PlayerAttack(int num)
+    {
+        // 플레이어 공격 로직 추가
+        var enemies = _gameState.EnemySpawner.GetEnemies();
+        Utility.AddLog($"{enemies[num]} 을(를) 맞췄습니다. [데미지 : 10]", ConsoleColor.Blue);
+        Utility.AddLog($"{enemies[num]} HP 10 -> Dead", ConsoleColor.Blue);
+    }
+
+    private void PlayerResultScreen()
+    {
+        Console.Clear();
+        Utility.ColorWriteLine("Battle!! - 플레이어 공격\n", ConsoleColor.Yellow);
+
+        Console.WriteLine("Chad 의 공격!\n");
+
+        // 공격 결과 로그 출력
+        Utility.PrintLogs();
+        Console.WriteLine();
+
+        // 플레이어 정보 표시
+        Console.WriteLine("[내정보]");
+        Console.WriteLine("Lv.1 Chad (전사)");
+        Console.WriteLine("HP: 100/100\n");
+
+        Console.WriteLine("0. 다음");
+    }
+
+    private void EnemyPhaseScreen()
+    {
+        var enemies = _gameState.EnemySpawner.GetEnemies();
+        foreach (var enemy in enemies)
         {
             Console.Clear();
-            currentTurn = Turn.Player;
-            EnemyTurn();
+            Utility.ColorWriteLine("Battle!! - 적 Phase\n", ConsoleColor.Yellow);
+
+            Console.WriteLine($"{enemy.Name}가 +{_gameState.Player.Name}을 + 공격합니다!(데미지: 5)\n");
+            // 적 공격 로직 추가 가능
+
+            Console.WriteLine("0. 다음");
+            Utility.GetInput(0, 0); // 사용자 입력 대기
         }
-    }
-
-    private void DisplayBattleState()
-    {
-        Utility.ColorWriteLine("\nBattle!", ConsoleColor.Yellow);
-
-        foreach (var enemy in battleEnemies)
-        {
-            string status = enemy.IsDead() ? "Dead" : $"HP {enemy.Health}";
-            ConsoleColor textColor = enemy.IsDead() ? ConsoleColor.DarkGray : ConsoleColor.White;
-            Utility.ColorWriteLine($"{enemy.Name} Lv.{enemy.GetStats().Lv} {status}", textColor);
-        }
-
-        PlayerInfo();
-    }
-
-    private void DisplayBattleResult()
-    {
-        int deadEnemies = battleEnemies.Count(m => m.IsDead());
-        Console.Clear();
-        Utility.ColorWriteLine($"Battle! - Result", ConsoleColor.DarkCyan);
-        Utility.ColorWriteLine("Victory", ConsoleColor.Green);
-
-        var player = _gameState.Player;
-        Console.WriteLine($"Lv.{player.GetStats().Lv} {player.Name}");
-        Console.WriteLine($"HP {player.GetStats().MaxHp} -> {player.Health}");
-        Console.WriteLine($"몬스터 {deadEnemies}마리 잡았음");
-
-        Console.WriteLine("\n0. 다음");
-        while (Console.ReadLine() != "0") { }
-    }
-
-    private void EnemyTurn()
-    {
-        Utility.ColorWriteLine("\nEnemy Turn!", ConsoleColor.Red);
-
-        float oldHp = _gameState.Player.Health;
-
-        foreach (var enemy in battleEnemies)
-        {
-            if (enemy.IsDead()) continue;
-            float damage = enemy.Power;
-            _gameState.Player.TakeDamage(damage);
-            Console.WriteLine($"Lv.{enemy.GetStats().Lv} {enemy.Name} 의 공격! [데미지: {damage}]");
-        }
-
-        Console.WriteLine($"Lv.{_gameState.Player.GetStats().Lv} {_gameState.Player.Name} HP {oldHp} -> {_gameState.Player.Health}");
-
-        if (_gameState.Player.IsDead())
-        {
-            Utility.ColorWriteLine("\n당신은 쓰러졌습니다...", ConsoleColor.Red);
-            return;
-        }
-
-        Console.WriteLine("\n0. 다음");
-        while (Console.ReadLine() != "0") { }
-
-        DisplayBattleState();
-        NextTurn();
-    }
-
-    private void PlayerTurn()
-    {
-        while (true)
-        {
-            Console.WriteLine("0. 취소\n");
-            Console.Write("대상을 선택해주세요.\n>> ");
-    
-            if (int.TryParse(Console.ReadLine(), out int choice))
-            {
-                if (choice == 0) return; // 취소 시 돌아가기
-    
-                int index = choice - 1;
-                if (index >= 0 && index < battleEnemies.Count)
-                {
-                    Enemy target = battleEnemies[index];
-                    if (target.IsDead())
-                    {
-                        Console.WriteLine("이미 죽은 적입니다.\n");
-                        continue;
-                    }
-    
-                    AttackEnemy(target); // 적 공격
-                    break; // 공격 후 종료
-                }
-                else
-                {
-                    Console.WriteLine("잘못된 입력입니다. 다시 시도하세요.\n");
-                }
-            }
-            else
-            {
-                Console.WriteLine("잘못된 입력입니다. 숫자를 입력하세요.\n");
-            }
-        }
-    }
-
-    private void AttackEnemy(Enemy target)
-    {
-        Console.Clear();
-        var player = _gameState.Player;  // player 객체를 여기에 할당
-        float attackPower = player.Power;     // 공격력
-        float oldHP = target.Health;         // 공격 전 적 HP
-    
-        target.TakeDamage(attackPower); // 적에게 데미지 주기
-    
-        Console.WriteLine($"\n{player.Name} 의 공격!");
-        Console.WriteLine($"Lv.{target.GetStats().Lv} {target.Name} 을(를) 맞췄습니다. [데미지 : {attackPower}]");
-        Console.WriteLine($"Lv.{target.GetStats().Lv} {target.Name} HP {oldHP} -> {(target.IsDead() ? "Dead" : target.Health.ToString())}\n");
-    
-        Console.WriteLine("0. 다음");
-        while (Console.ReadLine() != "0") { } // 0을 입력할 때까지 기다리기
-    
-        DisplayBattleState();  // 배틀 화면 갱신
-        NextTurn();  // 턴 전환
-    }
-public IScene? GetNextScene()
-    {
-        int input = Utility.GetInput(1, 2);
-        return input switch
-        {
-            1 => this,
-            2 => new MainScene(_gameState),
-            _ => null // 잘못된 입력 시 종료
-        };
     }
 }

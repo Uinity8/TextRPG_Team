@@ -1,5 +1,6 @@
 //using TextRPG_Mockup.Objects;
 
+using TextRPG_Team.Manager;
 using TextRPG_Team.Objects;
 
 namespace TextRPG_Team;
@@ -10,4 +11,5 @@ public class GameState
     
     //Objects
     public readonly Player Player = new Player("Chad", new Stats(100, 10, 5), 1500);
+    public readonly EnemySpawner EnemySpawner = new EnemySpawner();
 }

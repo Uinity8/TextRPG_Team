@@ -39,10 +39,10 @@ namespace TextRPG_Team.Objects
         public bool IsDead() => Health <= 0f;
 
         // 몬스터 정보 출력
-        public void ShowInfo()
+        public override string ToString()
         {
             // 레벨, 이름, 체력
-            Console.WriteLine($"Lv.{GetStats().Lv} {Name} \nHP {Health} \n");
+            return $"Lv.{GetStats().Lv} {Name} HP {Health}";
         }
     }
 }

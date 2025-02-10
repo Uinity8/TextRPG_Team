@@ -29,22 +29,11 @@ public struct Stats // 체,공,방
 
 public class Player : ICharacter
 {
-    // 필드
-    private int _gold;
-
     // 속성
     public string Name { get; private set; } //이름
-
-    public bool TryBuy(int price)   //아이템 구매시 사용하세요
-    {
-        if (_gold >= price)
-        {
-            _gold -= price;
-            return true;
-        }
-        return false;
-    }
-
+    
+    public int Gold { get; private set; } //이름
+    
     public float Health { get; private set; } //현재 체력
 
     public float Power => GetStats().Atk; //최종 데미지(추후에 치명타
@@ -65,7 +54,7 @@ public class Player : ICharacter
     {
         Name = name;
         PlayerStats = stats;
-        _gold = gold;
+        Gold = gold;
         Health = PlayerStats.MaxHp;
     }
 
@@ -83,6 +72,16 @@ public class Player : ICharacter
 
     public bool IsDead() => Health <= 0f;
 
+    public bool TryBuy(int price)   //아이템 구매여부 확인
+    {
+        if (_gold >= price)
+        {
+            _gold -= price;
+            return true;
+        }
+        return false;
+    }
+    
     public override string ToString()   //플레이어 정보
     {
         return $"Lv.{GetStats().Lv} : {Name} " + 

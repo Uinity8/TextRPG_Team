@@ -16,7 +16,7 @@ namespace TextRPG_Team.Objects
 
         /// <summary>최종 공격력 (스탯 기반, 치명타 미적용)</summary>
         public float Power => GetStats().Atk;
-        
+
         /// <summary>소유 아이템 목록</summary>
         public List<Item> Inventory { get; }
 
@@ -102,7 +102,7 @@ namespace TextRPG_Team.Objects
             Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
             Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
         }
-        
+
         /// <summary>아이템 장착/해제</summary>
         public void EquipItem(int index)
         {
@@ -129,7 +129,7 @@ namespace TextRPG_Team.Objects
             Utility.AddLog("성공적으로 판매하였습니다.", ConsoleColor.Blue);
             Utility.AddLog($"+{sell.Price} G", ConsoleColor.Yellow);
         }
-        
+
         /// <summary>아이템 장착 효과를 계산해 추가 스탯에 반영</summary>
         private void CalculateAddStats()
         {
@@ -165,10 +165,10 @@ namespace TextRPG_Team.Objects
         /// <summary>현재 플레이어의 정보를 문자열로 반환</summary>
         public override string ToString()
         {
-            return $"Lv.{GetStats().Lv} : {Name} " +
-                   $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") +
-                   $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") +
-                   $"방어력 : {GetStats().Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") +
+            return $"Lv.{GetStats().Lv} : {Name} " + "\n" +
+                   $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
+                   $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
+                   $"방어력 : {GetStats().Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
                    $"Gold : {Gold} G";
         }
     }

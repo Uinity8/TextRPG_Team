@@ -3,7 +3,6 @@ namespace TextRPG_Team.Objects
     public class Player : ICharacter
     {
         // ====== 필드 ======
-        private List<Item> _inventory; // 소유 아이템 목록
 
         // ====== 속성 ======
         /// <summary>캐릭터 이름</summary>
@@ -17,6 +16,9 @@ namespace TextRPG_Team.Objects
 
         /// <summary>최종 공격력 (스탯 기반, 치명타 미적용)</summary>
         public float Power => GetStats().Atk;
+        
+        /// <summary>소유 아이템 목록</summary>
+        public List<Item> Inventory { get; }
 
         // ====== 이벤트 ======
         /// <summary>공격 시 이벤트 동작 정의</summary>
@@ -45,7 +47,7 @@ namespace TextRPG_Team.Objects
             PlayerStats = stats;
             Gold = gold;
             Health = PlayerStats.MaxHp;
-            _inventory = new List<Item>();
+            Inventory = new List<Item>();
         }
 
         // ====== 메서드 ======
@@ -84,7 +86,7 @@ namespace TextRPG_Team.Objects
         /// <param name="item">구매할 아이템</param>
         public void BuyItem(Item item)
         {
-            if (_inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
+            if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
             {
                 Utility.AddLog("이미 보유한 아이템 입니다.", ConsoleColor.Red);
             }
@@ -96,7 +98,7 @@ namespace TextRPG_Team.Objects
 
             // 아이템 구매 성공
             Gold -= item.Price;
-            _inventory.Add(item);
+            Inventory.Add(item);
             Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
             Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
         }
@@ -105,7 +107,7 @@ namespace TextRPG_Team.Objects
         /// <param name="item">판매할 아이템</param>
         private void SellItem(Item item)
         {
-            Item sell = _inventory.Find(i => i.Id == item.Id);
+            Item sell = Inventory.Find(i => i.Id == item.Id);
             if (sell == null) return;
 
             if (sell.itemEquip)
@@ -115,7 +117,7 @@ namespace TextRPG_Team.Objects
             }
 
             Gold += (int)(sell.Price * 0.85);
-            _inventory.Remove(sell);
+            Inventory.Remove(sell);
             Utility.AddLog("성공적으로 판매하였습니다.", ConsoleColor.Blue);
             Utility.AddLog($"+{sell.Price} G", ConsoleColor.Yellow);
         }
@@ -124,7 +126,7 @@ namespace TextRPG_Team.Objects
         private void CalculateAddStats()
         {
             var itemStats = new Stats(0, 0, 0);
-            foreach (var item in _inventory.FindAll(i => i.itemEquip))
+            foreach (var item in Inventory.FindAll(i => i.itemEquip))
             {
                 itemStats = ApplyItemEffect(item);
             }

@@ -1,4 +1,4 @@
-namespace TextRPG_Mockup.Objects;
+namespace TextRPG_Team.Objects;
 
 public struct Stats // 체,공,방
 {

@@ -1,110 +1,61 @@
-namespace TextRPG_Team.Scenes;
-using System.Collections.Generic;
-using System.Linq;
 using TextRPG_Team.Manager;
 using TextRPG_Team.Objects;
 
-public enum Turn
-{
-    Player,
-    Enemy
-}
+namespace TextRPG_Team.Scenes;
 
 public class BattleScene : IScene
 {
-    static Random random = new Random();
-    private readonly GameState _gameState;
-    private List<Monster> battleMonsters = new List<Monster>();
-    //private Player player = new Player("Chad", "전사", 1, 100, 10);
-
-    private EnemySpawner enemySpawner = new EnemySpawner();
-    private Turn currentTurn = Turn.Player;
-
-    private class Monster
+    public enum State
     {
-        public string Name { get; }
-        public int Level { get; }
-        public float MaxHp { get; }
-        public float Attack { get; }
-        public float HP { get; private set; }
-        public bool IsDead => HP <= 0;
-
-        public Monster(string name, float hp, float attack)
-        {
-            Name = name;
-            MaxHp = hp;
-            HP = hp;
-            Attack = attack;
-        }
-
-        public void TakeDamage(float damage)
-        {
-            HP = Math.Max(0, HP - damage);
-        }
-
-        public override string ToString()
-        {
-            string status = IsDead ? "Dead" : $"HP {HP}";
-            return $"Lv.{Level} {Name} {status}";
-        }
+        Default, // 기본 화면
+        PlayerPhase, // 플레이어의 행동 차례
+        PlayerResult, // 플레이어의 공격 결과
+        EnemyPhase // 적의 차례
+    }
+    public enum Turn
+    {
+        Player,
+        Enemy
     }
 
-    // public class Player
-    // {
-    //     public string Name { get; }
-    //     public string Class { get; }
-    //     public int Level { get; }
-    //     public int Hp { get; set; }
-    //     public int MaxHp { get; }
-    //     public int Attack { get; }
+    static Random random = new Random();
+    private Player player;
+    private List<Enemy> battleEnemies = new List<Enemy>();
+    private EnemySpawner enemySpawner = new EnemySpawner();
+    private Turn currentTurn = Turn.Player;
+    private State _state; // 현재 상태
+    private readonly GameState _gameState; // 게임 상태 공유
 
-    //     public Player(string name, string playerClass, int level, int hp, int attack)
-    //     {
-    //         Name = name;
-    //         Class = playerClass;
-    //         Level = level;
-    //         Hp = hp;
-    //         MaxHp = hp;
-    //         Attack = attack;
-    //     }
-
-        public void PlayerInfo()
-        {
-            Console.WriteLine("\n[내정보]");
-            Console.WriteLine($"Lv. {_gameState.GetPlayer().Name}");
-            Console.WriteLine($"HP {_gameState.GetPlayer().Health}/{_gameState.GetPlayer().GetStats().MaxHp}");
-            Console.WriteLine($"power {_gameState.GetPlayer().GetStats().Atk}");
-        }
-    //}
-
-     public BattleScene(GameState gameState)
+    public BattleScene(GameState gameState, State state = State.Default)
     {
         _gameState = gameState;
+        _state = state;
     }
 
     public void Run()
     {
         Console.Clear();
+        ShowScreen();
+    }
+
+    public void PlayerInfo()
+    {
+        var player = _gameState.GetPlayer();
+        Console.WriteLine("\n[내 정보]");
+        Console.WriteLine(player.ToString());//Player클래스 ToString() 메서드 호출
+    }
+
+    private void ShowScreen()
+    {
+        Console.Clear();
         var enemyList = enemySpawner.GetEnemies();
-        // {
-        //     new Monster("미니언", 2, 15, 5),
-        //     new Monster("공허충", 3, 10, 9),
-        //     new Monster("대포미니언", 5, 25, 8),
-        // };
+        int enemyCount = random.Next(1, 5);  // 생성할 적의 수
+        battleEnemies.Clear();
 
-        int monsterCount = random.Next(1, 5);
-        battleMonsters.Clear();
-
-        for (int i = 0; i < monsterCount; i++)
+        for (int i = 0; i < enemyCount; i++)
         {
-            // battleMonsters.Add(new Monster(
-            //     monsterPool[random.Next(monsterPool.Count)].Name,
-            //     monsterPool[random.Next(monsterPool.Count)].Level,
-            //     monsterPool[random.Next(monsterPool.Count)].MaxHp,
-            //     monsterPool[random.Next(monsterPool.Count)].Attack
-            // ));
             var enemy = enemyList[random.Next(enemyList.Count)];
-            battleMonsters.Add(new Monster(enemy.Name,  enemy.GetStats().MaxHp, enemy.GetStats().Atk));
+            battleEnemies.Add(new Enemy(enemy.Name, enemy.GetStats(), enemy.GetStats().Lv));
         }
 
         DisplayBattleState();
@@ -113,12 +64,12 @@ public class BattleScene : IScene
 
     private void NextTurn()
     {
-         // 모든 몬스터가 죽었는지 확인
-        if (battleMonsters.All(m => m.IsDead))
+        if (battleEnemies.All(m => m.IsDead()))
         {
             DisplayBattleResult();
             return;
         }
+
         if (currentTurn == Turn.Player)
         {
             currentTurn = Turn.Enemy;
@@ -130,41 +81,37 @@ public class BattleScene : IScene
             currentTurn = Turn.Player;
             EnemyTurn();
         }
-
     }
 
     private void DisplayBattleState()
     {
         Utility.ColorWriteLine("\nBattle!", ConsoleColor.Yellow);
 
-        for (int i = 0; i < battleMonsters.Count; i++)
+        foreach (var enemy in battleEnemies)
         {
-            var monster = battleMonsters[i];
-            string status = monster.IsDead ? "Dead" : $"HP {monster.HP}";
-
-            ConsoleColor textColor = monster.IsDead ? ConsoleColor.DarkGray : ConsoleColor.White;
-
-            Utility.ColorWriteLine($"{i + 1} Lv.{monster.Level} {monster.Name} {status}", textColor);
-            
+            string status = enemy.IsDead() ? "Dead" : $"HP {enemy.Health}";
+            ConsoleColor textColor = enemy.IsDead() ? ConsoleColor.DarkGray : ConsoleColor.White;
+            Utility.ColorWriteLine($"{enemy.Name} Lv.{enemy.GetStats().Lv} {status}", textColor);
         }
+
         PlayerInfo();
     }
 
-     private void DisplayBattleResult()
+    private void DisplayBattleResult()
     {
-        int deadMonsters = battleMonsters.Count(m => m.IsDead);
+        int deadEnemies = battleEnemies.Count(m => m.IsDead());
         Console.Clear();
         Utility.ColorWriteLine($"Battle! - Result", ConsoleColor.DarkCyan);
         Utility.ColorWriteLine("Victory", ConsoleColor.Green);
 
-        Console.WriteLine($"Lv.{_gameState.GetPlayer().GetStats().MaxHp} {_gameState.GetPlayer().Name}");
-        Console.WriteLine($"HP {_gameState.GetPlayer().GetStats().MaxHp} -> {_gameState.GetPlayer().Health}");
-        Console.WriteLine($"몬스터 {deadMonsters}마리 잡았음");
+        var player = _gameState.GetPlayer();
+        Console.WriteLine($"Lv.{player.GetStats().Lv} {player.Name}");
+        Console.WriteLine($"HP {player.GetStats().MaxHp} -> {player.Health}");
+        Console.WriteLine($"몬스터 {deadEnemies}마리 잡았음");
 
         Console.WriteLine("\n0. 다음");
         while (Console.ReadLine() != "0") { }
     }
-
 
     private void EnemyTurn()
     {
@@ -172,29 +119,25 @@ public class BattleScene : IScene
 
         float oldHp = _gameState.GetPlayer().Health;
 
-        foreach (var monster in battleMonsters)
+        foreach (var enemy in battleEnemies)
         {
-            if (monster.IsDead) continue;
-            float damage = monster.Attack;
+            if (enemy.IsDead()) continue;
+            float damage = enemy.Power;
             _gameState.GetPlayer().TakeDamage(damage);
-            // 공격 후 출력
-            Console.WriteLine($"Lv.{monster.Level} {monster.Name} 의 공격! [데미지: {damage}]");
+            Console.WriteLine($"Lv.{enemy.GetStats().Lv} {enemy.Name} 의 공격! [데미지: {damage}]");
         }
 
-        // 플레이어 HP가 갱신된 후 출력
-        Console.WriteLine($"Lv.{_gameState.GetPlayer().GetStats().MaxHp} {_gameState.GetPlayer().Name} HP {oldHp} -> {_gameState.GetPlayer().Health}");
+        Console.WriteLine($"Lv.{_gameState.GetPlayer().GetStats().Lv} {_gameState.GetPlayer().Name} HP {oldHp} -> {_gameState.GetPlayer().Health}");
 
-        // 플레이어가 쓰러졌다면 전투 종료
         if (_gameState.GetPlayer().IsDead())
         {
             Utility.ColorWriteLine("\n당신은 쓰러졌습니다...", ConsoleColor.Red);
-            return; // 전투 종료
+            return;
         }
 
         Console.WriteLine("\n0. 다음");
         while (Console.ReadLine() != "0") { }
 
-        // 전투 상태 출력
         DisplayBattleState();
         NextTurn();
     }
@@ -205,63 +148,63 @@ public class BattleScene : IScene
         {
             Console.WriteLine("0. 취소\n");
             Console.Write("대상을 선택해주세요.\n>> ");
-
+    
             if (int.TryParse(Console.ReadLine(), out int choice))
             {
-                if (choice == 0) return;
-
+                if (choice == 0) return; // 취소 시 돌아가기
+    
                 int index = choice - 1;
-                if (index >= 0 && index < battleMonsters.Count)
+                if (index >= 0 && index < battleEnemies.Count)
                 {
-                    Monster target = battleMonsters[index];
-                    if (target.IsDead)
+                    Enemy target = battleEnemies[index];
+                    if (target.IsDead())
                     {
-                        Console.WriteLine("잘못된 입력입니다.\n");
+                        Console.WriteLine("이미 죽은 적입니다.\n");
                         continue;
                     }
-
-                    AttackMonster(target);
-                    break;
+    
+                    AttackEnemy(target); // 적 공격
+                    break; // 공격 후 종료
                 }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다. 다시 시도하세요.\n");
+                }
+            }
+            else
+            {
+                Console.WriteLine("잘못된 입력입니다. 숫자를 입력하세요.\n");
             }
         }
     }
 
-    private void AttackMonster(Monster target)
+    private void AttackEnemy(Enemy target)
     {
         Console.Clear();
-        float attackPower = _gameState.GetPlayer().Power;
-        float oldHP = target.HP;
-        target.TakeDamage(attackPower);
-
-        Console.WriteLine("\nChad 의 공격!");
-        Console.WriteLine($"Lv.{target.Level} {target.Name} 을(를) 맞췄습니다. [데미지 : {attackPower}]");
-        Console.Write($"Lv.{target.Level} {target.Name}");
-        Console.WriteLine($"HP {oldHP} -> {(target.IsDead ? "Dead" : target.HP.ToString())}\n");
-
+        var player = _gameState.GetPlayer();  // player 객체를 여기에 할당
+        float attackPower = player.Power;     // 공격력
+        float oldHP = target.Health;         // 공격 전 적 HP
+    
+        target.TakeDamage(attackPower); // 적에게 데미지 주기
+    
+        Console.WriteLine($"\n{player.Name} 의 공격!");
+        Console.WriteLine($"Lv.{target.GetStats().Lv} {target.Name} 을(를) 맞췄습니다. [데미지 : {attackPower}]");
+        Console.WriteLine($"Lv.{target.GetStats().Lv} {target.Name} HP {oldHP} -> {(target.IsDead() ? "Dead" : target.Health.ToString())}\n");
+    
         Console.WriteLine("0. 다음");
-        while (Console.ReadLine() != "0") { }
-
-        DisplayBattleState();
-        NextTurn();
+        while (Console.ReadLine() != "0") { } // 0을 입력할 때까지 기다리기
+    
+        DisplayBattleState();  // 배틀 화면 갱신
+        NextTurn();  // 턴 전환
     }
-
-    // private int ApplyAttackVariation(int baseAttack)
-    // {
-    //     double variation = baseAttack * 0.1;
-    //     int minAttack = (int)Math.Ceiling(baseAttack - variation);
-    //     int maxAttack = (int)Math.Ceiling(baseAttack + variation);
-    //     return random.Next(minAttack, maxAttack + 1);
-    // }
-
-    public IScene? GetNextScene()
+public IScene? GetNextScene()
     {
         int input = Utility.GetInput(1, 2);
         return input switch
         {
             1 => this,
-            2 => new ExampleScene(_gameState),
-            _ => null
+            2 => new MainScene(_gameState),
+            _ => null // 잘못된 입력 시 종료
         };
     }
 }

@@ -92,9 +92,9 @@ public class Player : ICharacter
     public override string ToString()   //플레이어 정보
     {
         return $"Lv.{GetStats().Lv} : {Name} " + 
-               $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "")+
-               $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "")+
-               $"방어력 : {GetStats().Def}"+ (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "")+
+               $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "\n")+
+               $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "\n")+
+               $"방어력 : {GetStats().Def}"+ (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "\n")+
                $"Gold : {Gold} G";
     }
 }

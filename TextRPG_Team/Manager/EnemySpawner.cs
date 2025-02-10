@@ -22,5 +22,16 @@ namespace TextRPG_Team.Manager
         {
             return enemies;
         }
+        public List<Enemy> GetRandomEnemies(int enemyCount)
+        {
+            Random random = new Random();
+            var randomEnemies = new List<Enemy>();
+            for (int i = 0; i < enemyCount; i++)
+            {
+                var enemy = enemies[random.Next(enemies.Count)];
+                randomEnemies.Add(new Enemy(enemy.Name, enemy.GetStats(), enemy.GetStats().Lv));
+            }
+            return randomEnemies;
+        }
     }
 }

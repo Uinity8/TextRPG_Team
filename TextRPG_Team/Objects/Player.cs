@@ -116,6 +116,14 @@ public class Player : ICharacter
     public void EquipItem(int index)
     {
         var equpItem = Inventory[index];
+        // 기존 장착 해제
+        foreach (var invItem in Inventory)
+        {
+            if (invItem.Type == equpItem.Type && invItem.itemEquip)
+            {
+                invItem.itemEquip = false;
+            }
+        }
         equpItem.itemEquip = !equpItem.itemEquip;
         CalculateAddStats();
     }
@@ -123,7 +131,9 @@ public class Player : ICharacter
     public bool TrySell(Item item)
     {
         bool canSell = !item.itemPurchase;
-        EquipItem(item.Id - 1);
+        
+        int index = Inventory.FindIndex(i => i.Id == item.Id);
+        EquipItem(index);
         SellItem(item);
         return canSell;
     }

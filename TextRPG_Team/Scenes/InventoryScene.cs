@@ -1,5 +1,7 @@
 namespace TextRPG_Team.Scenes;
 
+using static ConsoleColor;
+
 public class InventoryScene : IScene
 {
     // 인벤토리 상태를 나타내는 Enum
@@ -11,14 +13,25 @@ public class InventoryScene : IScene
 
     private State _state; // 현재 상태
     private readonly GameState _gameState; // 게임 상태 공유
-    
-   
+    private readonly string strTitle;
 
     // 생성자 (DI 의존성 주입)
     public InventoryScene(GameState gameState, State state = State.Default)
     {
         _gameState = gameState;
         _state = state;
+        switch (_state)
+        {
+            case State.Default:
+                strTitle = "보유 중인 아이템을 관리할 수 있습니다.\n";
+                break;
+            case State.Equip:
+                strTitle = "[ 장착관리 ]\n";
+                break;
+        }
+
+        foreach (var item in _gameState._itemList)
+            _gameState.Player.BuyItem(item);
     }
 
     // 인벤토리 씬 실행 메서드
@@ -26,7 +39,6 @@ public class InventoryScene : IScene
     {
         Console.Clear(); // 화면 초기화
         ShowScreen(); // 상태에 따라 화면 출력
-        Console.WriteLine("0. 나가기\n");
     }
 
     // 현재 상태에 따라 다음 씬 반환
@@ -62,14 +74,21 @@ public class InventoryScene : IScene
             case 0:
                 return new InventoryScene(_gameState); // 기본 상태로 복귀
             default:
-                _gameState.Player.EquipItem(input-1);
+                _gameState.Player.EquipItem(input - 1);
                 return this;
-        };
+        }
+
+        ;
     }
 
     // 현재 상태에 맞는 화면 표시
     private void ShowScreen()
     {
+        Console.WriteLine(new string('=', Utility.Width));
+        Utility.AlignCenter("인벤토리\n", DarkCyan);
+        Utility.AlignCenter(strTitle);
+        Console.WriteLine(new string('=', Utility.Width));
+
         switch (_state)
         {
             case State.Default:
@@ -79,39 +98,56 @@ public class InventoryScene : IScene
                 EquipScreen(); // 장착 관리 화면 출력
                 break;
         }
+
+        //Utility.PrintLogs();
     }
 
     // 기본 상태 화면 출력
     private void DefaultScreen()
     {
-        Utility.ColorWriteLine("인벤토리", ConsoleColor.Blue);
-        Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
-
         // 아이템 목록 표시
         foreach (var item in _gameState.Player.Inventory)
         {
-            Console.WriteLine("- "+ item.GetItemDisplay());
+            ConsoleColor color = White;
+            if (item.itemEquip)
+                color = DarkGreen;
+
+            Utility.AlignLeft(item.Icon, 7);
+            item.PrintNameAndEffect(color);
+            if (item.itemEquip)
+                Utility.ColorWrite("[E]", color);
+            Console.WriteLine();
+            item.PrintInfo();
         }
 
-        ;
-        Console.WriteLine();
-        Console.WriteLine("1. 장착관리");
+        Console.WriteLine(new string('-', Utility.Width));
+        Console.WriteLine(" 1. 장착관리");
+        Console.WriteLine(" 0. 나가기");
+        Console.WriteLine(new string('-', Utility.Width));
     }
 
     // 장착 관리 상태 화면 출력
     private void EquipScreen()
     {
-        Utility.ColorWriteLine("인벤토리 - 장착관리", ConsoleColor.Blue);
-        Console.WriteLine("장착하실 아이템을 선택해 주세요.\n");
-
         // 아이템 목록 표시
         int i = 1;
         foreach (var item in _gameState.Player.Inventory)
         {
-            Console.WriteLine($"- {i}. {item.GetItemDisplay()}");
-            i++;
+            ConsoleColor color = White;
+            if (item.itemEquip)
+                color = DarkGreen;
+
+            Utility.AlignLeft(item.Icon, 7);
+            Utility.ColorWrite($"{(i++)}. ", DarkMagenta);
+            item.PrintNameAndEffect(color);
+            if (item.itemEquip)
+                Utility.ColorWrite("[E]", color);
+            Console.WriteLine();
+            item.PrintInfo();
         }
 
-        Console.WriteLine();
+        Console.WriteLine(new string('-', Utility.Width));
+        Console.WriteLine(" 0. 취소");
+        Console.WriteLine(new string('-', Utility.Width));
     }
 }

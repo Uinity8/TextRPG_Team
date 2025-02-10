@@ -25,6 +25,7 @@ public class MainScene : IScene
         Console.WriteLine("1. 상태 보기");
         Console.WriteLine("2. 상점");
         Console.WriteLine("3. 전투 시작");
+        
         Console.WriteLine("\n0. 저장/종료\n");
     }
 

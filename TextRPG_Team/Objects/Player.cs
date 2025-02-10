@@ -1,4 +1,4 @@
-namespace TextRPG_Mockup.Objects;
+namespace TextRPG_Team.Objects;
 
 public struct Stats // 체,공,방
 {
@@ -35,20 +35,14 @@ public class Player : ICharacter
     // 속성
     public string Name { get; private set; } //이름
 
-    public int Gold //골드 그냥 골드에 값만 대입하시면 자동으로 로그뜹니다.
+    public bool TryBuy(int price)   //아이템 구매시 사용하세요
     {
-        get => _gold;
-        set
+        if (_gold >= price)
         {
-            if (value < _gold) // 골드가 줄어들 때만 메시지 출력
-            {
-                if (value < 0)
-                    TryBuyAction?.Invoke("골드가 부족합니다.", ConsoleColor.Red);
-                else
-                    TryBuyAction?.Invoke("구매에 성공했습니다.", ConsoleColor.Blue);
-            }
-            _gold = value; // 항상 골드 값을 설정
+            _gold -= price;
+            return true;
         }
+        return false;
     }
 
     public float Health { get; private set; } //현재 체력

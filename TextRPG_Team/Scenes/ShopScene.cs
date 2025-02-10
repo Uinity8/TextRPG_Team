@@ -108,19 +108,24 @@ public class ShopScene : IScene
                 
             case 2:
                 // 아이템을 장착중인가?
+                int SaleIinput = Utility.GetInput(0, _gameState.inventoryitemList.Count);
                 if (_gameState.inventoryitemList[input].itemEquip)
                 {
+                    if (_gameState.inventoryitemList[SaleIinput].Type == ItemType.Weapon) 
+                    {
+                        //_gameState.GetPlayer().AddStats = _gameState.inventoryitemList[SaleIinput].Value;
+                        
+                    }
+                    else
+                    {
 
+                    }
                 }
-                // 골드가 부족한지?
-                // else if(_gameState.player.Gold < _gameState.itemList[input].price) 
-                // {
-
-                //}
                 else
                 {
-                    _gameState.itemList[input].itemPurchase = true;
+
                 }
+                _gameState.itemList[input].itemPurchase = false;
                 return new ShopScene(_gameState, ShopState.SaleI);
             default:
                 return new MainScene(_gameState);

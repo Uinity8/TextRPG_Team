@@ -22,7 +22,7 @@ public class BattleScene : IScene
         _state = state;
         
         //플레이어,적 어택 액션에 서로의 TakeDamage등록
-        var enemies = _gameState.Spawner.GetEnemies();
+        var enemies = _gameState.Spawner.GetSpawnedEnemies();
     }
 
     public void Run()
@@ -55,13 +55,14 @@ public class BattleScene : IScene
 
     private IScene? GetInputForPlayerPhase()
     {
-        int input = Utility.GetInput(0, 3);
+        int max = _gameState.Spawner.GetSpawnedEnemies().Count;
+        int input = Utility.GetInput(0, max);
         switch (input)
         {
             case 0:
                 return new BattleScene(_gameState); // 취소 시 기본 상태로 복귀
             default:
-                var enemy = _gameState.Spawner.GetEnemies()[input-1];
+                var enemy = _gameState.Spawner.GetSpawnedEnemies()[input-1];
                 if (enemy.IsDead())
                 {
                     Utility.AddLog("이미 뒤졌는데요", ConsoleColor.Red);
@@ -88,7 +89,7 @@ public class BattleScene : IScene
         if (_gameState.Player.IsDead())
             return new ResultScene(_gameState, ResultScene.State.Lose);
         
-        var enemies = _gameState.Spawner.GetEnemies();
+        var enemies = _gameState.Spawner.GetSpawnedEnemies();
         if (enemies.FindAll(e => !e.IsDead()).Count == 0)
             return new ResultScene(_gameState, ResultScene.State.Victory);
         
@@ -119,10 +120,13 @@ public class BattleScene : IScene
         Utility.ColorWriteLine("Battle!!\n", ConsoleColor.Yellow);
 
         // 적 정보 표시
-        var enemies = _gameState.Spawner.GetEnemies();
+        var enemies = _gameState.Spawner.GetSpawnedEnemies();
         foreach (var enemy in enemies)
         {
-            Console.WriteLine(enemy.ToString());
+            if(enemy.IsDead())
+                Utility.ColorWriteLine(enemy.ToString(), ConsoleColor.DarkGray);
+            else
+                Console.WriteLine(enemy.ToString());
         }
 
         Console.WriteLine();
@@ -139,10 +143,15 @@ public class BattleScene : IScene
         Utility.ColorWriteLine("Battle!! - 플레이어 공격\n", ConsoleColor.Yellow);
 
         // 적 선택 목록 표시
-        var enemies = _gameState.Spawner.GetEnemies();
-        for (int i = 0; i < enemies.Count; i++)
+        var enemies = _gameState.Spawner.GetSpawnedEnemies();
+        int i = 1;
+        foreach (var enemy in enemies)
         {
-            Console.WriteLine($"{i + 1}. {enemies[i]}");
+            if(enemy.IsDead())
+                Utility.ColorWriteLine($"{i}. {enemy}", ConsoleColor.DarkGray);
+            else
+                Console.WriteLine($"{i}. {enemy}");
+            i++;
         }
 
         Console.WriteLine();
@@ -173,7 +182,7 @@ public class BattleScene : IScene
 
     private void EnemyPhaseScreen()
     {
-        var enemies = _gameState.Spawner.GetEnemies();
+        var enemies = _gameState.Spawner.GetSpawnedEnemies();
         foreach (var enemy in enemies)
         {
             if(enemy.IsDead()) continue;

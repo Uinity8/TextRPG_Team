@@ -1,3 +1,5 @@
+using TextRPG_Team.Objects;
+
 namespace TextRPG_Team.Scenes;
 
 
@@ -33,16 +35,19 @@ public class ResultScene : IScene
         //Utiltiy.PrintLog로 대체가능
         if (_state == State.Victory)
         {
+            int enemyCount = _gameState.Spawner.GetSpawnedEnemies().Count;
+            var player = _gameState.Player;
             Console.WriteLine("Victory\n");
-            Console.WriteLine("던전에서 몬스터 3마리를 잡았습니다.\n"); 
-            Console.WriteLine("Lv.1 Chad");
-            Console.WriteLine("HP 100 -> 74\n");
+            Console.WriteLine($"던전에서 몬스터 {enemyCount}마리를 잡았습니다.\n"); 
+            Console.WriteLine($"Lv.{player.GetStats.Lv} {player.Name}");
+            Console.WriteLine($"HP {_gameState.PlayerHpBeforeDungeon} -> {player.Health}\n");
         }
         else
         {
+            var player = _gameState.Player;
             Console.WriteLine("You Lose\n");
-            Console.WriteLine("Lv.1 Chad");
-            Console.WriteLine("HP 100 -> 0\n");
+            Console.WriteLine($"Lv.{player.GetStats.Lv} {player.Name}");
+            Console.WriteLine($"HP {_gameState.PlayerHpBeforeDungeon} -> {player.Health}\n");
 
         }
         

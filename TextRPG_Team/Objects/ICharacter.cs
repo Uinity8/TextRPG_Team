@@ -7,7 +7,7 @@ public struct Stats // 체,공,방
     public float Def { get; set; } //방어력
     public int Lv { get; set; } //레벨
 
-    public Stats(float maxHp, float atk, float def, int lv = 1)
+    public Stats(float maxHp, float atk, float def, int lv = 0)
     {
         MaxHp = maxHp;
         Atk = atk;

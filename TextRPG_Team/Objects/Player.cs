@@ -15,7 +15,26 @@ namespace TextRPG_Team.Objects
         public float Health { get; private set; }
 
         /// <summary>최종 공격력 (스탯 기반, 치명타 미적용)</summary>
-        public float Power => GetStats.Atk;
+        public float Power
+        {
+            get
+            {
+                Random random = new Random(); // 랜덤 객체 생성
+                float basePower = GetStats.Atk; // 원본 공격력
+
+                float errorRange = (float)Math.Ceiling(basePower * 0.1f);
+                // ±10% 오차 범위 계산
+                float minPower = basePower -errorRange; // 올림 적용된 최솟값
+                float maxPower = basePower +errorRange; // 올림 적용된 최댓값
+
+
+                // minPower~maxPower 사이의 랜덤 값 생성
+                float randomPower = (float)(random.Next((int)minPower, (int)maxPower+1));
+                
+                return randomPower;
+            }
+        }
+
 
         /// <summary>소유 아이템 목록</summary>
         public List<Item> Inventory { get; }
@@ -70,32 +89,23 @@ namespace TextRPG_Team.Objects
 
         /// <summary>플레이어가 사망했는지 여부를 반환</summary>
         public bool IsDead() => Health <= 0f;
-
-        /// <summary>아이템 구매 가능 여부를 확인</summary>
-        /// <param name="price">아이템 가격</param>
-        /// <returns>구매 성공 여부</returns>
-        public bool TryBuy(Item item)
-        {
-            bool canBuy = Gold >= item.Price;
-            BuyItem(item);
-            return canBuy;
-        }
+        
 
         /// <summary>아이템 구매 처리 메서드</summary>
         /// <param name="item">구매할 아이템</param>
-        public void BuyItem(Item item)
+        public bool BuyItem(Item item)
         {
             if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
 
             {
                 Utility.AddLog("이미 보유한 아이템 입니다.", ConsoleColor.Red);
-                return;
+                return false;
             }
 
             if (Gold < item.Price)
             {
                 Utility.AddLog("골드가 부족합니다", ConsoleColor.Red);
-                return;
+                return false;
             }
 
             // 아이템 구매 성공
@@ -103,6 +113,7 @@ namespace TextRPG_Team.Objects
             Inventory.Add(item);
             Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
             Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
+            return true;
             
         }
 

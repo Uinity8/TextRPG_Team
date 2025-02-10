@@ -17,7 +17,7 @@ namespace TextRPG_Team.Objects
 
         public float Power => GetStats.Atk; // 적 공경력  
         
-        public Enemy(string name, Stats stats, int level)
+        public Enemy(string name, Stats stats)
         {
             Name = name;
             _stats = stats;

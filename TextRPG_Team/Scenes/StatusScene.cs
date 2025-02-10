@@ -18,16 +18,25 @@ public class StatusScene : IScene
     // 현재 상태에 맞는 화면 표시
     private void ShowScreen()
     {
+        Console.WriteLine("상태보기");
+        Console.WriteLine("캐릭터의 정보가 표시됩니다.\n");
+        Console.WriteLine("Lv. 01");
+        Console.WriteLine("직업 ( 전사 )");
+        Console.WriteLine("공격력 : 10 ");
+        Console.WriteLine("방어력 : 5");
+        Console.WriteLine("체력 : 100");
+        Console.WriteLine("Gold : 1500 G");
+        Console.WriteLine("\n0. 나가기\n");
+
     }
 
     // 현재 상태에 따라 다음 씬 반환
     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(1, 2);
+        int input = Utility.GetInput(0, 0);
         return input switch
         {
-            1 => this,
-            2 => new MainScene(_gameState), // MainScene()
+            0 => new MainScene(_gameState), // MainScene()
             _ => null // 잘못된 입력 시 종료
         };
     }

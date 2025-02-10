@@ -13,7 +13,7 @@ public class InventoryScene : IScene
 
     private State _state; // 현재 상태
     private readonly GameState _gameState; // 게임 상태 공유
-    private readonly string strTitle;
+    private string _strTitle = "";
 
     // 생성자 (DI 의존성 주입)
     public InventoryScene(GameState gameState, State state = State.Default)
@@ -23,10 +23,10 @@ public class InventoryScene : IScene
         switch (_state)
         {
             case State.Default:
-                strTitle = "보유 중인 아이템을 관리할 수 있습니다.\n";
+                _strTitle = "보유 중인 아이템을 관리할 수 있습니다.\n";
                 break;
             case State.Equip:
-                strTitle = "[ 장착관리 ]\n";
+                _strTitle = "[ 장착관리 ]\n";
                 break;
         }
     }
@@ -83,7 +83,7 @@ public class InventoryScene : IScene
     {
         Console.WriteLine(new string('=', Utility.Width));
         Utility.AlignCenter("인벤토리\n", DarkCyan);
-        Utility.AlignCenter(strTitle);
+        Utility.AlignCenter(_strTitle);
         Console.WriteLine(new string('=', Utility.Width));
 
         if (_gameState.Player.Inventory.Count == 0)

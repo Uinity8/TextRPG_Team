@@ -14,7 +14,7 @@ public class ShopScene : IScene
 
     State _state;
     private readonly GameState _gameState;
-    private readonly string strTitle;
+    private string _strTitle ="";
 
     public ShopScene(GameState gameState, State state = State.Default) //DI 의존성 주입
     {
@@ -23,13 +23,13 @@ public class ShopScene : IScene
         switch (_state)
         {
             case State.Default:
-                strTitle = "필요한 아이템을 얻을 수 있는 상점입니다.\n";
+                _strTitle = "필요한 아이템을 얻을 수 있는 상점입니다.\n";
                 break;
             case State.Buy:
-                strTitle = "[ 구매하기 ]\n";
+                _strTitle = "[ 구매하기 ]\n";
                 break;
             case State.Sell:
-                strTitle = "[ 판매하기 ]\n";
+                _strTitle = "[ 판매하기 ]\n";
                 break;
         }
     }
@@ -72,7 +72,7 @@ public class ShopScene : IScene
                 return new ShopScene(_gameState);
             default:
                 Item item = _gameState._itemList[input - 1];
-                item.itemPurchase = _gameState.Player.TryBuy(item);
+                item.itemPurchase = _gameState.Player.TrySell(item);
                 return this;
         }
     }
@@ -96,7 +96,7 @@ public class ShopScene : IScene
     {
         Console.WriteLine(new string('=', Utility.Width));
         Utility.AlignCenter("상점\n", DarkCyan);
-        Utility.AlignCenter(strTitle);
+        Utility.AlignCenter(_strTitle);
         Console.WriteLine(new string('=', Utility.Width));
         Utility.AlignRight("[ 보유 골드 ]\n", Utility.Width);
         Console.WriteLine(" [ 아이템 목록 ]");

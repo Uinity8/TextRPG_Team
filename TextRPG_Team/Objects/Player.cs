@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace TextRPG_Team.Objects;
 using static ConsoleColor;
 
@@ -71,45 +69,39 @@ public class Player : ICharacter
     {
         float preHp = Health;
         Health = Math.Max(0, Health - damage);
-        string hpStr = Health > 0 ? Health.ToString() : "Dead";
+        string hpStr = Health > 0 ? $"{Health}" : "Dead";
         var log = $"Lv.{GetStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
     }
 
     /// <summary>플레이어가 사망했는지 여부를 반환</summary>
     public bool IsDead() => Health <= 0f;
-
-    /// <summary>아이템 구매 가능 여부를 확인</summary>
-    /// <param name="price">아이템 가격</param>
-    /// <returns>구매 성공 여부</returns>
-    public bool TryBuy(Item item)
-    {
-        bool canBuy = Gold >= item.Price;
-        BuyItem(item);
-        return canBuy;
-    }
+    
 
     /// <summary>아이템 구매 처리 메서드</summary>
     /// <param name="item">구매할 아이템</param>
-    public void BuyItem(Item item)
+    public bool BuyItem(Item item)
     {
         if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
 
         {
-            Utility.AddLog("이미 보유한 아이템 입니다.\n", ConsoleColor.Red);
-            return;
+            Utility.AddLog("이미 보유한 아이템 입니다.", ConsoleColor.Red);
+            return false;
         }
 
         if (Gold < item.Price)
         {
-            Utility.AddLog("골드가 부족합니다\n", ConsoleColor.Red);
-            return;
+            Utility.AddLog("골드가 부족합니다", ConsoleColor.Red);
+            return false;
         }
 
         // 아이템 구매 성공
         Gold -= item.Price;
         Inventory.Add(item);
-        Utility.AddLog($"성공적으로 구매하였습니다.(-{item.Price} G)\n", ConsoleColor.DarkBlue);
+        Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
+        Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
+        return true;
+            
     }
 
     /// <summary>아이템 장착/해제</summary>
@@ -143,7 +135,7 @@ public class Player : ICharacter
     /// <param name="item">판매할 아이템</param>
     public void SellItem(Item item)
     {
-        Item sell = Inventory.Find(i => i.Id == item.Id);
+        Item? sell = Inventory.Find(i => i.Id == item.Id);
         if (sell == null) return;
 
         if (sell.itemEquip)
@@ -185,7 +177,8 @@ public class Player : ICharacter
         int width = 10;
         
         Console.WriteLine();
-        Console.WriteLine($" [ Lv.{GetStats.Lv} ] {Name}  ( {Job} )");
+        Console.Write($" [ Lv.{GetStats.Lv} ] {Name}  ");
+        Utility.ColorWriteLine($"( {Job} )", Cyan);
         Console.WriteLine();
         Console.WriteLine(new string('-', Utility.Width));
         Utility.AlignLeft($"\n HP",width);

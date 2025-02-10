@@ -18,7 +18,7 @@ public class StatusScene : IScene
     // 현재 상태에 맞는 화면 표시
     private void ShowScreen()
     {
-        Console.WriteLine("상태보기");
+        Utility.ColorWriteLine("상태보기", ConsoleColor.Yellow);
         Console.WriteLine("캐릭터의 정보가 표시됩니다.\n");
         Console.WriteLine("Lv. 01");
         Console.WriteLine("직업 ( 전사 )");

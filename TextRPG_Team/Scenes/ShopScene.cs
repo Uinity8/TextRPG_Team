@@ -1,9 +1,5 @@
-using System.Diagnostics;
-
 namespace TextRPG_Team.Scenes;
-using System.Diagnostics;
-using System.Xml;
-
+using Objects;
 public class ShopScene : IScene
 {
     public enum State

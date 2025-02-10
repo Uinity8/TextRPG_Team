@@ -16,7 +16,7 @@ namespace TextRPG_Team.Objects
 
     public class Item
     {
-        Stats Value; // 능력치 값
+        public Stats Effect { get; } // 능력치 값
         public string Name { get; } // 이름
         public ItemType Type { get; } // 아이템 종류 (무기 or 방어구)
         public string Info { get; } // 아이템 정보
@@ -26,11 +26,11 @@ namespace TextRPG_Team.Objects
         
         public int Id {get; set;}   //아이템 ID
 
-        public Item(string name, ItemType type, Stats value, string info, int price, int id)
+        public Item(string name, ItemType type, Stats effect, string info, int price, int id)
         {
             Name = name;
             Type = type;
-            Value = value;
+            Effect = effect;
             Info = info;
             Price = price;
             itemPurchase = false;
@@ -46,7 +46,7 @@ namespace TextRPG_Team.Objects
 
         public string GetTypeValue() // 아이템 능력치 표시 ( 공격력 || 방어력 )
         {
-            string str = (Type == ItemType.Weapon ? $"공격력 +{Value}" : $"방어력 +{Value}"); // 타입이 무기면 공격력 / 아니면 방어력 출력
+            string str = (Type == ItemType.Weapon ? $"공격력 +{Effect.Atk}" : $"방어력 +{Effect.Def}"); // 타입이 무기면 공격력 / 아니면 방어력 출력
             return str;
         }
 

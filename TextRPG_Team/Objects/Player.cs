@@ -154,39 +154,20 @@ namespace TextRPG_Team.Objects
             var itemStats = new Stats(0, 0, 0);
             foreach (var item in Inventory.FindAll(i => i.itemEquip))
             {
-                itemStats = ApplyItemEffect(item);
+                itemStats += item.Effect; 
             }
 
             AddStats = itemStats;
         }
-
-        /// <summary>아이템의 타입별 효과를 스탯에 반영</summary>
-        /// <param name="item">적용할 아이템</param>
-        /// <returns>적용된 스탯</returns>
-        private Stats ApplyItemEffect(Item item)
-        {
-            switch (item.Type)
-            {
-                case ItemType.Armor:
-                    return new Stats(0, 0, item.Value);
-
-                case ItemType.Weapon:
-                    return new Stats(0, item.Value, 0);
-
-                    // case ItemType.Accessory:
-                    //     return new Stats(item.Value, 0, 0);
-            }
-
-            return new Stats();
-        }
+        
 
         /// <summary>현재 플레이어의 정보를 문자열로 반환</summary>
         public override string ToString()
         {
-            return $"Lv.{GetStats().Lv} : {Name} [{Job}]" + "\n" +
-                   $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
-                   $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
-                   $"방어력 : {GetStats().Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
+            return $"Lv.{GetStats.Lv} : {Name} [{Job}]" + "\n" +
+                   $"HP : {Health} / {GetStats.MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
+                   $"공격력 : {GetStats.Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
+                   $"방어력 : {GetStats.Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
                    $"Gold : {Gold} G";
         }
     }

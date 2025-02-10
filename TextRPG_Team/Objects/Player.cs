@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace TextRPG_Team.Objects
 {
     public class Player : ICharacter
@@ -6,7 +8,9 @@ namespace TextRPG_Team.Objects
 
         // ====== 속성 ======
         /// <summary>캐릭터 이름</summary>
-        public string Name { get; private set; }
+        public string Name { get;  set; }
+        /// <summary>캐릭터 직업</summary>
+        public string Job { get; set; }
 
         /// <summary>소지 금액</summary>
         public int Gold { get; private set; }
@@ -42,13 +46,16 @@ namespace TextRPG_Team.Objects
         /// <param name="name">플레이어 이름</param>
         /// <param name="stats">초기 스탯</param>
         /// <param name="gold">초기 골드</param>
-        public Player(string name, Stats stats, int gold)
+        /// <param name="job">플레이어 직업</param>
+        public Player(string name, Stats stats, int gold, string job)
         {
             Name = name;
             PlayerStats = stats;
             Gold = gold;
             Health = PlayerStats.MaxHp;
             Inventory = new List<Item>();
+            Job = job;
+
         }
 
         // ====== 메서드 ======
@@ -111,7 +118,6 @@ namespace TextRPG_Team.Objects
             equpItem.itemEquip = !equpItem.itemEquip;
             CalculateAddStats();
         }
-
         public bool TrySell(Item item)
         {
             bool canSell = !item.itemPurchase;
@@ -175,11 +181,10 @@ namespace TextRPG_Team.Objects
         /// <summary>현재 플레이어의 정보를 문자열로 반환</summary>
         public override string ToString()
         {
-            return $"Lv.{GetStats().Lv} : {Name} " + "\n" +
+            return $"Lv.{GetStats().Lv} : {Name} [{Job}]" + "\n" +
                    $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
                    $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
                    $"방어력 : {GetStats().Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
-
                    $"Gold : {Gold} G";
         }
     }

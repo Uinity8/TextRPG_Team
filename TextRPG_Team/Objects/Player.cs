@@ -15,25 +15,18 @@ namespace TextRPG_Team.Objects
         public float Health { get; private set; }
 
         /// <summary>최종 공격력 (스탯 기반, 치명타 미적용)</summary>
-        public float Power => GetStats().Atk;
-
+        public float Power => GetStats.Atk;
 
         /// <summary>소유 아이템 목록</summary>
         public List<Item> Inventory { get; }
-
-        // ====== 이벤트 ======
-        /// <summary>공격 시 이벤트 동작 정의</summary>
-        public Action<ICharacter, float>? AttackAction { get; set; }
-
-        /// <summary>구매 시도 시 동작 정의</summary>
-        public Action<string, ConsoleColor>? TryBuyAction { get; set; }
-
+        
+        
         // ====== 스탯 ======
-        private Stats PlayerStats { get; set; } // 기본 스탯
+        private Stats _stats; // 기본 스탯
         private Stats AddStats { get; set; } // 추가 스탯
 
         /// <summary>기본 스탯과 추가 스탯을 합친 최종 스탯 반환</summary>
-        public Stats GetStats() => PlayerStats + AddStats;
+        public Stats GetStats => _stats + AddStats;
 
         // ====== 생성자 ======
         /// <summary>
@@ -45,25 +38,34 @@ namespace TextRPG_Team.Objects
         public Player(string name, Stats stats, int gold)
         {
             Name = name;
-            PlayerStats = stats;
+            _stats = stats;
             Gold = gold;
-            Health = PlayerStats.MaxHp;
+            Health = _stats.MaxHp;
             Inventory = new List<Item>();
         }
 
         // ====== 메서드 ======
         /// <summary>타겟에게 공격을 수행</summary>
         /// <param name="target">대상 캐릭터</param>
-        public void Attack(ICharacter target)
+        public void PerformAttack(ICharacter target)
         {
-            AttackAction?.Invoke(this, Power);
+            // 공격 동작 실행
+            var log = $"{Name}(이)가 Lv.{target.GetStats.Lv}.{target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
+            Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
+            
+            target.TakeDamage(Power); // 대상의 TakeDamage 호출
         }
+
 
         /// <summary>데미지를 받아 체력을 감소</summary>
         /// <param name="damage">받는 데미지 값</param>
         public void TakeDamage(float damage)
         {
+            float preHp = Health;
             Health = Math.Max(0, Health - damage);
+            string hpStr = Health > 0 ? Health.ToString() : "Dead";
+            var log = $"Lv.{GetStats.Lv} {Name}\nHP {preHp} -> {hpStr}\n";
+            Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
         }
 
         /// <summary>플레이어가 사망했는지 여부를 반환</summary>
@@ -168,10 +170,10 @@ namespace TextRPG_Team.Objects
         /// <summary>현재 플레이어의 정보를 문자열로 반환</summary>
         public override string ToString()
         {
-            return $"Lv.{GetStats().Lv} : {Name} " + "\n" +
-                   $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
-                   $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
-                   $"방어력 : {GetStats().Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
+            return $"Lv.{GetStats.Lv} : {Name} " + "\n" +
+                   $"HP : {Health} / {GetStats.MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
+                   $"공격력 : {GetStats.Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
+                   $"방어력 : {GetStats.Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
 
                    $"Gold : {Gold} G";
         }

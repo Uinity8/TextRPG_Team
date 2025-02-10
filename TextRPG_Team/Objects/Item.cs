@@ -24,7 +24,7 @@ namespace TextRPG_Team
         
         public int Id {get; set;}   //아이템 ID
 
-        public Item(string name, ItemType type, int value, string info, int price)
+        public Item(string name, ItemType type, int value, string info, int price, int id)
         {
             Name = name;
             Type = type;
@@ -33,6 +33,7 @@ namespace TextRPG_Team
             Price = price;
             itemPurchase = false;
             itemEquip = false;
+            Id = id;
         }
         public string GetItemDisplay() // 장착여부 표시
         {

@@ -1,5 +1,4 @@
-using System.Diagnostics;
-using TextRPG_Team.Manager;
+using TextRPG_Team.Objects;
 
 namespace TextRPG_Team.Scenes;
 
@@ -21,6 +20,9 @@ public class BattleScene : IScene
     {
         _gameState = gameState;
         _state = state;
+        
+        //플레이어,적 어택 액션에 서로의 TakeDamage등록
+        var enemies = _gameState.Spawner.GetEnemies();
     }
 
     public void Run()
@@ -59,7 +61,14 @@ public class BattleScene : IScene
             case 0:
                 return new BattleScene(_gameState); // 취소 시 기본 상태로 복귀
             default:
-                PlayerAttack(input - 1); // 특정 적 공격
+                var enemy = _gameState.Spawner.GetEnemies()[input-1];
+                if (enemy.IsDead())
+                {
+                    Utility.AddLog("이미 뒤졌는데요", ConsoleColor.Red);
+                    return this;
+                }
+                
+                _gameState.Player.PerformAttack(enemy); // 특정 적 공격
                 return new BattleScene(_gameState, State.PlayerResult); // 결과 화면으로 이동
         }
     }
@@ -76,8 +85,14 @@ public class BattleScene : IScene
 
     private IScene? GetInputForEnemyPhase()
     {
-        return new ResultScene(_gameState, ResultScene.State.Victory); // 실제론 GetNextScene에서 체크해야합니다.
-        //return new BattleScene(_gameState); // BattleScene 초기 화면으로 이동
+        if (_gameState.Player.IsDead())
+            return new ResultScene(_gameState, ResultScene.State.Lose);
+        
+        var enemies = _gameState.Spawner.GetEnemies();
+        if (enemies.FindAll(e => !e.IsDead()).Count == 0)
+            return new ResultScene(_gameState, ResultScene.State.Victory);
+        
+        return new BattleScene(_gameState, State.Default); 
     }
 
     private void ShowScreen()
@@ -104,7 +119,7 @@ public class BattleScene : IScene
         Utility.ColorWriteLine("Battle!!\n", ConsoleColor.Yellow);
 
         // 적 정보 표시
-        var enemies = _gameState.EnemySpawner.GetEnemies();
+        var enemies = _gameState.Spawner.GetEnemies();
         foreach (var enemy in enemies)
         {
             Console.WriteLine(enemy.ToString());
@@ -113,9 +128,8 @@ public class BattleScene : IScene
         Console.WriteLine();
 
         // 플레이어 정보 표시
-        Console.WriteLine("[내정보]");
-        Console.WriteLine("Lv.1 Chad (전사)");
-        Console.WriteLine("HP: 100/100\n");
+        ShowPlayerInfo();
+
 
         Console.WriteLine("1. 공격");
     }
@@ -125,7 +139,7 @@ public class BattleScene : IScene
         Utility.ColorWriteLine("Battle!! - 플레이어 공격\n", ConsoleColor.Yellow);
 
         // 적 선택 목록 표시
-        var enemies = _gameState.EnemySpawner.GetEnemies();
+        var enemies = _gameState.Spawner.GetEnemies();
         for (int i = 0; i < enemies.Count; i++)
         {
             Console.WriteLine($"{i + 1}. {enemies[i]}");
@@ -134,20 +148,9 @@ public class BattleScene : IScene
         Console.WriteLine();
 
         // 플레이어 정보 표시
-        var player = _gameState.Player;
-        Console.WriteLine("[내정보]");
-        Console.WriteLine($"{player.GetStats().Lv: player.Name}");
-        Console.WriteLine($"{player.Health/player.GetStats().MaxHp}\n");
-
+        ShowPlayerInfo();
         Console.WriteLine("0. 취소");
-    }
-
-    private void PlayerAttack(int num)
-    {
-        // 플레이어 공격 로직 추가
-        var enemies = _gameState.EnemySpawner.GetEnemies();
-        Utility.AddLog($"{enemies[num]} 을(를) 맞췄습니다. [데미지 : 10]", ConsoleColor.Blue);
-        Utility.AddLog($"{enemies[num]} HP 10 -> Dead", ConsoleColor.Blue);
+        Utility.PrintLogs();
     }
 
     private void PlayerResultScreen()
@@ -155,33 +158,43 @@ public class BattleScene : IScene
         Console.Clear();
         Utility.ColorWriteLine("Battle!! - 플레이어 공격\n", ConsoleColor.Yellow);
 
-        Console.WriteLine("Chad 의 공격!\n");
+        Console.WriteLine($"{_gameState.Player.Name}의 공격!\n");
+        Utility.PrintLogs();
 
         // 공격 결과 로그 출력
         Utility.PrintLogs();
         Console.WriteLine();
 
         // 플레이어 정보 표시
-        Console.WriteLine("[내정보]");
-        Console.WriteLine("Lv.1 Chad (전사)");
-        Console.WriteLine("HP: 100/100\n");
+        ShowPlayerInfo();
 
         Console.WriteLine("0. 다음");
     }
 
     private void EnemyPhaseScreen()
     {
-        var enemies = _gameState.EnemySpawner.GetEnemies();
+        var enemies = _gameState.Spawner.GetEnemies();
         foreach (var enemy in enemies)
         {
+            if(enemy.IsDead()) continue;
+            
             Console.Clear();
             Utility.ColorWriteLine("Battle!! - 적 Phase\n", ConsoleColor.Yellow);
 
-            Console.WriteLine($"{enemy.Name}가 +{_gameState.Player.Name}을 + 공격합니다!(데미지: 5)\n");
-            // 적 공격 로직 추가 가능
+            enemy.PerformAttack(_gameState.Player);
+            Utility.PrintLogs();
 
             Console.WriteLine("0. 다음");
             Utility.GetInput(0, 0); // 사용자 입력 대기
         }
     }
+
+    private void ShowPlayerInfo()
+    {
+        var player = _gameState.Player;
+        Console.WriteLine("[내정보]");
+        Console.WriteLine($"Lv.{player.GetStats.Lv}: {player.Name}");
+        Console.WriteLine($"{player.Health}/{player.GetStats.MaxHp}\n");
+    }
+    
 }

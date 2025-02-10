@@ -1,5 +1,8 @@
 namespace TextRPG_Team.Scenes;
+
 using Objects;
+using static ConsoleColor;
+
 public class ShopScene : IScene
 {
     public enum State
@@ -11,19 +14,30 @@ public class ShopScene : IScene
 
     State _state;
     private readonly GameState _gameState;
+    private readonly string strTitle;
 
     public ShopScene(GameState gameState, State state = State.Default) //DI 의존성 주입
     {
         _gameState = gameState;
         _state = state;
+        switch (_state)
+        {
+            case State.Default:
+                strTitle = "필요한 아이템을 얻을 수 있는 상점입니다.\n";
+                break;
+            case State.Buy:
+                strTitle = "[ 구매하기 ]\n";
+                break;
+            case State.Sell:
+                strTitle = "[ 판매하기 ]\n";
+                break;
+        }
     }
 
     public void Run()
     {
         Console.Clear(); //처음 진입시 화면 지우기
         ShowScreen();
-        Console.WriteLine("0. 나가기\n");
-        Utility.PrintLogs();
     }
 
     public IScene? GetNextScene()
@@ -59,11 +73,10 @@ public class ShopScene : IScene
             default:
                 Item item = _gameState._itemList[input - 1];
                 item.itemPurchase = _gameState.Player.TryBuy(item);
-                return this; 
+                return this;
         }
-        
     }
-    
+
     private IScene? GetInputForSell() // 판매하기
     {
         int input = Utility.GetInput(0, _gameState.Player.Inventory.Count);
@@ -76,12 +89,23 @@ public class ShopScene : IScene
                 item.itemPurchase = _gameState.Player.TrySell(item);
                 return this;
         }
-
     }
 
 
     private void ShowScreen()
     {
+        Console.WriteLine(new string('=', Utility.Width));
+        Utility.AlignCenter("상점\n", DarkCyan);
+        Utility.AlignCenter(strTitle);
+        Console.WriteLine(new string('=', Utility.Width));
+        Utility.AlignRight("[ 보유 골드 ]\n", Utility.Width);
+        Console.WriteLine(" [ 아이템 목록 ]");
+
+        Utility.AlignRight($"💰", Utility.Width - 11);
+        Utility.AlignRight($"{_gameState.Player.Gold}", 7);
+        Utility.ColorWriteLine(" G", Yellow);
+        Console.WriteLine(new string('-', Utility.Width));
+
         switch (_state)
         {
             case State.Default:
@@ -98,39 +122,66 @@ public class ShopScene : IScene
 
     private void DefaultScreen() //기본화면
     {
-        Utility.ColorWriteLine("상점", ConsoleColor.Blue);
-        Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n");
-        Utility.ColorWriteLine($"[보유 골드]\n{_gameState.Player.Gold}G\n",ConsoleColor.Yellow);
-        Console.WriteLine("[아이템 목록]");
         foreach (var item in _gameState._itemList)
         {
-            Console.WriteLine($"- {item.GetItemDisplay()} | {item.GetPricPurchase()}");
+            Utility.AlignLeft(item.Icon, 7);
+            ConsoleColor color = item.Price > _gameState.Player.Gold ? Red : White;
+            item.PrintNameAndEffect(color);
+            item.PrintPriceForBuy(color);
+            item.PrintInfo();
         }
-        Console.WriteLine("\n1. 구매하기");
-        Console.WriteLine("2. 판매하기");
+        Utility.PrintLogs();
+        Console.Write(" 1. 구매하기");
+        Console.Write(" 2. 판매하기");
+        Console.WriteLine(" 0. 나가기");
     }
 
     private void BuyScreen() //구매하기
     {
-        Utility.ColorWriteLine("상점 - 구매하기", ConsoleColor.Blue);
-        Console.WriteLine("아이템을 구매할 수 있습니다.\n");
-        Utility.ColorWriteLine($"[보유 골드]\n{_gameState.Player.Gold}G\n",ConsoleColor.Yellow);
-        Console.WriteLine("[아이템 목록]");
+        int i = 1;
         foreach (var item in _gameState._itemList)
         {
-            Console.WriteLine($"- {item.Id}. {item.GetItemDisplay()} | {item.GetPricPurchase()}");
+            Utility.AlignLeft(item.Icon, 7);
+            Utility.ColorWrite($"{(i++)}. ", DarkMagenta);
+            ConsoleColor color = item.Price > _gameState.Player.Gold ? Red : White;
+            item.PrintNameAndEffect(color);
+            item.PrintPriceForBuy(color);
+            item.PrintInfo();
         }
+        Utility.PrintLogs();
+        Console.WriteLine(" 0. 취소");
     }
-    
+
     private void SellScreen() //판매하기
     {
-        Utility.ColorWriteLine("상점 - 판매하기", ConsoleColor.Blue);
-        Console.WriteLine("아이템을 판매할 수 있습니다.\n");
-        Utility.ColorWriteLine($"[보유 골드]\n{_gameState.Player.Gold}G\n",ConsoleColor.Yellow);
-        Console.WriteLine("[아이템 목록]");
-        foreach (var item in _gameState.Player.Inventory)
+        if (_gameState.Player.Inventory.Count == 0)
         {
-            Console.WriteLine($"- {item.Id}. {item.GetItemDisplay()} | {item.Price * 0.85}");
+            for (int i = 0; i < 6; i++)
+                Console.WriteLine(new string(' ', Utility.Width));
+            Utility.AlignCenter("보유중인 아이템이 없습니다.\n");
+            for (int i = 0; i < 5; i++)
+                Console.WriteLine(new string(' ', Utility.Width));
+            //Console.WriteLine(new string('-', Utility.Width));
         }
+        else
+        {
+            var invetory = _gameState.Player.Inventory;
+            for (int i = 0; i < 10; i++)
+            {
+                if (i >= invetory.Count)
+                {
+                    Console.WriteLine(new string(' ', Utility.Width));
+                    continue;
+                }
+
+                Utility.AlignLeft(invetory[i].Icon, 7);
+                Utility.ColorWrite($"{(i+1)}. ", DarkMagenta);
+                invetory[i].PrintNameAndEffect(White);
+                invetory[i].PrintPriceForSell();
+                invetory[i].PrintInfo();
+            }
+        }
+        Utility.PrintLogs();
+        Console.WriteLine(" 0. 취소");
     }
 }

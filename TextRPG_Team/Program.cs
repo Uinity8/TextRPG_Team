@@ -1,4 +1,5 @@
 ﻿namespace TextRPG_Team;
+
 using Scenes;
 class Program
 {
@@ -6,7 +7,7 @@ class Program
     {
         GameState gameState = new GameState(); //인스턴스 생성
         
-        var initialScene = new MainScene(gameState); // 첫 번째 씬 설정
+        var initialScene = new ShopScene(gameState); // 첫 번째 씬 설정
 
         var sceneManager = new SceneManager(initialScene);
         

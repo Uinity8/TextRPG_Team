@@ -26,7 +26,6 @@ public class MainScene : IScene
         Console.WriteLine("2. 상점");
         Console.WriteLine("3. 전투 시작");
         Console.WriteLine("\n0. 저장/종료\n");
-        Console.Write("원하시는 행동을 입력해주세요.\n>> ");
     }
 
     // 다음 씬 결정

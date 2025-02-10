@@ -74,15 +74,11 @@ namespace TextRPG_Team.Objects
         /// <summary>아이템 구매 가능 여부를 확인</summary>
         /// <param name="price">아이템 가격</param>
         /// <returns>구매 성공 여부</returns>
-        public bool TryBuy(int price)
+        public bool TryBuy(Item item)
         {
-            if (Gold >= price)
-            {
-                Gold -= price;
-                return true;
-            }
-
-            return false;
+            bool canBuy = Gold >= item.Price;
+            BuyItem(item);
+            return canBuy;
         }
 
         /// <summary>아이템 구매 처리 메서드</summary>
@@ -93,11 +89,13 @@ namespace TextRPG_Team.Objects
 
             {
                 Utility.AddLog("이미 보유한 아이템 입니다.", ConsoleColor.Red);
+                return;
             }
 
             if (Gold < item.Price)
             {
                 Utility.AddLog("골드가 부족합니다", ConsoleColor.Red);
+                return;
             }
 
             // 아이템 구매 성공
@@ -105,6 +103,7 @@ namespace TextRPG_Team.Objects
             Inventory.Add(item);
             Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
             Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
+            
         }
 
         /// <summary>아이템 장착/해제</summary>
@@ -115,10 +114,18 @@ namespace TextRPG_Team.Objects
             CalculateAddStats();
         }
 
+        public bool TrySell(Item item)
+        {
+            bool canSell = !item.itemPurchase;
+            EquipItem(item.Id-1);
+            SellItem(item);
+            return canSell;
+        }
+
 
         /// <summary>아이템 판매 처리 메서드</summary>
         /// <param name="item">판매할 아이템</param>
-        private void SellItem(Item item)
+        public void SellItem(Item item)
         {
             Item sell = Inventory.Find(i => i.Id == item.Id);
             if (sell == null) return;
@@ -155,13 +162,13 @@ namespace TextRPG_Team.Objects
             switch (item.Type)
             {
                 case ItemType.Armor:
-                    return new Stats(0, item.Value, 0);
+                    return new Stats(0, 0, item.Value);
 
                 case ItemType.Weapon:
-                    return new Stats(item.Value, 0, 0);
+                    return new Stats(0, item.Value, 0);
 
-                // case ItemType.Accessory:
-                //     return new Stats(0, 0, item.Value);
+                    // case ItemType.Accessory:
+                    //     return new Stats(item.Value, 0, 0);
             }
 
             return new Stats();

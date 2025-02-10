@@ -3,7 +3,7 @@ namespace TextRPG_Team.Objects
     public class Player : ICharacter
     {
         // ====== 필드 ======
-        private List<Item> _inventory; // 소유 아이템 목록
+        public List<Item> _inventory; // 소유 아이템 목록
 
         // ====== 속성 ======
         /// <summary>캐릭터 이름</summary>
@@ -89,21 +89,24 @@ namespace TextRPG_Team.Objects
                 Utility.AddLog("이미 보유한 아이템 입니다.", ConsoleColor.Red);
             }
 
-            if (Gold < item.Price)
+            else if (Gold < item.Price)
             {
                 Utility.AddLog("골드가 부족합니다", ConsoleColor.Red);
             }
 
             // 아이템 구매 성공
-            Gold -= item.Price;
-            _inventory.Add(item);
-            Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
-            Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
+            else
+            {
+                Gold -= item.Price;
+                _inventory.Add(item);
+                Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
+                Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
+            }
         }
 
         /// <summary>아이템 판매 처리 메서드</summary>
         /// <param name="item">판매할 아이템</param>
-        private void SellItem(Item item)
+        public void SellItem(Item item)
         {
             Item sell = _inventory.Find(i => i.Id == item.Id);
             if (sell == null) return;

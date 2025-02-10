@@ -96,9 +96,10 @@ public class InventoryScene : IScene
         Console.WriteLine("장착하실 아이템을 선택해 주세요.\n");
 
         // 장착 가능한 아이템 목록 표시
-        Console.WriteLine("- 1 [E]스파르타의 창 | 공격력 +7 | 스파르타의 전사들이 사용했다는 전설의 창입니다.");
-        Console.WriteLine("- 2 [E]스파르타의 창 | 공격력 +7 | 스파르타의 전사들이 사용했다는 전설의 창입니다.");
-        Console.WriteLine("- 3 낡은 검          | 공격력 +2 | 쉽게 볼 수 있는 낡은 검 입니다.");
+        foreach (var item in _gameState._player._inventory)
+        {
+            Console.WriteLine($"{_gameState._player._inventory}");
+        }
         Console.WriteLine();
     }
 }

@@ -22,7 +22,8 @@ public struct Stats // 체,공,방
         {
             MaxHp = s1.MaxHp + s2.MaxHp,
             Atk = s1.Atk + s2.Atk,
-            Def = s1.Def + s2.Def
+            Def = s1.Def + s2.Def,
+            Lv = s1.Lv + s2.Lv
         };
     }
 }

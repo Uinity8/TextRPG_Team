@@ -19,15 +19,10 @@ public class StatusScene : IScene
     private void ShowScreen()
     {
         Utility.ColorWriteLine("상태보기", ConsoleColor.Yellow);
-        Console.WriteLine("캐릭터의 정보가 표시됩니다.\n");
-        Console.WriteLine("Lv. 01");
-        Console.WriteLine("직업 ( 전사 )");
-        Console.WriteLine("공격력 : 10 ");
-        Console.WriteLine("방어력 : 5");
-        Console.WriteLine("체력 : 100");
-        Console.WriteLine("Gold : 1500 G");
-        Console.WriteLine("\n0. 나가기\n");
-
+        Console.WriteLine("플레이어의 정보를 확인할수 있습니다.\n");
+        Console.WriteLine(_gameState.Player.ToString());
+        Console.WriteLine();
+        Console.WriteLine("0. 나가기\n");
     }
 
     // 현재 상태에 따라 다음 씬 반환

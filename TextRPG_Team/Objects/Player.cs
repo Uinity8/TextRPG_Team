@@ -1,67 +1,165 @@
-namespace TextRPG_Team.Objects;
-
-
-public class Player : ICharacter
+namespace TextRPG_Team.Objects
 {
-    // 속성
-    public string Name { get; private set; } //이름
-    
-    public int Gold { get; private set; } //이름
-    
-    public float Health { get; private set; } //현재 체력
-
-    public float Power => GetStats().Atk; //최종 데미지(추후에 치명타
-
-    // 이벤트
-    public Action<ICharacter, float>? AttackAction { get; set; } //공격 시 동작을 정의하는 Action
-    public Action<string, ConsoleColor>? TryBuyAction { get; set; } //구매 시도 Action
-
-
-    // 스탯 관련 변수 및 메서드
-    private Stats PlayerStats { get; set; } //기본 스텟
-    private Stats AddStats { get; set; } //추가 스텟
-    public Stats GetStats() => PlayerStats + AddStats; //최종 스텟
-
-
-    // 생성자
-    public Player(string name, Stats stats, int gold)
+    public class Player : ICharacter
     {
-        Name = name;
-        PlayerStats = stats;
-        Gold = gold;
-        Health = PlayerStats.MaxHp;
-    }
+        // ====== 필드 ======
+        private List<Item> _inventory; // 소유 아이템 목록
 
-    // 메서드
-    public void Attack(ICharacter target) //공격
-    {
-        // Action이 정의돼 있다면 실행
-        AttackAction?.Invoke(this, Power);
-    }
+        // ====== 속성 ======
+        /// <summary>캐릭터 이름</summary>
+        public string Name { get; private set; }
 
-    public void TakeDamage(float damage) //피해
-    {
-        Health = Math.Max(0, Health - damage);
-    }
+        /// <summary>소지 금액</summary>
+        public int Gold { get; private set; }
 
-    public bool IsDead() => Health <= 0f;
+        /// <summary>현재 체력</summary>
+        public float Health { get; private set; }
 
-    public bool TryBuy(int price)   //아이템 구매여부 확인
-    {
-        if (Gold >= price)
+        /// <summary>최종 공격력 (스탯 기반, 치명타 미적용)</summary>
+        public float Power => GetStats().Atk;
+
+        // ====== 이벤트 ======
+        /// <summary>공격 시 이벤트 동작 정의</summary>
+        public Action<ICharacter, float>? AttackAction { get; set; }
+
+        /// <summary>구매 시도 시 동작 정의</summary>
+        public Action<string, ConsoleColor>? TryBuyAction { get; set; }
+
+        // ====== 스탯 ======
+        private Stats PlayerStats { get; set; } // 기본 스탯
+        private Stats AddStats { get; set; } // 추가 스탯
+
+        /// <summary>기본 스탯과 추가 스탯을 합친 최종 스탯 반환</summary>
+        public Stats GetStats() => PlayerStats + AddStats;
+
+        // ====== 생성자 ======
+        /// <summary>
+        /// 새로운 플레이어 생성
+        /// </summary>
+        /// <param name="name">플레이어 이름</param>
+        /// <param name="stats">초기 스탯</param>
+        /// <param name="gold">초기 골드</param>
+        public Player(string name, Stats stats, int gold)
         {
-            Gold -= price;
-            return true;
+            Name = name;
+            PlayerStats = stats;
+            Gold = gold;
+            Health = PlayerStats.MaxHp;
+            _inventory = new List<Item>();
         }
-        return false;
-    }
-    
-    public override string ToString()   //플레이어 정보
-    {
-        return $"Lv.{GetStats().Lv} : {Name} " + 
-               $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "")+
-               $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "")+
-               $"방어력 : {GetStats().Def}"+ (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "")+
-               $"Gold : {Gold} G";
+
+        // ====== 메서드 ======
+        /// <summary>타겟에게 공격을 수행</summary>
+        /// <param name="target">대상 캐릭터</param>
+        public void Attack(ICharacter target)
+        {
+            AttackAction?.Invoke(this, Power);
+        }
+
+        /// <summary>데미지를 받아 체력을 감소</summary>
+        /// <param name="damage">받는 데미지 값</param>
+        public void TakeDamage(float damage)
+        {
+            Health = Math.Max(0, Health - damage);
+        }
+
+        /// <summary>플레이어가 사망했는지 여부를 반환</summary>
+        public bool IsDead() => Health <= 0f;
+
+        /// <summary>아이템 구매 가능 여부를 확인</summary>
+        /// <param name="price">아이템 가격</param>
+        /// <returns>구매 성공 여부</returns>
+        public bool TryBuy(int price)
+        {
+            if (Gold >= price)
+            {
+                Gold -= price;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>아이템 구매 처리 메서드</summary>
+        /// <param name="item">구매할 아이템</param>
+        public void BuyItem(Item item)
+        {
+            if (_inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
+            {
+                Utility.AddLog("이미 보유한 아이템 입니다.", ConsoleColor.Red);
+            }
+
+            if (Gold < item.Price)
+            {
+                Utility.AddLog("골드가 부족합니다", ConsoleColor.Red);
+            }
+
+            // 아이템 구매 성공
+            Gold -= item.Price;
+            _inventory.Add(item);
+            Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
+            Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
+        }
+
+        /// <summary>아이템 판매 처리 메서드</summary>
+        /// <param name="item">판매할 아이템</param>
+        private void SellItem(Item item)
+        {
+            Item sell = _inventory.Find(i => i.Id == item.Id);
+            if (sell == null) return;
+
+            if (sell.itemEquip)
+            {
+                sell.itemEquip = false;
+                CalculateAddStats();
+            }
+
+            Gold += (int)(sell.Price * 0.85);
+            _inventory.Remove(sell);
+            Utility.AddLog("성공적으로 판매하였습니다.", ConsoleColor.Blue);
+            Utility.AddLog($"+{sell.Price} G", ConsoleColor.Yellow);
+        }
+
+        /// <summary>아이템 장착 효과를 계산해 추가 스탯에 반영</summary>
+        private void CalculateAddStats()
+        {
+            var itemStats = new Stats(0, 0, 0);
+            foreach (var item in _inventory.FindAll(i => i.itemEquip))
+            {
+                itemStats = ApplyItemEffect(item);
+            }
+
+            AddStats = itemStats;
+        }
+
+        /// <summary>아이템의 타입별 효과를 스탯에 반영</summary>
+        /// <param name="item">적용할 아이템</param>
+        /// <returns>적용된 스탯</returns>
+        private Stats ApplyItemEffect(Item item)
+        {
+            switch (item.Type)
+            {
+                case ItemType.Armor:
+                    return new Stats(0, item.Value, 0);
+
+                case ItemType.Weapon:
+                    return new Stats(item.Value, 0, 0);
+
+                // case ItemType.Accessory:
+                //     return new Stats(0, 0, item.Value);
+            }
+
+            return new Stats();
+        }
+
+        /// <summary>현재 플레이어의 정보를 문자열로 반환</summary>
+        public override string ToString()
+        {
+            return $"Lv.{GetStats().Lv} : {Name} " +
+                   $"HP : {Health} / {GetStats().MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") +
+                   $"공격력 : {GetStats().Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") +
+                   $"방어력 : {GetStats().Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") +
+                   $"Gold : {Gold} G";
+        }
     }
 }

@@ -21,6 +21,8 @@ namespace TextRPG_Team
         public int Price { get; } // 가격
         public bool itemPurchase { get; set; } // 아이템 구매 여부
         public bool itemEquip { get; set; } // 아이템 장착 여부
+        
+        public int Id {get; set;}   //아이템 ID
 
         public Item(string name, ItemType type, int value, string info, int price)
         {

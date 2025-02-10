@@ -1,4 +1,4 @@
-namespace TextRPG_Team.Objects;
+namespace TextRPG_Mockup.Objects;
 
 public interface ICharacter
 {

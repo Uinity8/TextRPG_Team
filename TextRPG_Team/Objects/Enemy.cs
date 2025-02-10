@@ -5,6 +5,8 @@ namespace TextRPG_Team.Objects
 {
     public class Enemy : ICharacter
     {
+        string[] Icon = { " 🦠", " 🎯", " 🐀" };
+        public int Id { get; }
         public string Name { get; private set; }
 
         //삭제 부탁(Stat 구조체로 이동)public int Level { get; private set; } //삭제 부탁(Stat 구조체로 이동)
@@ -17,12 +19,13 @@ namespace TextRPG_Team.Objects
 
         public float Power => GetStats.Atk; // 적 공경력  
         
-        public Enemy(string name, Stats stats, int level)
+        public Enemy(string name, Stats stats, int leve, int id)
         {
             Name = name;
             _stats = stats;
             //삭제 부탁(Stat 구조체로 이동) Level = level;  // 삭제 부탁
             Health = GetStats.MaxHp; // 최대 체력 초기화
+            Id = id;
         }
 
         // 공격
@@ -49,11 +52,14 @@ namespace TextRPG_Team.Objects
         public bool IsDead() => Health <= 0f;
 
         // 몬스터 정보 출력
-        public override string ToString()
+        public void PrintInfo()
         {
-            // 레벨, 이름, 체력
+            Utility.AlignLeft(Icon[Id-1], 4);
+            Utility.AlignLeft($" Lv.{GetStats.Lv}", 6);
+            Utility.AlignLeft(Name, 15);
             string hpStr = Health > 0 ? Health.ToString() : "Dead";
-            return $"Lv.{GetStats.Lv} {Name} HP {hpStr}";
+            Utility.AlignLeft($"HP : {hpStr}", 2);
+            Console.WriteLine();
         }
     }
 }

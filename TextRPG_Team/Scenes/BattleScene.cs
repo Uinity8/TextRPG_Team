@@ -2,6 +2,8 @@ using TextRPG_Team.Objects;
 
 namespace TextRPG_Team.Scenes;
 
+using static ConsoleColor;
+
 public class BattleScene : IScene
 {
     public enum State
@@ -55,7 +57,8 @@ public class BattleScene : IScene
 
     private IScene? GetInputForPlayerPhase()
     {
-        int input = Utility.GetInput(0, 3);
+        int max = _gameState.Spawner.GetRandomEnemies().Count;
+        int input = Utility.GetInput(0, max, "공격할 대상을 선택하세요.");
         switch (input)
         {
             case 0:
@@ -97,6 +100,10 @@ public class BattleScene : IScene
 
     private void ShowScreen()
     {
+        Console.WriteLine(new string('=',Utility.Width));
+        Utility.AlignCenter("⚔️     BATTLE!!   ⚔️\n", Red);
+        Console.WriteLine(new string('=',Utility.Width));
+     
         switch (_state)
         {
             case State.Default:
@@ -116,13 +123,14 @@ public class BattleScene : IScene
 
     private void DefaultScreen()
     {
-        Utility.ColorWriteLine("Battle!!\n", ConsoleColor.Yellow);
+        Console.WriteLine();
 
         // 적 정보 표시
+        Utility.ColorWriteLine(" [ 적 정보 ]");
         var enemies = _gameState.Spawner.GetEnemies();
         foreach (var enemy in enemies)
         {
-            Console.WriteLine(enemy.ToString());
+            enemy.PrintInfo();
         }
 
         Console.WriteLine();
@@ -130,8 +138,7 @@ public class BattleScene : IScene
         // 플레이어 정보 표시
         ShowPlayerInfo();
 
-
-        Console.WriteLine("1. 공격");
+        Console.WriteLine(" 1. ⚔️   공격\n");
     }
 
     private void PlayerPhaseScreen()
@@ -142,15 +149,15 @@ public class BattleScene : IScene
         var enemies = _gameState.Spawner.GetEnemies();
         for (int i = 0; i < enemies.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {enemies[i]}");
+            Console.WriteLine($" {i + 1}. ");
+            enemies[i].PrintInfo();
         }
 
         Console.WriteLine();
 
         // 플레이어 정보 표시
         ShowPlayerInfo();
-        Console.WriteLine("0. 취소");
-        Utility.PrintLogs();
+        Console.WriteLine(" 0. 취소");
     }
 
     private void PlayerResultScreen()
@@ -168,7 +175,7 @@ public class BattleScene : IScene
         // 플레이어 정보 표시
         ShowPlayerInfo();
 
-        Console.WriteLine("0. 다음");
+        Console.WriteLine(" 0. 다음");
     }
 
     private void EnemyPhaseScreen()
@@ -179,7 +186,7 @@ public class BattleScene : IScene
             if(enemy.IsDead()) continue;
             
             Console.Clear();
-            Utility.ColorWriteLine("Battle!! - 적 Phase\n", ConsoleColor.Yellow);
+            Utility.ColorWriteLine("Battle!! - 적 Phase\n", Yellow);
 
             enemy.PerformAttack(_gameState.Player);
             Utility.PrintLogs();
@@ -191,10 +198,16 @@ public class BattleScene : IScene
 
     private void ShowPlayerInfo()
     {
+        Console.WriteLine(new string('-',Utility.Width));
         var player = _gameState.Player;
-        Console.WriteLine("[내정보]");
-        Console.WriteLine($"Lv.{player.GetStats.Lv}: {player.Name}");
-        Console.WriteLine($"{player.Health}/{player.GetStats.MaxHp}\n");
+        Console.WriteLine(" [ 내정보 ]");
+        Utility.AlignLeft(" ", 4);
+        Utility.AlignLeft($"Lv.{player.GetStats.Lv}", 7);
+        Console.WriteLine($"{player.Name}");
+        Utility.AlignLeft(" ❤️  HP : ", 12);
+        Utility.AlignRight($"{player.Health} / {player.GetStats.MaxHp}\n", 9);
+        Console.WriteLine(new string('-',Utility.Width));
+        Utility.PrintLogs();
     }
     
 }

@@ -65,7 +65,7 @@ public class InventoryScene : IScene
     private IScene? GetInputForEquip()
     {
         int max = _gameState.Player.Inventory.Count;
-        int input = Utility.GetInput(0, max, "장착하실 아이템을 선택해주세요.");
+        int input = Utility.GetInput(0, max, " 장착하실 아이템을 선택해주세요.");
         switch (input)
         {
             case 0:

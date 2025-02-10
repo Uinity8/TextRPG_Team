@@ -18,9 +18,9 @@ namespace TextRPG_Team.Manager
         // 기본 적 목록 초기화 메서드 (리팩토링)
         private void InitializeEnemies()
         {
-            enemies.Add(new Enemy("미니언", new Stats(15, 5, 0), 2)); // Lv 2
-            enemies.Add(new Enemy("공허충", new Stats(10, 9, 0), 3)); // Lv 3
-            enemies.Add(new Enemy("대포미니언", new Stats(25, 8, 0), 5)); // Lv 5
+            enemies.Add(new Enemy("미니언", new Stats(15, 5, 0), 2, 1)); // Lv 2
+            enemies.Add(new Enemy("공허충", new Stats(10, 9, 0), 3, 2)); // Lv 3
+            enemies.Add(new Enemy("대포미니언", new Stats(25, 8, 0), 5, 3)); // Lv 5
         }
 
         // 적 리스트 가져오기
@@ -41,7 +41,7 @@ namespace TextRPG_Team.Manager
                 var randomEnemy = enemies[random.Next(enemies.Count)];
 
                 // 새 객체로 적을 추가 (기존 적이 변하지 않도록 복제)
-                enemies.Add(new Enemy(randomEnemy.Name, randomEnemy.GetStats, randomEnemy.GetStats.Lv));
+                enemies.Add(new Enemy(randomEnemy.Name, randomEnemy.GetStats, randomEnemy.GetStats.Lv, randomEnemy.Id));
             }
         }
 
@@ -56,7 +56,7 @@ namespace TextRPG_Team.Manager
                 var randomEnemy = enemies[random.Next(enemies.Count)];
 
                 // 복제하여 반환 (참조 공유 방지)
-                randomEnemies.Add(new Enemy(randomEnemy.Name, randomEnemy.GetStats, randomEnemy.GetStats.Lv));
+                randomEnemies.Add(new Enemy(randomEnemy.Name, randomEnemy.GetStats, randomEnemy.GetStats.Lv, randomEnemy.Id));
             }
 
             return randomEnemies;

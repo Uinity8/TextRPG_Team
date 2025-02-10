@@ -29,9 +29,6 @@ public class InventoryScene : IScene
                 strTitle = "[ 장착관리 ]\n";
                 break;
         }
-
-        foreach (var item in _gameState._itemList)
-            _gameState.Player.BuyItem(item);
     }
 
     // 인벤토리 씬 실행 메서드
@@ -68,7 +65,7 @@ public class InventoryScene : IScene
     private IScene? GetInputForEquip()
     {
         int max = _gameState.Player.Inventory.Count;
-        int input = Utility.GetInput(0, max);
+        int input = Utility.GetInput(0, max, "장착하실 아이템을 선택해주세요.");
         switch (input)
         {
             case 0:
@@ -89,25 +86,58 @@ public class InventoryScene : IScene
         Utility.AlignCenter(strTitle);
         Console.WriteLine(new string('=', Utility.Width));
 
+        if (_gameState.Player.Inventory.Count == 0)
+        {
+            for (int i = 0; i < 6; i++)
+                Console.WriteLine(new string(' ', Utility.Width));
+            Utility.AlignCenter("보유중인 아이템이 없습니다.\n");
+            for (int i = 0; i < 5; i++)
+                Console.WriteLine(new string(' ', Utility.Width));
+            //Console.WriteLine(new string('-', Utility.Width));
+        }
+        else
+        {
+            switch (_state)
+            {
+                case State.Default:
+                    DefaultScreen(); // 기본 화면 출력
+                    break;
+                case State.Equip:
+                    EquipScreen(); // 장착 관리 화면 출력
+                    break;
+            }
+        }
         switch (_state)
         {
             case State.Default:
                 DefaultScreen(); // 기본 화면 출력
+                Console.WriteLine(new string('-', Utility.Width));
+                Console.WriteLine(" 1. 장착관리");
+                Console.WriteLine(" 0. 나가기");
+                Console.WriteLine(new string('-', Utility.Width));
                 break;
             case State.Equip:
                 EquipScreen(); // 장착 관리 화면 출력
+                Console.WriteLine(new string('-', Utility.Width));
+                Console.WriteLine(" 0. 취소");
+                Console.WriteLine(new string('-', Utility.Width));
                 break;
         }
-
-        //Utility.PrintLogs();
+        Utility.PrintLogs();
     }
 
     // 기본 상태 화면 출력
     private void DefaultScreen()
     {
         // 아이템 목록 표시
+        int i = 1;
         foreach (var item in _gameState.Player.Inventory)
         {
+            if (i >= _gameState.Player.Inventory.Count)
+            {
+                Console.WriteLine(new string(' ', Utility.Width));
+                continue;
+            }
             ConsoleColor color = White;
             if (item.itemEquip)
                 color = DarkGreen;
@@ -120,10 +150,6 @@ public class InventoryScene : IScene
             item.PrintInfo();
         }
 
-        Console.WriteLine(new string('-', Utility.Width));
-        Console.WriteLine(" 1. 장착관리");
-        Console.WriteLine(" 0. 나가기");
-        Console.WriteLine(new string('-', Utility.Width));
     }
 
     // 장착 관리 상태 화면 출력
@@ -133,6 +159,12 @@ public class InventoryScene : IScene
         int i = 1;
         foreach (var item in _gameState.Player.Inventory)
         {
+            if (i >= _gameState.Player.Inventory.Count)
+            {
+                Console.WriteLine(new string(' ', Utility.Width));
+                continue;
+            }
+
             ConsoleColor color = White;
             if (item.itemEquip)
                 color = DarkGreen;
@@ -145,9 +177,6 @@ public class InventoryScene : IScene
             Console.WriteLine();
             item.PrintInfo();
         }
-
-        Console.WriteLine(new string('-', Utility.Width));
-        Console.WriteLine(" 0. 취소");
-        Console.WriteLine(new string('-', Utility.Width));
+        
     }
 }

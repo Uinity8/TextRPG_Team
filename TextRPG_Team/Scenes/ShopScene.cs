@@ -65,7 +65,7 @@ public class ShopScene : IScene
 
     private IScene? GetInputForBuy() // 구매하기
     {
-        int input = Utility.GetInput(0, _gameState._itemList.Count);
+        int input = Utility.GetInput(0, _gameState._itemList.Count, "구매하실 아이템을 선택해주세요.");
         switch (input)
         {
             case 0:
@@ -79,7 +79,7 @@ public class ShopScene : IScene
 
     private IScene? GetInputForSell() // 판매하기
     {
-        int input = Utility.GetInput(0, _gameState.Player.Inventory.Count);
+        int input = Utility.GetInput(0, _gameState.Player.Inventory.Count, "판매하실 아이템을 선택해주세요.");
         switch (input)
         {
             case 0:

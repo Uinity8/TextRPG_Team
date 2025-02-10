@@ -102,6 +102,14 @@ namespace TextRPG_Team.Objects
             Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
             Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
         }
+        
+        /// <summary>아이템 장착/해제</summary>
+        public void EquipItem(int index)
+        {
+            var equpItem = Inventory[index];
+            equpItem.itemEquip = !equpItem.itemEquip;
+            CalculateAddStats();
+        }
 
         /// <summary>아이템 판매 처리 메서드</summary>
         /// <param name="item">판매할 아이템</param>
@@ -121,7 +129,7 @@ namespace TextRPG_Team.Objects
             Utility.AddLog("성공적으로 판매하였습니다.", ConsoleColor.Blue);
             Utility.AddLog($"+{sell.Price} G", ConsoleColor.Yellow);
         }
-
+        
         /// <summary>아이템 장착 효과를 계산해 추가 스탯에 반영</summary>
         private void CalculateAddStats()
         {

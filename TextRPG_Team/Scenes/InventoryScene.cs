@@ -62,7 +62,7 @@ public class InventoryScene : IScene
             case 0:
                 return new InventoryScene(_gameState); // 기본 상태로 복귀
             default:
-                _gameState.Player.Inventory[input-1].itemEquip = true;
+                _gameState.Player.EquipItem(input-1);
                 return this;
         };
     }

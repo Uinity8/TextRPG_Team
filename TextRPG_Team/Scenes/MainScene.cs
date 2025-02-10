@@ -21,12 +21,13 @@ public class MainScene : IScene
     // 메뉴 화면 출력
     private void ShowScreen()
     {
-        Utility.ColorWriteLine("스파르타 던전에 오신 여러분 환영합니다.", ConsoleColor.Yellow);
+        Utility.ColorWriteLine("스파르타 던전에 오신 여러분 환영합니다.", ConsoleColor.Blue);
         Console.WriteLine("이제 전투를 시작할 수 있습니다.\n");
         Console.WriteLine("1. 상태 보기");
         Console.WriteLine("2. 인벤토리");
         Console.WriteLine("3. 상 점");
-        Console.WriteLine("4. 전투 시작");
+        Console.Write("4. ");
+        Utility.ColorWriteLine("전투 시작", ConsoleColor.DarkRed);
         
         Console.WriteLine("\n0. 저장/종료\n");
     }

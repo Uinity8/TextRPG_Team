@@ -18,9 +18,9 @@ public class StatusScene : IScene
     // 현재 상태에 맞는 화면 표시
     private void ShowScreen()
     {
-        Utility.ColorWriteLine("상태보기", ConsoleColor.Yellow);
+        Utility.ColorWriteLine("상태보기", ConsoleColor.Blue);
         Console.WriteLine("플레이어의 정보를 확인할수 있습니다.\n");
-        Console.WriteLine(_gameState.Player.ToString());
+        _gameState.Player.PrintInfo();
         Console.WriteLine();
         Console.WriteLine("0. 나가기\n");
     }

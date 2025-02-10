@@ -8,7 +8,8 @@ namespace TextRPG_Team.Objects
 
         // ====== 속성 ======
         /// <summary>캐릭터 이름</summary>
-        public string Name { get;  set; }
+        public string Name { get; set; }
+
         /// <summary>캐릭터 직업</summary>
         public string Job { get; set; }
 
@@ -23,8 +24,8 @@ namespace TextRPG_Team.Objects
 
         /// <summary>소유 아이템 목록</summary>
         public List<Item> Inventory { get; }
-        
-        
+
+
         // ====== 스탯 ======
         private Stats _stats; // 기본 스탯
         private Stats AddStats { get; set; } // 추가 스탯
@@ -48,7 +49,6 @@ namespace TextRPG_Team.Objects
             Health = _stats.MaxHp;
             Inventory = new List<Item>();
             Job = job;
-
         }
 
         // ====== 메서드 ======
@@ -59,7 +59,7 @@ namespace TextRPG_Team.Objects
             // 공격 동작 실행
             var log = $"{Name}(이)가 Lv.{target.GetStats.Lv}.{target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
-            
+
             target.TakeDamage(Power); // 대상의 TakeDamage 호출
         }
 
@@ -109,8 +109,7 @@ namespace TextRPG_Team.Objects
             Gold -= item.Price;
             Inventory.Add(item);
             Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
-            Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
-            
+            Utility.AddLog($"-{item.Price} G\n", ConsoleColor.DarkRed);
         }
 
         /// <summary>아이템 장착/해제</summary>
@@ -120,10 +119,11 @@ namespace TextRPG_Team.Objects
             equpItem.itemEquip = !equpItem.itemEquip;
             CalculateAddStats();
         }
+
         public bool TrySell(Item item)
         {
             bool canSell = !item.itemPurchase;
-            EquipItem(item.Id-1);
+            EquipItem(item.Id - 1);
             SellItem(item);
             return canSell;
         }
@@ -145,7 +145,7 @@ namespace TextRPG_Team.Objects
             Gold += (int)(sell.Price * 0.85);
             Inventory.Remove(sell);
             Utility.AddLog("성공적으로 판매하였습니다.", ConsoleColor.Blue);
-            Utility.AddLog($"+{sell.Price} G", ConsoleColor.Yellow);
+            Utility.AddLog($"+{sell.Price} G\n", ConsoleColor.Yellow);
         }
 
         /// <summary>아이템 장착 효과를 계산해 추가 스탯에 반영</summary>
@@ -154,12 +154,12 @@ namespace TextRPG_Team.Objects
             var itemStats = new Stats(0, 0, 0);
             foreach (var item in Inventory.FindAll(i => i.itemEquip))
             {
-                itemStats += item.Effect; 
+                itemStats += item.Effect;
             }
 
             AddStats = itemStats;
         }
-        
+
 
         /// <summary>현재 플레이어의 정보를 문자열로 반환</summary>
         public override string ToString()
@@ -169,6 +169,23 @@ namespace TextRPG_Team.Objects
                    $"공격력 : {GetStats.Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
                    $"방어력 : {GetStats.Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
                    $"Gold : {Gold} G";
+        }
+
+        public void PrintInfo()
+        {
+            Console.Write($"Lv.{GetStats.Lv} : {Name} ");
+            Utility.ColorWrite($"[{Job}]", ConsoleColor.Blue);
+            Console.Write($"\nHP : ");
+            if(Health == GetStats.MaxHp)
+                Utility.ColorWrite($"{Health} / {GetStats.MaxHp}", ConsoleColor.DarkGreen);
+            else
+                Utility.ColorWrite($"{Health} / {GetStats.MaxHp}", ConsoleColor.DarkRed);
+            if (AddStats.MaxHp > 0) Utility.ColorWrite($"(+{AddStats.MaxHp})", ConsoleColor.DarkBlue);
+            Console.Write($"\n공격력 : {GetStats.Atk}");
+            if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", ConsoleColor.DarkBlue);
+            Console.Write($"\n방어력 : {GetStats.Def}");
+            if (AddStats.Def > 0) Utility.ColorWrite($"(+{AddStats.Def})", ConsoleColor.DarkBlue);
+            Utility.ColorWriteLine($"\n\nGold : {Gold} G", ConsoleColor.Yellow);
         }
     }
 }

@@ -100,8 +100,7 @@ public class ShopScene : IScene
     {
         Utility.ColorWriteLine("상점", ConsoleColor.Blue);
         Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n");
-        Console.WriteLine("[보유 골드]");
-        Console.WriteLine($"{_gameState.Player.Gold}G\n");
+        Utility.ColorWriteLine($"[보유 골드]\n{_gameState.Player.Gold}G\n",ConsoleColor.Yellow);
         Console.WriteLine("[아이템 목록]");
         foreach (var item in _gameState._itemList)
         {
@@ -115,8 +114,7 @@ public class ShopScene : IScene
     {
         Utility.ColorWriteLine("상점 - 구매하기", ConsoleColor.Blue);
         Console.WriteLine("아이템을 구매할 수 있습니다.\n");
-        Console.WriteLine("[보유 골드]");
-        Console.WriteLine($"{_gameState.Player.Gold}G\n");
+        Utility.ColorWriteLine($"[보유 골드]\n{_gameState.Player.Gold}G\n",ConsoleColor.Yellow);
         Console.WriteLine("[아이템 목록]");
         foreach (var item in _gameState._itemList)
         {
@@ -128,8 +126,7 @@ public class ShopScene : IScene
     {
         Utility.ColorWriteLine("상점 - 판매하기", ConsoleColor.Blue);
         Console.WriteLine("아이템을 판매할 수 있습니다.\n");
-        Console.WriteLine("[보유 골드]");
-        Console.WriteLine($"{_gameState.Player.Gold}G\n");
+        Utility.ColorWriteLine($"[보유 골드]\n{_gameState.Player.Gold}G\n",ConsoleColor.Yellow);
         Console.WriteLine("[아이템 목록]");
         foreach (var item in _gameState.Player.Inventory)
         {

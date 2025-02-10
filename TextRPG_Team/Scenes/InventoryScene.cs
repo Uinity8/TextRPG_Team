@@ -84,7 +84,7 @@ public class InventoryScene : IScene
     // 기본 상태 화면 출력
     private void DefaultScreen()
     {
-        Utility.ColorWriteLine("인벤토리", ConsoleColor.Yellow);
+        Utility.ColorWriteLine("인벤토리", ConsoleColor.Blue);
         Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
 
         // 아이템 목록 표시
@@ -101,7 +101,7 @@ public class InventoryScene : IScene
     // 장착 관리 상태 화면 출력
     private void EquipScreen()
     {
-        Utility.ColorWriteLine("인벤토리 - 장착관리", ConsoleColor.Yellow);
+        Utility.ColorWriteLine("인벤토리 - 장착관리", ConsoleColor.Blue);
         Console.WriteLine("장착하실 아이템을 선택해 주세요.\n");
 
         // 아이템 목록 표시

@@ -10,15 +10,16 @@ static class Utility
     /// </summary>
     /// <param name="min">선택지 최소값</param>
     /// <param name="max">선택지 최대값</param>
+    /// /// <param name="prompt">기본="원하시는 행동을 입력해주세요."</param>
     /// <returns></returns>
-    public static int GetInput(int min, int max)
+    public static int GetInput(int min, int max, string prompt = "원하시는 행동을 입력해주세요.")
     {
         while (true)
         {
             // 현재 위치를 저장
             int cursorTop = Console.CursorTop;
 
-            Console.WriteLine("원하시는 행동을 입력해주세요.");
+            Console.WriteLine(prompt);
             ColorWrite(">> ", ConsoleColor.Yellow);
 
             if (int.TryParse(Console.ReadLine(), out int input) && (input >= min) && (input <= max))

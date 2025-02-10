@@ -1,3 +1,5 @@
+
+
 namespace TextRPG_Team.Scenes;
 
 public class MainScene : IScene
@@ -14,7 +16,6 @@ public class MainScene : IScene
     {
         Console.Clear(); // 화면 초기화
         ShowScreen(); // 메뉴 출력
-        GetNextScene()?.Run(); // 선택한 씬 실행
     }
     
     // 메뉴 화면 출력

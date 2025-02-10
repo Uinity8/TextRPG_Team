@@ -1,9 +1,11 @@
 ﻿namespace TextRPG_Team;
-
+//수정 금지
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+       Game game = new Game();
+       game.Run();
+       game.TestRun();
     }
 }

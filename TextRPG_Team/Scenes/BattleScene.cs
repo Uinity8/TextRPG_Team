@@ -57,8 +57,7 @@ public class BattleScene : IScene
 
     private IScene? GetInputForPlayerPhase()
     {
-        int max = _gameState.Spawner.GetRandomEnemies().Count;
-        int input = Utility.GetInput(0, max, "공격할 대상을 선택하세요.");
+        int input = Utility.GetInput(0, 3, "공격할 대상을 선택하세요.");
         switch (input)
         {
             case 0:
@@ -67,7 +66,7 @@ public class BattleScene : IScene
                 var enemy = _gameState.Spawner.GetEnemies()[input-1];
                 if (enemy.IsDead())
                 {
-                    Utility.AddLog("이미 뒤졌는데요", ConsoleColor.Red);
+                    Utility.AddLog("이미 뒤졌는데요\n", ConsoleColor.Red);
                     return this;
                 }
                 
@@ -162,11 +161,7 @@ public class BattleScene : IScene
 
     private void PlayerResultScreen()
     {
-        Console.Clear();
-        Utility.ColorWriteLine("Battle!! - 플레이어 공격\n", ConsoleColor.Yellow);
-
-        Console.WriteLine($"{_gameState.Player.Name}의 공격!\n");
-        Utility.PrintLogs();
+        Console.WriteLine($" {_gameState.Player.Name}의 공격!\n");
 
         // 공격 결과 로그 출력
         Utility.PrintLogs();
@@ -186,7 +181,10 @@ public class BattleScene : IScene
             if(enemy.IsDead()) continue;
             
             Console.Clear();
-            Utility.ColorWriteLine("Battle!! - 적 Phase\n", Yellow);
+            Console.WriteLine(new string('=',Utility.Width));
+            Utility.AlignCenter("⚔️     BATTLE!!   ⚔️\n", Red);
+            Console.WriteLine(new string('=',Utility.Width));
+            Console.WriteLine($" {enemy.Name}의 공격!\n");
 
             enemy.PerformAttack(_gameState.Player);
             Utility.PrintLogs();

@@ -58,7 +58,7 @@ public class Player : ICharacter
     public void PerformAttack(ICharacter target)
     {
         // 공격 동작 실행
-        var log = $"{Name}(이)가 Lv.{target.GetStats.Lv}.{target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
+        var log = $"{Name}(이)가 Lv.{target.GetStats.Lv} {target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
 
         target.TakeDamage(Power); // 대상의 TakeDamage 호출
@@ -72,7 +72,7 @@ public class Player : ICharacter
         float preHp = Health;
         Health = Math.Max(0, Health - damage);
         string hpStr = Health > 0 ? Health.ToString() : "Dead";
-        var log = $"Lv.{GetStats.Lv} {Name}\nHP {preHp} -> {hpStr}\n";
+        var log = $"Lv.{GetStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
     }
 

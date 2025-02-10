@@ -32,7 +32,7 @@ namespace TextRPG_Team.Objects
         public void PerformAttack(ICharacter target)
         {
             // 공격 동작 실행
-            var log = $"Lv.{GetStats.Lv} {Name}(이)가 {target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
+            var log = $"{Icon[Id]} Lv.{GetStats.Lv} {Name}(이)가 {target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Red); // 로그 출력
 
             target.TakeDamage(Power); // 대상의 TakeDamage 호출
@@ -44,7 +44,7 @@ namespace TextRPG_Team.Objects
             float preHp = Health;
             Health = Math.Max(0, Health - damage);
             string hpStr = Health > 0 ? Health.ToString() : "Dead";
-            var log = $"Lv.{GetStats.Lv} {Name}\nHP {preHp} -> {hpStr}\n";
+            var log = $"{Icon[Id]} Lv.{GetStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
             Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
         }
 
@@ -54,7 +54,7 @@ namespace TextRPG_Team.Objects
         // 몬스터 정보 출력
         public void PrintInfo()
         {
-            Utility.AlignLeft(Icon[Id-1], 4);
+            Utility.AlignLeft(Icon[Id], 4);
             Utility.AlignLeft($" Lv.{GetStats.Lv}", 6);
             Utility.AlignLeft(Name, 15);
             string hpStr = Health > 0 ? Health.ToString() : "Dead";

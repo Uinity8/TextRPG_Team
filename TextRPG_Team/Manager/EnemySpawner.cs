@@ -18,9 +18,9 @@ namespace TextRPG_Team.Manager
         // 기본 적 목록 초기화 메서드 (리팩토링)
         private void InitializeEnemies()
         {
-            enemies.Add(new Enemy("미니언", new Stats(15, 5, 0), 2, 1)); // Lv 2
-            enemies.Add(new Enemy("공허충", new Stats(10, 9, 0), 3, 2)); // Lv 3
-            enemies.Add(new Enemy("대포미니언", new Stats(25, 8, 0), 5, 3)); // Lv 5
+            enemies.Add(new Enemy("미니언", new Stats(15, 5, 0), 2, 0)); // Lv 2
+            enemies.Add(new Enemy("공허충", new Stats(10, 9, 0), 3, 1)); // Lv 3
+            enemies.Add(new Enemy("대포미니언", new Stats(25, 8, 0), 5, 2)); // Lv 5
         }
 
         // 적 리스트 가져오기

@@ -95,14 +95,10 @@ public class ShopScene : IScene
         Utility.ColorWriteLine("상점", ConsoleColor.Blue);
         Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n");
         Console.WriteLine("[보유 골드]");
-        Console.WriteLine("1000G\n");
+        Console.WriteLine($"{_gameState._player.Gold}\n");
         Console.WriteLine("[아이템 목록]");
-        Console.WriteLine("-아이템 | 설명 | 효과 | 가격");
-        Console.WriteLine("-아이템 | 설명 | 효과 | 가격");
-        Console.WriteLine();
-        Console.WriteLine("1. 구매하기");
+        Console.WriteLine("\n1. 구매하기");
         Console.WriteLine("2. 판매하기");
-        Console.WriteLine();
         Console.WriteLine("0. 나가기\n");
     }
 
@@ -111,10 +107,8 @@ public class ShopScene : IScene
         Utility.ColorWriteLine("상점 - 구매하기", ConsoleColor.Blue);
         Console.WriteLine("아이템을 구매할 수 있습니다.\n");
         Console.WriteLine("[보유 골드]");
-        Console.WriteLine("1000G\n");
+        Console.WriteLine($"{_gameState._player.Gold}\n");
         Console.WriteLine("[아이템 목록]");
-        Console.WriteLine("1. 아이템 | 설명 | 효과 | 가격");
-        Console.WriteLine("2. 아이템 | 설명 | 효과 | 보유중");
         Console.WriteLine();
         Console.WriteLine("0. 나가기\n");
     }
@@ -124,10 +118,8 @@ public class ShopScene : IScene
         Utility.ColorWriteLine("상점 - 판매하기", ConsoleColor.Blue);
         Console.WriteLine("아이템을 판매할 수 있습니다.\n");
         Console.WriteLine("[보유 골드]");
-        Console.WriteLine("1000G\n");
+        Console.WriteLine($"{_gameState._player.Gold}\n");
         Console.WriteLine("[아이템 목록]");
-        Console.WriteLine("1. 아이템 | 설명 | 효과 | 판매가격");
-        Console.WriteLine("2. 아이템 | 설명 | 효과 | 판매가격");
         Console.WriteLine();
         Console.WriteLine("0. 나가기\n");
     }

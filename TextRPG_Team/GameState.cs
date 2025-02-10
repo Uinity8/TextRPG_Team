@@ -9,7 +9,7 @@ public class GameState
     //씬전환간에 필요한 인스터스들
 
     //Objects
-    Player _player = new Player { "player", Stats { 1, 2, 3 }, 1500 };
+    public readonly Player _player = new Player("Payer", new Stats(100, 10, 5), 1000);
     public readonly List<Item> inventoryitemList = new List<Item>();
     public readonly List<Item> itemList = new List<Item>()
     {

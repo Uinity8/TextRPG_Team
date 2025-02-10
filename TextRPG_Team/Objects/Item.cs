@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TextRPG_Team
+namespace TextRPG_Team.Objects
 {
     public enum ItemType
     {
@@ -12,11 +12,13 @@ namespace TextRPG_Team
         Armor // 방어구
     }
 
+    
+
     public class Item
     {
+        Stats Value; // 능력치 값
         public string Name { get; } // 이름
         public ItemType Type { get; } // 아이템 종류 (무기 or 방어구)
-        public int Value { get; } // 능력치 값
         public string Info { get; } // 아이템 정보
         public int Price { get; } // 가격
         public bool itemPurchase { get; set; } // 아이템 구매 여부
@@ -24,7 +26,7 @@ namespace TextRPG_Team
         
         public int Id {get; set;}   //아이템 ID
 
-        public Item(string name, ItemType type, int value, string info, int price, int id)
+        public Item(string name, ItemType type, Stats value, string info, int price, int id)
         {
             Name = name;
             Type = type;

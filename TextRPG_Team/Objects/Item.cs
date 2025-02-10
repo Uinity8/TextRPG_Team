@@ -34,7 +34,7 @@ namespace TextRPG_Team
             itemPurchase = false;
             itemEquip = false;
         }
-        public string GetIteDisplay() // 장착여부 표시
+        public string GetItemDisplay() // 장착여부 표시
         {
             string str = itemEquip ? "[E]" : ""; // 장착중이면 : "[E]" / 아니면 : "" 출력
             str += $"{Name} | {GetTypeValue()} | {Info}";

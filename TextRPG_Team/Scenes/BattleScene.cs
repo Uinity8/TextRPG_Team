@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace TextRPG_Mockup.Scenes;
+namespace TextRPG_Team.Scenes;
 
 public class BattleScene : IScene
 {

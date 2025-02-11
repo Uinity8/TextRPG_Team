@@ -11,6 +11,8 @@ public class InventoryScene : IScene
 
     private State _state; // 현재 상태
     private readonly GameState _gameState; // 게임 상태 공유
+    
+   
 
     // 생성자 (DI 의존성 주입)
     public InventoryScene(GameState gameState, State state = State.Default)
@@ -53,11 +55,15 @@ public class InventoryScene : IScene
     // 장착 관리 상태에서 입력 처리
     private IScene? GetInputForEquip()
     {
-        int input = Utility.GetInput(0, 3);
-        return input switch
+        int max = _gameState.Player.Inventory.Count;
+        int input = Utility.GetInput(0, max);
+        switch (input)
         {
-            0 => new InventoryScene(_gameState), // 기본 상태로 복귀
-            _ => this
+            case 0:
+                return new InventoryScene(_gameState); // 기본 상태로 복귀
+            default:
+                _gameState.Player.EquipItem(input-1);
+                return this;
         };
     }
 
@@ -78,13 +84,16 @@ public class InventoryScene : IScene
     // 기본 상태 화면 출력
     private void DefaultScreen()
     {
-        Utility.ColorWriteLine("인벤토리", ConsoleColor.Yellow);
+        Utility.ColorWriteLine("인벤토리", ConsoleColor.Blue);
         Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
 
         // 아이템 목록 표시
-        Console.WriteLine("- [E]스파르타의 창 | 공격력 +7 | 스파르타의 전사들이 사용했다는 전설의 창입니다.");
-        Console.WriteLine("- [E]스파르타의 창 | 공격력 +7 | 스파르타의 전사들이 사용했다는 전설의 창입니다.");
-        Console.WriteLine("- 낡은 검          | 공격력 +2 | 쉽게 볼 수 있는 낡은 검 입니다.");
+        foreach (var item in _gameState.Player.Inventory)
+        {
+            Console.WriteLine("- "+ item.GetItemDisplay());
+        }
+
+        ;
         Console.WriteLine();
         Console.WriteLine("1. 장착관리");
     }
@@ -92,13 +101,17 @@ public class InventoryScene : IScene
     // 장착 관리 상태 화면 출력
     private void EquipScreen()
     {
-        Utility.ColorWriteLine("인벤토리 - 장착관리", ConsoleColor.Yellow);
+        Utility.ColorWriteLine("인벤토리 - 장착관리", ConsoleColor.Blue);
         Console.WriteLine("장착하실 아이템을 선택해 주세요.\n");
 
-        // 장착 가능한 아이템 목록 표시
-        Console.WriteLine("- 1 [E]스파르타의 창 | 공격력 +7 | 스파르타의 전사들이 사용했다는 전설의 창입니다.");
-        Console.WriteLine("- 2 [E]스파르타의 창 | 공격력 +7 | 스파르타의 전사들이 사용했다는 전설의 창입니다.");
-        Console.WriteLine("- 3 낡은 검          | 공격력 +2 | 쉽게 볼 수 있는 낡은 검 입니다.");
+        // 아이템 목록 표시
+        int i = 1;
+        foreach (var item in _gameState.Player.Inventory)
+        {
+            Console.WriteLine($"- {i}. {item.GetItemDisplay()}");
+            i++;
+        }
+
         Console.WriteLine();
     }
 }

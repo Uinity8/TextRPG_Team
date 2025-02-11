@@ -17,7 +17,6 @@ public class BattleScene : IScene
     private State _state; // 현재 상태
     private readonly GameState _gameState; // 게임 상태 공유
 
-
     public BattleScene(GameState gameState, State state = State.Default)
     {
         _gameState = gameState;
@@ -45,14 +44,15 @@ public class BattleScene : IScene
 
     private IScene? GetInputForDefault()
     {
-        int input = Utility.GetInput(1, 2); // 사용자 입력 받음
+        int input = Utility.GetInput(0, 1); // 사용자 입력 받음
         return input switch
         {
             1 => new BattleScene(_gameState, State.PlayerPhase), // 플레이어 턴으로 이동
-            2 => RunAway(),
+            0 => RunAway(),
             _ => null
         };
     }
+
     private IScene RunAway()
     {
         var enemies = _gameState.Spawner.GetSpawnedEnemies();
@@ -83,33 +83,34 @@ public class BattleScene : IScene
             }
         }
 
-    // 플레이어가 살아있으면 메인 씬으로 이동
-    return _gameState.Player.IsDead() 
-        ? new ResultScene(_gameState, ResultScene.State.Lose) 
-        : new MainScene(_gameState);
-}
+        // 플레이어가 살아있으면 메인 씬으로 이동
+        return _gameState.Player.IsDead()
+            ? new ResultScene(_gameState, ResultScene.State.Lose)
+            : new MainScene(_gameState);
+    }
 
     private IScene? GetInputForPlayerPhase()
-{
-    int max = _gameState.Spawner.GetSpawnedEnemies().Count;
-    int input = Utility.GetInput(0, max, " 공격할 대상을 선택하세요.");
-    switch (input)
     {
-        case 0:
-            return new BattleScene(_gameState); // 취소 시 기본 상태로 복귀
-        default:
-            var enemy = _gameState.Spawner.GetSpawnedEnemies()[input - 1];
-            if (enemy.IsDead())
-            {
-                Utility.AddLog("이미 뒤졌는데요\n", ConsoleColor.Red);
-                return this;
-            }
-            _gameState.Player.PerformAttack(enemy);
+        int max = _gameState.Spawner.GetSpawnedEnemies().Count;
+        int input = Utility.GetInput(0, max, " 공격할 대상을 선택하세요.");
+        switch (input)
+        {
+            case 0:
+                return new BattleScene(_gameState); // 취소 시 기본 상태로 복귀
+            default:
+                var enemy = _gameState.Spawner.GetSpawnedEnemies()[input - 1];
+                if (enemy.IsDead())
+                {
+                    Utility.AddLog("이미 죽었습니다.\n", ConsoleColor.Red);
+                    return this;
+                }
 
-            //상태를 PlayerResult로 변경하여 공격 반복 방지
-            return new BattleScene(_gameState, State.PlayerResult);
+                _gameState.Player.PerformAttack(enemy);
+
+                //상태를 PlayerResult로 변경하여 공격 반복 방지
+                return new BattleScene(_gameState, State.PlayerResult);
+        }
     }
-}
 
     private IScene? GetInputForPlayerResult()
     {
@@ -171,13 +172,14 @@ public class BattleScene : IScene
             else
                 enemy.PrintInfo();
         }
+
         Console.WriteLine();
 
         // 플레이어 정보 표시
         ShowPlayerInfo();
 
         Console.WriteLine(" 1. ⚔️   공격");
-        Console.WriteLine(" 2. ⚔️   빤쓰런");
+        Console.WriteLine(" 0. 🏃‍♂️  빤쓰런");
     }
 
     private void PlayerPhaseScreen()
@@ -243,7 +245,7 @@ public class BattleScene : IScene
             // 플레이어 정보 표시
             ShowPlayerInfo();
             Console.WriteLine();
-            
+
             Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
             while (true)
             {
@@ -261,16 +263,12 @@ public class BattleScene : IScene
         Utility.AlignLeft(" ", 4);
         Utility.AlignLeft($"Lv.{player.GetStats.Lv}", 7);
         Console.WriteLine($"{player.Name}");
-        Utility.AlignLeft(" ❤️  HP : ", 12);
-        Utility.AlignLeft($"{player.Health}", 3);
+        Utility.AlignLeft(" ❤️  HP : ", 10);
+        Utility.AlignLeft($"{player.Health}", 2);
         Console.WriteLine($" / {player.GetStats.MaxHp}");
-        Utility.AlignLeft("   Exp : ", 12);
-        Utility.AlignLeft($"{player.Exp}", 3);
-        Console.WriteLine($" / {player.GetStats.MaxExp}");
-        Utility.AlignLeft("   ATK : ", 12);
-        Utility.AlignLeft($"{player.GetStats.Atk}\n", 3);
-        Utility.AlignLeft("   DEF : ", 12);
-        Utility.AlignLeft($"{player.GetStats.Def}\n", 3);
+        Utility.AlignLeft(" 🆙  Exp : ", 10);
+        Utility.AlignLeft($"{player.Exp}", 2);
+        Console.WriteLine($"/ {player.GetStats.MaxExp}");
         Console.WriteLine(new string('-', Utility.Width));
         Utility.PrintLogs();
     }

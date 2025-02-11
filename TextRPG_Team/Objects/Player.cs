@@ -55,8 +55,13 @@ public class Player : ICharacter
         get => _exp;
         private set
         {
+            if (value >= GetStats.MaxExp)
+            {
+                value -= GetStats.MaxExp;
+                LevelUp();
+            }
+
             _exp = value;
-            CheckLevelUp();
         }
     }
     
@@ -99,7 +104,7 @@ public class Player : ICharacter
      
         if (isCritical)
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.- 치명타 공격!!\n"; // 공격 로그 생성
+            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다 -치명타 공격!!\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
         }
         else
@@ -112,8 +117,7 @@ public class Player : ICharacter
 
         if(target.IsDead() && target is Enemy enemy)
         {
-            int getExp = enemy.GetStats.Lv * 10;
-            GainExp(getExp);
+            Exp += enemy.GetStats.Lv;
         }
     }
     public bool IsDodge()  //회피 
@@ -135,31 +139,19 @@ public class Player : ICharacter
 
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
     }
-    /// <summary>적 처치 시 경험치 획득</summary>
-    public void GainExp(int amount)
-    {
-        Utility.AddLog($"🆙 {Name}이(가) {amount} 경험치를 획득했습니다!\n", ConsoleColor.Yellow);
-        Exp += amount; // Exp 프로퍼티가 자동으로 레벨업 체크
-    }
-    /// <summary>레벨업 체크 및 처리</summary>
-    private void CheckLevelUp()
-    {
-        while (_exp >= _stats.MaxExp) // 경험치가 MaxExp 이상이면 레벨업, 나머지 경험치 유지
-        {
-            _exp -= _stats.MaxExp; // 남은 경험치 계산
-            _stats.Lv++; // 레벨 증가
-            _stats.MaxExp = (int)(_stats.MaxExp * 2.0); // MaxExp 2배 증가
-            _stats.MaxHp += 10; // 최대 체력 증가
-            _stats.Atk += 2; // 공격력 증가
-            _stats.Def += 1; // 방어력 증가
-            Health = _stats.MaxHp; // 체력 회복
 
-            Utility.AddLog($"🎉 {Name}이(가) 레벨업! (Lv.{_stats.Lv})\n", ConsoleColor.Green);
-            Utility.AddLog($" {Name}의 체력이 회복되며 모든 스텟이 상승합니다.\n", ConsoleColor.DarkCyan);
-        }
+    /// 레벨업 체크 및 처리
+    private void LevelUp()
+    {
+        _stats.Lv++; // 레벨 증가
+        _stats.MaxExp = (5 * (_stats.Lv * _stats.Lv - _stats.Lv)) / 2 + 10;
+        _stats.MaxHp += 5; // 최대 체력 증가
+        _stats.Atk += 0.5f; // 공격력 증가
+        _stats.Def += 1; // 방어력 증가
+        Health = _stats.MaxHp; // 체력 회복
     }
 
-    /// <summary>플레이어가 사망했는지 여부를 반환</summary>
+    // 플레이어가 사망했는지 여부를 반환
     public bool IsDead() => Health <= 0f;
     
     public void UseHealingPotion()

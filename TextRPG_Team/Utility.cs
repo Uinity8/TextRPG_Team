@@ -3,7 +3,7 @@ namespace TextRPG_Team;
 //수정원할시 사전 공지
 static class Utility
 {
-    public static int Width = 68;//Console.WindowWidth;
+    public static int Width = Console.WindowWidth;
     private static Queue<(string, ConsoleColor)> Logs { get; } = new(); //Log Info를 저장할 Queue입니다.
 
     /// <summary>

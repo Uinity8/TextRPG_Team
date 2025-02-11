@@ -176,6 +176,7 @@ public class BattleScene : IScene
         for (int i = 0; i < 4; i++)
             Console.WriteLine(new string(' ', Utility.Width));
 
+        // 플레이어 정보 표시
         ShowPlayerInfo();
     }
 
@@ -193,7 +194,7 @@ public class BattleScene : IScene
             Console.WriteLine(new string('=', Utility.Width));
             Utility.AlignCenter("⚔️     BATTLE!!   ⚔️\n", Red);
             Console.WriteLine(new string('=', Utility.Width));
-            Console.WriteLine($" {enemy.Name}의 반격!\n");
+            Console.WriteLine($" LV.{enemy.GetStats.Lv} {enemy.Name}의 반격!\n");
 
             for (int i = 0; i < 2; i++)
                 Console.WriteLine(new string(' ', Utility.Width));

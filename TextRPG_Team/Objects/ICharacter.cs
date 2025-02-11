@@ -40,5 +40,6 @@ public interface ICharacter
     
     void PerformAttack(ICharacter target); //공격
     void TakeDamage(float damage);  //피해
+    bool IsDodge();
     bool IsDead();  //사망
 }

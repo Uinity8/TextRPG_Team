@@ -14,6 +14,8 @@ public class ShopScene : IScene
 
     State _state;
     private readonly GameState _gameState;
+    
+    private string _strTitle = "";
 
     private string _strTitle ="";
 

@@ -49,10 +49,45 @@ public class BattleScene : IScene
         return input switch
         {
             1 => new BattleScene(_gameState, State.PlayerPhase), // 플레이어 턴으로 이동
-            2 => new MainScene(_gameState),
+            2 => RunAway(),
             _ => null
         };
     }
+    private IScene RunAway()
+    {
+        var enemies = _gameState.Spawner.GetSpawnedEnemies();
+
+        // 남아있는 몬스터들이 공격
+        foreach (var enemy in enemies)
+        {
+            if (_gameState.Player.IsDead()) break; // 플레이어 사망 시 중단
+            if (enemy.IsDead()) continue; // 죽은 몬스터는 공격 안 함
+
+            Console.Clear();
+            Console.WriteLine(new string('=', Utility.Width));
+            Utility.AlignCenter("⚔️     도저히 못 이길 것 같다! 빤쓰런!   ⚔️\n", Red);
+            Console.WriteLine(new string('=', Utility.Width));
+            Console.WriteLine("");
+            Utility.AlignCenter($" LV.{enemy.GetStats.Lv} {enemy.Name} 의 기습공격!\n");
+
+            enemy.PerformAttack(_gameState.Player);
+            Utility.PrintLogs();
+            ShowPlayerInfo();
+
+            Console.WriteLine();
+            Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
+            while (true)
+            {
+                ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+                if (key.Key == ConsoleKey.Enter) break;
+            }
+        }
+
+    // 플레이어가 살아있으면 메인 씬으로 이동
+    return _gameState.Player.IsDead() 
+        ? new ResultScene(_gameState, ResultScene.State.Lose) 
+        : new MainScene(_gameState);
+}
 
     private IScene? GetInputForPlayerPhase()
     {
@@ -169,7 +204,8 @@ public class BattleScene : IScene
 
     private void PlayerResultScreen()
     {
-        Console.WriteLine($" {_gameState.Player.Name}의 공격!\n");
+        Console.WriteLine("");
+        Utility.AlignCenter($" {_gameState.Player.Name}의 공격!\n");
         for (int i = 0; i < 2; i++)
             Console.WriteLine(new string(' ', Utility.Width));
         // 공격 결과 로그 출력
@@ -195,7 +231,8 @@ public class BattleScene : IScene
             Console.WriteLine(new string('=', Utility.Width));
             Utility.AlignCenter("⚔️     BATTLE!!   ⚔️\n", Red);
             Console.WriteLine(new string('=', Utility.Width));
-            Console.WriteLine($" LV.{enemy.GetStats.Lv} {enemy.Name}의 반격!\n");
+            Console.WriteLine("");
+            Utility.AlignCenter($" LV.{enemy.GetStats.Lv} {enemy.Name}의 반격!\n");
 
             for (int i = 0; i < 2; i++)
                 Console.WriteLine(new string(' ', Utility.Width));

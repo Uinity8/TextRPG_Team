@@ -23,8 +23,11 @@ public class Player : ICharacter
 
     /// <summary>소유 아이템 목록</summary>
     public List<Item> Inventory { get; }
-    
-    
+
+    /// <summary>힐링 포션 (HP 회복)/// </summary>
+    public HealingPotion Potion { get; private set; }
+
+
     // ====== 스탯 ======
     private Stats _stats; // 기본 스탯
     private Stats AddStats { get; set; } // 추가 스탯
@@ -48,6 +51,7 @@ public class Player : ICharacter
         Health = _stats.MaxHp;
         Inventory = new List<Item>();
         Job = job;
+        Potion = new HealingPotion(this);
     }
 
     // ====== 메서드 ======
@@ -76,7 +80,12 @@ public class Player : ICharacter
 
     /// <summary>플레이어가 사망했는지 여부를 반환</summary>
     public bool IsDead() => Health <= 0f;
-    
+
+    /// <summary>체력을 회복하는 메서드</summary>
+    public void Heal(float amount)
+    {
+        Health = Math.Min(Health + amount, GetStats.MaxHp);
+    }
 
     /// <summary>아이템 구매 처리 메서드</summary>
     /// <param name="item">구매할 아이템</param>

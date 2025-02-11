@@ -52,10 +52,11 @@ public class InventoryScene : IScene
     // 기본 상태에서 입력 처리
     private IScene? GetInputForDefault()
     {
-        int input = Utility.GetInput(0, 1); // 사용자 입력 받음
+        int input = Utility.GetInput(0, 2); // 사용자 입력 받음
         return input switch
         {
             1 => new InventoryScene(_gameState, State.Equip), // 장착 관리 상태로 이동
+            2 => new HealingPotionScene(_gameState),//포션창으로 이동
             0 => new MainScene(_gameState), // 메인 화면으로 복귀
             _ => null
         };
@@ -102,6 +103,7 @@ public class InventoryScene : IScene
                 case State.Default:
                     DefaultScreen(); // 기본 화면 출력
                     break;
+                
                 case State.Equip:
                     EquipScreen(); // 장착 관리 화면 출력
                     break;
@@ -113,6 +115,7 @@ public class InventoryScene : IScene
                 DefaultScreen(); // 기본 화면 출력
                 Console.WriteLine(new string('-', Utility.Width));
                 Console.WriteLine(" 1. 장착관리");
+                Console.WriteLine(" 2. 회복하기");
                 Console.WriteLine(" 0. 나가기");
                 Console.WriteLine(new string('-', Utility.Width));
                 break;

@@ -3,9 +3,11 @@
 namespace TextRPG_Team.Scenes;
 using static Utility.Alignment;
 using static ConsoleColor;
+using TextRPG_Team.Objects;
 
 public class MainScene : IScene
 {
+    private Stats _stats;
     private readonly GameState _gameState;
 
     public MainScene(GameState gameState) // DI 의존성 주입
@@ -55,6 +57,7 @@ public class MainScene : IScene
                 return new ShopScene(_gameState); // 상점
             case 4:
                 _gameState.PlayerHpBeforeDungeon = _gameState.Player.Health;
+                _gameState.PlayerLevelBeforeDungeon = _gameState.Player.Level;
                 _gameState.Spawner.AddRandomEnemies();
                 return new BattleScene(_gameState); // 배틀 시작
             case 0:

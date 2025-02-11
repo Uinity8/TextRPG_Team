@@ -43,6 +43,25 @@ public class Player : ICharacter
     /// <summary>소유 아이템 목록</summary>
     public List<Item> Inventory { get; }
 
+    
+    /// <summary>경험치</summary>
+    private int _exp; //현재 경험치
+
+    /// <summary>힐링 포션 (HP 회복)/// </summary>
+    public HealingPotion Potion { get; private set; }
+    
+    /// <summary>레벨</summary>
+    public int Level = 1;
+    public int Exp
+    {
+        get => _exp;
+        private set
+        {
+            _exp = value;
+            CheckLevelUp();
+        }
+    }
+    
 
     // ====== 스탯 ======
     public Stats _stats; // 기본 스탯
@@ -59,7 +78,8 @@ public class Player : ICharacter
     /// <param name="stats">초기 스탯</param>
     /// <param name="gold">초기 골드</param>
     /// <param name="job">플레이어 직업</param>
-    public Player(string name, Stats stats, int gold, string job)
+    /// <param name="level">플레이어 레벨</param>
+    public Player(string name, Stats stats, int gold, string job, int level)
     {
         Name = name;
         _stats = stats;
@@ -67,6 +87,9 @@ public class Player : ICharacter
         Health = _stats.MaxHp;
         Inventory = new List<Item>();
         Job = job;
+        _exp = 0;
+        Level = level;
+        Potion = new HealingPotion(this);
     }
 
     // ====== 메서드 ======
@@ -97,6 +120,13 @@ public class Player : ICharacter
         }
 
         target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
+
+        if(target.IsDead() && target is Enemy enemy)
+        {
+            int getExp = enemy.GetStats.Lv * 10;
+            GainExp(getExp);
+        }
+        
     }
 
 
@@ -117,10 +147,39 @@ public class Player : ICharacter
         
         return isDodge;
     }
+    /// <summary>적 처치 시 경험치 획득</summary>
+    public void GainExp(int amount)
+    {
+        Utility.AddLog($"🆙 {Name}이(가) {amount} 경험치를 획득했습니다!\n", ConsoleColor.Yellow);
+        Exp += amount; // Exp 프로퍼티가 자동으로 레벨업 체크
+    }
+    /// <summary>레벨업 체크 및 처리</summary>
+    private void CheckLevelUp()
+    {
+        while (_exp >= _stats.MaxExp) // 경험치가 MaxExp 이상이면 레벨업, 나머지 경험치 유지
+        {
+            _exp -= _stats.MaxExp; // 남은 경험치 계산
+            _stats.Lv++; // 레벨 증가
+            _stats.MaxExp = (int)(_stats.MaxExp * 2.0); // MaxExp 30% 증가
+            _stats.MaxHp += 10; // 최대 체력 증가
+            _stats.Atk += 2; // 공격력 증가
+            _stats.Def += 1; // 방어력 증가
+            Health = _stats.MaxHp; // 체력 회복
+
+            Utility.AddLog($"🎉 {Name}이(가) 레벨업! (Lv.{_stats.Lv})\n", ConsoleColor.Green);
+            Utility.AddLog($" {Name}의 체력이 회복되며 모든 스텟이 상승합니다.\n", ConsoleColor.Green);
+        }
+    }
 
     /// <summary>플레이어가 사망했는지 여부를 반환</summary>
     public bool IsDead() => Health <= 0f;
-
+    
+    
+    /// <summary>체력을 회복하는 메서드</summary>
+    public void Heal(float amount)
+    {
+        Health = Math.Min(Health + amount, GetStats.MaxHp);
+    }
 
     /// <summary>아이템 구매 처리 메서드</summary>
     /// <param name="item">구매할 아이템</param>
@@ -231,7 +290,15 @@ public class Player : ICharacter
             Utility.ColorWrite($"{Health} / {GetStats.MaxHp}", ConsoleColor.DarkRed);
         if (AddStats.MaxHp > 0) Utility.ColorWrite($"(+{AddStats.MaxHp})", ConsoleColor.DarkBlue);
 
-        Utility.AlignLeft("\n 공격력", width);
+        Utility.AlignLeft($"\n Exp",width);
+        Console.Write($": ");
+        if (Exp == GetStats.MaxExp)
+            Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.DarkYellow);
+        else
+            Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.Yellow);
+        if (AddStats.MaxExp > 0) Utility.ColorWrite($"(+{AddStats.MaxExp})", ConsoleColor.DarkCyan);
+
+         Utility.AlignLeft("\n 공격력", width);
         Console.Write($": {GetStats.Atk}");
         if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", ConsoleColor.DarkBlue);
 

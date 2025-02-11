@@ -1,11 +1,13 @@
 namespace TextRPG_Team.Scenes;
 
+using TextRPG_Team.Objects;
 using static ConsoleColor;
 
 public class ResultScene : IScene
 {
     private readonly GameState _gameState;
     
+    private Stats _stats;
     public enum State
     {
         Victory, // 승리
@@ -74,6 +76,8 @@ public class ResultScene : IScene
         Console.WriteLine($"{player.Name}");
         Utility.AlignLeft(" ❤️  HP : ", 11);
         Utility.AlignLeft($" {_gameState.PlayerHpBeforeDungeon} -> {player.Health}\n", 4);
+        Utility.AlignLeft(" Level : ", 11);
+        Utility.AlignLeft($" {_gameState.PlayerLevelBeforeDungeon} -> {player.GetStats.Lv}\n", 4);
         Console.WriteLine(new string('-', Utility.Width));
         Utility.PrintLogs();
     }

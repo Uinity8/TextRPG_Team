@@ -18,8 +18,10 @@ public class GameState
         new Item("무언가 들어 있는 텀블러", ItemType.Double, new Stats(0, 15, -10), "누군가의 각성제로 쓰이는거 같다. 이 냄새는 알코올 ? ", 800, 4),
         new Item("회사 다이어리", ItemType.Weapon, new Stats(0, 10, 0), "00회사 창립 00주년 이라 적혀있다. 펼쳐보니 이곳 저곳 욕이 적혀있다. ", 1500, 5),
     };
-    public readonly Player Player = new Player("Chad", new Stats(100, 10, 5), 1500, "Job");
+    public readonly Player Player = new Player("Chad", new Stats(100, 10, 5, 1), 1500, "Job", 1);
     public readonly EnemySpawner Spawner = new EnemySpawner();
     
     public float PlayerHpBeforeDungeon;
+
+    public float PlayerLevelBeforeDungeon;
 }

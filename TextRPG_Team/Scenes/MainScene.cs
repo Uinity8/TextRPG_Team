@@ -57,7 +57,7 @@ public class MainScene : IScene
                 return new ShopScene(_gameState); // 상점
             case 4:
                 _gameState.PlayerHpBeforeDungeon = _gameState.Player.Health;
-                _gameState.PlayerLevelBeforeDungeon = _gameState.Player.Level;
+                _gameState.PlayerLevelBeforeDungeon = _gameState.Player.GetStats.Lv;
                 _gameState.Spawner.AddRandomEnemies();
                 return new BattleScene(_gameState); // 배틀 시작
             case 0:

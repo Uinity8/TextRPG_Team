@@ -97,13 +97,6 @@ public class Player : ICharacter
     /// <param name="target">대상 캐릭터</param>
     public void PerformAttack(ICharacter target)
     {
-        if (target.IsDodge())
-        {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}을 공격했지만 아무일도 일어나지 않았습니다.\n"; // 공격 로그 생성
-            Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
-            return;
-        }
-        
         // 공격 동작 실행
         var isCritical = new Random().NextDouble() < 0.15; // 랜덤 확률 적용(15%)
         var totalDamage = isCritical ? (float)Math.Floor(Power * 1.6f) : Power;
@@ -118,7 +111,7 @@ public class Player : ICharacter
             string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
         }
-
+       
         target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
 
         if(target.IsDead() && target is Enemy enemy)
@@ -126,7 +119,6 @@ public class Player : ICharacter
             int getExp = enemy.GetStats.Lv * 10;
             GainExp(getExp);
         }
-        
     }
 
 
@@ -141,12 +133,6 @@ public class Player : ICharacter
 
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
     }
-    public bool IsDodge()  //회피 
-    {
-        var isDodge = new Random().NextDouble() < 0.1; // 랜덤 확률 적용(10%)
-        
-        return isDodge;
-    }
     /// <summary>적 처치 시 경험치 획득</summary>
     public void GainExp(int amount)
     {
@@ -160,7 +146,7 @@ public class Player : ICharacter
         {
             _exp -= _stats.MaxExp; // 남은 경험치 계산
             _stats.Lv++; // 레벨 증가
-            _stats.MaxExp = (int)(_stats.MaxExp * 2.0); // MaxExp 30% 증가
+            _stats.MaxExp = (int)(_stats.MaxExp * 2.0); // MaxExp 2배 증가
             _stats.MaxHp += 10; // 최대 체력 증가
             _stats.Atk += 2; // 공격력 증가
             _stats.Def += 1; // 방어력 증가
@@ -173,7 +159,6 @@ public class Player : ICharacter
 
     /// <summary>플레이어가 사망했는지 여부를 반환</summary>
     public bool IsDead() => Health <= 0f;
-    
     
     /// <summary>체력을 회복하는 메서드</summary>
     public void Heal(float amount)
@@ -268,8 +253,8 @@ public class Player : ICharacter
     {
         return $"Lv.{GetStats.Lv} : {Name} [{Job}]" + "\n" +
                $"HP : {Health} / {GetStats.MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
-               $"공격력 : {GetStats.Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
-               $"방어력 : {GetStats.Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
+               $"공격력 : {GetStats.Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : (AddStats.Atk != 0 ? $"(-{AddStats.Atk})" : "")) + "\n" +
+               $"방어력 : {GetStats.Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : (AddStats.Def != 0 ? $"(-{AddStats.Def})" : "")) + "\n" +
                $"Gold : {Gold} G";
     }
 
@@ -301,11 +286,11 @@ public class Player : ICharacter
          Utility.AlignLeft("\n 공격력", width);
         Console.Write($": {GetStats.Atk}");
         if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", ConsoleColor.DarkBlue);
-
+        else if(AddStats.Atk < 0) Utility.ColorWrite($"({AddStats.Atk})", ConsoleColor.DarkRed);
         Utility.AlignLeft("\n 방어력", width);
         Console.Write($": {GetStats.Def}");
         if (AddStats.Def > 0) Utility.ColorWrite($"(+{AddStats.Def})", ConsoleColor.DarkBlue);
-
+        else if (AddStats.Def < 0) Utility.ColorWrite($"({AddStats.Def})", ConsoleColor.DarkRed);
         Console.WriteLine("\n");
         Console.WriteLine(new string('-', Utility.Width));
         //Utility.AlignLeft(" Gold", width-1);

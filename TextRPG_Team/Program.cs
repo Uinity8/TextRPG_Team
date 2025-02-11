@@ -1,4 +1,5 @@
 ﻿namespace TextRPG_Team;
+
 using Scenes;
 class Program
 {

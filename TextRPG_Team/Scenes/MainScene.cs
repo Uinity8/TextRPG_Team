@@ -1,6 +1,8 @@
 
 
 namespace TextRPG_Team.Scenes;
+using static Utility.Alignment;
+using static ConsoleColor;
 
 public class MainScene : IScene
 {
@@ -21,14 +23,22 @@ public class MainScene : IScene
     // 메뉴 화면 출력
     private void ShowScreen()
     {
-        Utility.ColorWriteLine("스파르타 던전에 오신 여러분 환영합니다.", ConsoleColor.Yellow);
-        Console.WriteLine("이제 전투를 시작할 수 있습니다.\n");
-        Console.WriteLine("1. 상태 보기");
-        Console.WriteLine("2. 인벤토리");
-        Console.WriteLine("3. 상 점");
-        Console.WriteLine("4. 전투 시작");
-        
-        Console.WriteLine("\n0. 저장/종료\n");
+        int width = 5;
+        Console.WriteLine(new string('=',Utility.Width));
+        Utility.AlignCenter("⚔️  스파르타 던전에 오신 여러분 환영합니다.⚔️\n", Blue);
+        Utility.AlignCenter("이제 전투를 시작할 수 있습니다.\n");
+        Console.WriteLine(new string('=',Utility.Width));
+        Console.WriteLine();
+        Utility.AlignLeft(" 1.", width);
+        Console.WriteLine("상태 보기\n");
+        Utility.AlignLeft(" 2.", width);
+        Console.WriteLine("인벤토리\n");
+        Utility.AlignLeft(" 3.", width);
+        Console.WriteLine("상 점\n");
+        Utility.AlignLeft(" 4.", width);
+        Console.WriteLine("전투시작\n");
+        Console.WriteLine(new string('-',Utility.Width));
+        Console.WriteLine("\n 0. 💾 저장/종료\n");
     }
 
     // 다음 씬 결정

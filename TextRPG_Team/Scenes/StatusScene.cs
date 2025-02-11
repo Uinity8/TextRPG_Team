@@ -1,5 +1,7 @@
 namespace TextRPG_Team.Scenes;
 
+using static ConsoleColor;
+
 public class StatusScene : IScene
 {
     private readonly GameState _gameState;
@@ -14,15 +16,17 @@ public class StatusScene : IScene
         Console.Clear(); //처음 진입시 화면 지우기
         ShowScreen();
     }
-    
+
     // 현재 상태에 맞는 화면 표시
     private void ShowScreen()
     {
-        Utility.ColorWriteLine("상태보기", ConsoleColor.Yellow);
-        Console.WriteLine("플레이어의 정보를 확인할수 있습니다.\n");
-        Console.WriteLine(_gameState.Player.ToString());
+        Console.WriteLine(new string('=',Utility.Width));
+        Utility.AlignCenter("상태보기\n", DarkCyan);
+        Utility.AlignCenter("플레이어의 정보를 확인할 수 있습니다.\n");
+        Console.WriteLine(new string('=',Utility.Width));
+        _gameState.Player.PrintInfo();
         Console.WriteLine();
-        Console.WriteLine("0. 나가기\n");
+        Console.WriteLine(" 0. 나가기\n");
     }
 
     // 현재 상태에 따라 다음 씬 반환

@@ -167,7 +167,7 @@ public class Player : ICharacter
             Health = _stats.MaxHp; // 체력 회복
 
             Utility.AddLog($"🎉 {Name}이(가) 레벨업! (Lv.{_stats.Lv})\n", ConsoleColor.Green);
-            Utility.AddLog($" {Name}의 체력이 회복되며 모든 스텟이 상승합니다.\n", ConsoleColor.Green);
+            Utility.AddLog($" {Name}의 체력이 회복되며 모든 스텟이 상승합니다.\n", ConsoleColor.DarkCyan);
         }
     }
 

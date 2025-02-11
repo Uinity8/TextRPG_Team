@@ -9,9 +9,8 @@ public static class LoadManager
 {
     private static string itemFilePath =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "items.json");
     private static string playerFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "playerData.json");
-    public static List<Item> Items { get; private set; } = new List<Item>();
     
-    public static void LoadItems()
+    public static List<Item> LoadItems()
     {
         // Console.WriteLine($"현재 작업 디렉터리: {Directory.GetCurrentDirectory()}");
         //Console.WriteLine($"JSON 파일 예상 경로: {Path.GetFullPath(filePath)}");
@@ -19,12 +18,14 @@ public static class LoadManager
         {
             Console.WriteLine("아이템 데이터 파일이 없습니다.");
             Console.ReadLine();
-            return;
+            return  new ();;
         }
         
         string json = File.ReadAllText(itemFilePath);
-        Items = JsonConvert.DeserializeObject<List<Item>>(json) ?? new ();
-        //Console.WriteLine("아이템 데이터 로드 완료!");
+        List<Item> items= JsonConvert.DeserializeObject<List<Item>>(json) ?? new ();
+        Console.WriteLine("아이템 데이터 로드 완료!");
+        Thread.Sleep(1000);
+        return items;
     }
     public static void SaveItemsData(List<Item> items)
     {

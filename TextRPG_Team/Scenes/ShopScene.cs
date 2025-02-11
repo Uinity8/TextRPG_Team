@@ -72,7 +72,8 @@ public class ShopScene : IScene
                 return new ShopScene(_gameState);
             default:
                 Item item = _gameState._itemList[input - 1];
-                item.itemPurchase = _gameState.Player.TryBuy(item);
+                if (_gameState.Player.TryBuy(item))
+                    item.itemPurchase = true;
                 return this;
         }
     }
@@ -130,6 +131,7 @@ public class ShopScene : IScene
             item.PrintPriceForBuy(color);
             item.PrintInfo();
         }
+
         Utility.PrintLogs();
         Console.Write(" 1. 구매하기");
         Console.Write(" 2. 판매하기");
@@ -148,6 +150,7 @@ public class ShopScene : IScene
             item.PrintPriceForBuy(color);
             item.PrintInfo();
         }
+
         Utility.PrintLogs();
         Console.WriteLine(" 0. 취소");
     }
@@ -175,12 +178,13 @@ public class ShopScene : IScene
                 }
 
                 Utility.AlignLeft(invetory[i].Icon, 7);
-                Utility.ColorWrite($"{(i+1)}. ", DarkMagenta);
+                Utility.ColorWrite($"{(i + 1)}. ", DarkMagenta);
                 invetory[i].PrintNameAndEffect(White);
                 invetory[i].PrintPriceForSell();
                 invetory[i].PrintInfo();
             }
         }
+
         Utility.PrintLogs();
         Console.WriteLine(" 0. 취소");
     }

@@ -15,27 +15,25 @@ static class Utility
     /// <returns></returns>
     public static int GetInput(int min, int max, string prompt = " 원하시는 행동을 입력해주세요.")
     {
+        int cursorTop = Console.GetCursorPosition().Top; // 커서 위치 저장
+        Console.Write(prompt); // 줄바꿈 없이 출력
         while (true)
         {
-            // 현재 위치를 저장
-            int cursorTop = Console.CursorTop;
-
-            Console.WriteLine(prompt);
+            Console.WriteLine();
             ColorWrite(" >> ", ConsoleColor.Yellow);
 
             if (int.TryParse(Console.ReadLine(), out int input) && (input >= min) && (input <= max))
                 return input;
 
-            // 잘못된 입력이므로 메시지를 수정
-            for (int i = 0; i < 2; i++)
-            {
-                Console.SetCursorPosition(0, cursorTop + i); // 이전 메시지가 있던 위치로 커서 이동
-                Console.Write(new string(' ', Console.WindowWidth)); // 공백으로 채우기
-            }
-
-            ColorWrite(" 잘못된 입력입니다. 다시 입력해주세요", ConsoleColor.Red); //경고 메세지 출력
-
-            Console.SetCursorPosition(0, cursorTop); // 커서를 다시 이동
+            // 이전 두 줄 지우기
+            Console.Write("\u001b[1A");  // 위로 이동
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.Write("\u001b[1A");  // 위로 이동
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.Write("\u001b[1A");  // 위로 이동
+            Console.Write("\r");
+            // 경고 메시지 출력
+            ColorWrite(" 잘못된 입력입니다. 다시 입력해주세요", ConsoleColor.Red);
         }
     }
 

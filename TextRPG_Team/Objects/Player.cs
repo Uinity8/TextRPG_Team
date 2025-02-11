@@ -129,7 +129,6 @@ public class Player : ICharacter
         return canSell;
     }
 
-
     /// <summary>아이템 판매 처리 메서드</summary>
     /// <param name="item">판매할 아이템</param>
     public void SellItem(Item item)
@@ -156,7 +155,6 @@ public class Player : ICharacter
         {
             itemStats += item.Effect;
         }
-
         AddStats = itemStats;
     }
 

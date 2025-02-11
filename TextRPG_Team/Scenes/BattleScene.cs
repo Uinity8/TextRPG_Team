@@ -76,10 +76,10 @@ public class BattleScene : IScene
 
     private IScene? GetInputForPlayerResult()
     {
+        Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
         while (true)
         {
-            Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
-            ConsoleKeyInfo key = Console.ReadKey();
+            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
             if (key.Key == ConsoleKey.Enter)
                 return new BattleScene(_gameState, State.EnemyPhase); // 적의 턴으로 이동
         }
@@ -177,7 +177,6 @@ public class BattleScene : IScene
 
         // 플레이어 정보 표시
         ShowPlayerInfo();
-
     }
 
     private void EnemyPhaseScreen()
@@ -185,13 +184,16 @@ public class BattleScene : IScene
         var enemies = _gameState.Spawner.GetSpawnedEnemies();
         foreach (var enemy in enemies)
         {
+            if (_gameState.Player.IsDead())
+                break;
+
             if (enemy.IsDead()) continue;
 
             Console.Clear();
             Console.WriteLine(new string('=', Utility.Width));
             Utility.AlignCenter("⚔️     BATTLE!!   ⚔️\n", Red);
             Console.WriteLine(new string('=', Utility.Width));
-            Console.WriteLine($" 적의 반격!\n");
+            Console.WriteLine($" LV.{enemy.GetStats.Lv} {enemy.Name}의 반격!\n");
 
             for (int i = 0; i < 2; i++)
                 Console.WriteLine(new string(' ', Utility.Width));
@@ -202,18 +204,18 @@ public class BattleScene : IScene
 
             // 플레이어 정보 표시
             ShowPlayerInfo();
-
-
+            Console.WriteLine();
+            
+            Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
             while (true)
             {
-                Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
-                ConsoleKeyInfo key = Console.ReadKey();
+                ConsoleKeyInfo key = Console.ReadKey(intercept: true);
                 if (key.Key == ConsoleKey.Enter) break;
             }
         }
     }
 
-    private void ShowPlayerInfo()
+    public void ShowPlayerInfo()
     {
         Console.WriteLine(new string('-', Utility.Width));
         var player = _gameState.Player;
@@ -223,9 +225,15 @@ public class BattleScene : IScene
         Console.WriteLine($"{player.Name}");
         Utility.AlignLeft(" ❤️  HP : ", 12);
         Utility.AlignLeft($"{player.Health}", 3);
-        Console.WriteLine($" / {player.GetStats.MaxHp}\n");
+        Console.WriteLine($" / {player.GetStats.MaxHp}");
+        Utility.AlignLeft("   Exp : ", 12);
+        Utility.AlignLeft($"{player.Exp}", 3);
+        Console.WriteLine($" / {player.GetStats.MaxExp}");
+        Utility.AlignLeft("   ATK : ", 12);
+        Utility.AlignLeft($"{player.GetStats.Atk}\n", 3);
+        Utility.AlignLeft("   DEF : ", 12);
+        Utility.AlignLeft($"{player.GetStats.Def}\n", 3);
         Console.WriteLine(new string('-', Utility.Width));
         Utility.PrintLogs();
-        
     }
 }

@@ -14,9 +14,8 @@ public class ShopScene : IScene
 
     State _state;
     private readonly GameState _gameState;
-    private string _strTitle ="";
-
-    private string _strTitle ="";
+    
+    private string _strTitle = "";
 
     public ShopScene(GameState gameState, State state = State.Default) //DI 의존성 주입
     {
@@ -73,8 +72,8 @@ public class ShopScene : IScene
             case 0:
                 return new ShopScene(_gameState);
             default:
-                Item item = _gameState._itemList[input - 1];
-                item.itemPurchase = _gameState.Player.BuyItem(item);
+                Item item = _gameState._itemList[input - 1]; 
+                if(_gameState.Player.BuyItem(item)) item.itemPurchase = true;
                 return this;
         }
     }

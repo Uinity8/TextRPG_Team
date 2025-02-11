@@ -5,7 +5,6 @@ using static ConsoleColor;
 public class Player : ICharacter
 {
     // ====== 필드 ======
-    
 
     // ====== 속성 ======
     /// <summary>캐릭터 이름</summary>
@@ -48,6 +47,9 @@ public class Player : ICharacter
     /// <summary>경험치</summary>
     private int _exp; //현재 경험치
 
+    /// <summary>힐링 포션 (HP 회복)/// </summary>
+    public HealingPotion Potion { get; private set; }
+    
     /// <summary>레벨</summary>
     public int Level = 1;
     public int Exp
@@ -87,6 +89,7 @@ public class Player : ICharacter
         Job = job;
         _exp = 0;
         Level = level;
+        Potion = new HealingPotion(this);
     }
 
     // ====== 메서드 ======
@@ -120,7 +123,6 @@ public class Player : ICharacter
         }
 
         target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
-
     }
 
 
@@ -161,7 +163,12 @@ public class Player : ICharacter
 
     /// <summary>플레이어가 사망했는지 여부를 반환</summary>
     public bool IsDead() => Health <= 0f;
-
+    
+    /// <summary>체력을 회복하는 메서드</summary>
+    public void Heal(float amount)
+    {
+        Health = Math.Min(Health + amount, GetStats.MaxHp);
+    }
 
     /// <summary>아이템 구매 처리 메서드</summary>
     /// <param name="item">구매할 아이템</param>

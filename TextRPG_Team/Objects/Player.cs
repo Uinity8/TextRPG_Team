@@ -103,26 +103,24 @@ public class Player : ICharacter
      
         if (isCritical)
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {Power}의 데미지를 입혔습니다.- 치명타 공격!!\n"; // 공격 로그 생성
+            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.- 치명타 공격!!\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
         }
         else
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
+            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
         }
        
 
 
-        target.TakeDamage(Power); // 대상의 TakeDamage 호출
+        target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
 
         if(target.IsDead() && target is Enemy enemy)
         {
             int getExp = enemy.GetStats.Lv * 10;
             GainExp(getExp);
         }
-
-        target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
     }
 
 
@@ -150,7 +148,7 @@ public class Player : ICharacter
         {
             _exp -= _stats.MaxExp; // 남은 경험치 계산
             _stats.Lv++; // 레벨 증가
-            _stats.MaxExp = (int)(_stats.MaxExp * 2.0); // MaxExp 30% 증가
+            _stats.MaxExp = (int)(_stats.MaxExp * 2.0); // MaxExp 2배 증가
             _stats.MaxHp += 10; // 최대 체력 증가
             _stats.Atk += 2; // 공격력 증가
             _stats.Def += 1; // 방어력 증가

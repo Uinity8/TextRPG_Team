@@ -23,4 +23,6 @@ public class GameState
 
     public Player? PlayerBeforeDungeon;
 
+    public float PlayerLevelBeforeDungeon;
+    
 }

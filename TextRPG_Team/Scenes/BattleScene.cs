@@ -175,7 +175,6 @@ public class BattleScene : IScene
         for (int i = 0; i < 4; i++)
             Console.WriteLine(new string(' ', Utility.Width));
 
-        // 플레이어 정보 표시
         ShowPlayerInfo();
     }
 
@@ -215,7 +214,7 @@ public class BattleScene : IScene
         }
     }
 
-    private void ShowPlayerInfo()
+    public void ShowPlayerInfo()
     {
         Console.WriteLine(new string('-', Utility.Width));
         var player = _gameState.Player;
@@ -225,7 +224,14 @@ public class BattleScene : IScene
         Console.WriteLine($"{player.Name}");
         Utility.AlignLeft(" ❤️  HP : ", 12);
         Utility.AlignLeft($"{player.Health}", 3);
-        Console.WriteLine($" / {player.GetStats.MaxHp}\n");
+        Console.WriteLine($" / {player.GetStats.MaxHp}");
+        Utility.AlignLeft("   Exp : ", 12);
+        Utility.AlignLeft($"{player.Exp}", 3);
+        Console.WriteLine($" / {player.GetStats.MaxExp}");
+        Utility.AlignLeft("   ATK : ", 12);
+        Utility.AlignLeft($"{player.GetStats.Atk}\n", 3);
+        Utility.AlignLeft("   DEF : ", 12);
+        Utility.AlignLeft($"{player.GetStats.Def}\n", 3);
         Console.WriteLine(new string('-', Utility.Width));
         Utility.PrintLogs();
     }

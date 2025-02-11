@@ -17,6 +17,7 @@ public class ShopScene : IScene
     
     private string _strTitle = "";
 
+
     public ShopScene(GameState gameState, State state = State.Default) //DI 의존성 주입
     {
         _gameState = gameState;

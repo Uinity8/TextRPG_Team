@@ -18,8 +18,40 @@ public class Player : ICharacter
     /// <summary>현재 체력</summary>
     public float Health { get; private set; }
 
-    /// <summary>최종 공격력 (스탯 기반, 치명타 미적용)</summary>
-    public float Power => GetStats.Atk;
+    /// <summary>최종 공격력 (스탯 기반, 치명타 적용)</summary>
+    public float Power
+    {
+        get
+        {
+            var baseAtk = RandomizedPower;         // 기본 공격 오차범위 ±10% 
+            var critChance = 0.15f; // 치명타 확률 (15%)
+            var critMultiplier = 1.6f; // 치명타 배율 (160%)
+
+            // 치명타가 적용된 최종 공격력 계산
+            return (float)Math.Floor(baseAtk * (1 + critChance * (critMultiplier - 1)));
+        }
+    }
+    /// <summary>(±10% 범위의 랜덤 값 반영)</summary>
+    public float RandomizedPower
+    {
+        get
+        {
+            float baseAtk = GetStats.Atk; // 기본 공격력
+
+            // ±10% 계산
+            float minAtk = baseAtk * 0.9f; // 최저 공격력 (기본 공격력의 90%)
+            float maxAtk = baseAtk * 1.1f; // 최고 공격력 (기본 공격력의 110%)
+
+            // 랜덤한 값 생성
+            Random random = new Random();
+            float randomizedAtk = (float)(minAtk + (maxAtk - minAtk) * random.NextDouble());
+
+            // 최종값 올림 처리 후 반환
+            return (float)Math.Ceiling(randomizedAtk);
+        }
+    }
+
+
 
     /// <summary>소유 아이템 목록</summary>
     public List<Item> Inventory { get; }
@@ -84,26 +116,23 @@ public class Player : ICharacter
     /// <summary>아이템 구매 처리 메서드</summary>
     /// <param name="item">구매할 아이템</param>
     public bool BuyItem(Item item)
-
     {
         if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
-
         {
-            Utility.AddLog("이미 보유한 아이템 입니다.", ConsoleColor.Red);
+            Utility.AddLog("이미 보유한 아이템 입니다.\n", Red);
             return false;
         }
 
         if (Gold < item.Price)
         {
-            Utility.AddLog("골드가 부족합니다", ConsoleColor.Red);
+            Utility.AddLog("골드가 부족합니다\n", Red);
             return false;
         }
 
         // 아이템 구매 성공
         Gold -= item.Price;
         Inventory.Add(item);
-        Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
-        Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
+        Utility.AddLog($"성공적으로 구매하였습니다.-{item.Price} G\n", DarkBlue);
         return true;
             
     }

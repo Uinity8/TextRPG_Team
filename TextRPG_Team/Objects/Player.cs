@@ -164,8 +164,8 @@ public class Player : ICharacter
     {
         return $"Lv.{GetStats.Lv} : {Name} [{Job}]" + "\n" +
                $"HP : {Health} / {GetStats.MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
-               $"공격력 : {GetStats.Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : "") + "\n" +
-               $"방어력 : {GetStats.Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : "") + "\n" +
+               $"공격력 : {GetStats.Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : (AddStats.Atk != 0 ? $"(-{AddStats.Atk})" : "")) + "\n" +
+               $"방어력 : {GetStats.Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : (AddStats.Def != 0 ? $"(-{AddStats.Def})" : "")) + "\n" +
                $"Gold : {Gold} G";
     }
 
@@ -189,11 +189,11 @@ public class Player : ICharacter
         Utility.AlignLeft("\n 공격력", width);
         Console.Write($": {GetStats.Atk}");
         if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", ConsoleColor.DarkBlue);
-        
+        else if(AddStats.Atk < 0) Utility.ColorWrite($"({AddStats.Atk})", ConsoleColor.DarkRed);
         Utility.AlignLeft("\n 방어력", width);
         Console.Write($": {GetStats.Def}");
         if (AddStats.Def > 0) Utility.ColorWrite($"(+{AddStats.Def})", ConsoleColor.DarkBlue);
-        
+        else if (AddStats.Def < 0) Utility.ColorWrite($"({AddStats.Def})", ConsoleColor.DarkRed);
         Console.WriteLine("\n");
         Console.WriteLine(new string('-', Utility.Width));
         //Utility.AlignLeft(" Gold", width-1);

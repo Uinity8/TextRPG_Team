@@ -14,6 +14,7 @@ public class ShopScene : IScene
 
     State _state;
     private readonly GameState _gameState;
+    private string _strTitle ="";
 
     private string _strTitle ="";
 
@@ -73,7 +74,7 @@ public class ShopScene : IScene
                 return new ShopScene(_gameState);
             default:
                 Item item = _gameState._itemList[input - 1];
-                item.itemPurchase = _gameState.Player.TrySell(item);
+                item.itemPurchase = _gameState.Player.BuyItem(item);
                 return this;
         }
     }

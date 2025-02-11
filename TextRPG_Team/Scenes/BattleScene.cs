@@ -76,10 +76,10 @@ public class BattleScene : IScene
 
     private IScene? GetInputForPlayerResult()
     {
+        Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
         while (true)
         {
-            Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
-            ConsoleKeyInfo key = Console.ReadKey();
+            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
             if (key.Key == ConsoleKey.Enter)
                 return new BattleScene(_gameState, State.EnemyPhase); // 적의 턴으로 이동
         }
@@ -177,7 +177,6 @@ public class BattleScene : IScene
 
         // 플레이어 정보 표시
         ShowPlayerInfo();
-
     }
 
     private void EnemyPhaseScreen()
@@ -185,6 +184,9 @@ public class BattleScene : IScene
         var enemies = _gameState.Spawner.GetSpawnedEnemies();
         foreach (var enemy in enemies)
         {
+            if (_gameState.Player.IsDead())
+                break;
+
             if (enemy.IsDead()) continue;
 
             Console.Clear();
@@ -202,12 +204,12 @@ public class BattleScene : IScene
 
             // 플레이어 정보 표시
             ShowPlayerInfo();
-
-
+            Console.WriteLine();
+            
+            Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
             while (true)
             {
-                Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
-                ConsoleKeyInfo key = Console.ReadKey();
+                ConsoleKeyInfo key = Console.ReadKey(intercept: true);
                 if (key.Key == ConsoleKey.Enter) break;
             }
         }
@@ -226,6 +228,5 @@ public class BattleScene : IScene
         Console.WriteLine($" / {player.GetStats.MaxHp}\n");
         Console.WriteLine(new string('-', Utility.Width));
         Utility.PrintLogs();
-        
     }
 }

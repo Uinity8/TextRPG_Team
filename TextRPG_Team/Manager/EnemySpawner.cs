@@ -39,6 +39,7 @@ namespace TextRPG_Team.Manager
         // 랜덤한 수의 적 생성 (1~4마리) 및 저장
         public void AddRandomEnemies()
         {
+            spawnedEnemies = new List<Enemy>();
             // 1~4 사이의 랜덤 숫자를 생성
             int randomEnemyCount = random.Next(1, 5);
 

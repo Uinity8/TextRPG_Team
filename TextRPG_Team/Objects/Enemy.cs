@@ -35,7 +35,7 @@ public class Enemy : ICharacter
         if (target.IsDodge())
         {
             string log = $"{target.Name}을 공격했지만 아무일도 일어나지 않았습니다.\n"; // 공격 로그 생성
-            Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
+            Utility.AddLog(log, Yellow); // 로그 출력
             return;
         }
         // 공격 동작 실행
@@ -45,15 +45,14 @@ public class Enemy : ICharacter
         if (isCritical)
         {
             string log = $"{target.Name}에게 {Power}의 데미지를 입혔습니다.- 치명타 공격!!\n"; // 공격 로그 생성
-            Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
+            Utility.AddLog(log, Magenta); // 로그 출력
         }
         else
         {
             string log = $"{target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
-            Utility.AddLog(log, ConsoleColor.Red); // 로그 출력
+            Utility.AddLog(log, Red); // 로그 출력
         }
         
-
         target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
     }
 
@@ -78,7 +77,7 @@ public class Enemy : ICharacter
     public bool IsDead() => Health <= 0f;
 
     // 몬스터 정보 출력
-    public void PrintInfo(ConsoleColor color = ConsoleColor.White)
+    public void PrintInfo(ConsoleColor color = White)
     {
         Utility.AlignLeft(Icon[Id], 4, color);
         Utility.AlignLeft($" Lv.{GetStats.Lv}", 6, color);

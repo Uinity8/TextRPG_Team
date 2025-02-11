@@ -20,9 +20,7 @@ public class GameState
     };
     public  Player Player = new Player("Chad", new Stats(100, 10, 5, 1), 1500, "Job");
     public readonly EnemySpawner Spawner = new EnemySpawner();
-    
-    public float PlayerHpBeforeDungeon;
 
-    public float PlayerLevelBeforeDungeon;
-    
+    public Player? PlayerBeforeDungeon;
+
 }

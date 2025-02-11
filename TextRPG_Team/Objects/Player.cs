@@ -112,8 +112,6 @@ public class Player : ICharacter
             Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
         }
        
-
-
         target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
 
         if(target.IsDead() && target is Enemy enemy)

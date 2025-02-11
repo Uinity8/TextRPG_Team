@@ -204,10 +204,10 @@ public class BattleScene : IScene
             ShowPlayerInfo();
 
 
+            Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
             while (true)
             {
-                Utility.ColorWrite(" 엔터키를 눌러서 계속...", DarkGreen);
-                ConsoleKeyInfo key = Console.ReadKey();
+                ConsoleKeyInfo key = Console.ReadKey(intercept: true);
                 if (key.Key == ConsoleKey.Enter) break;
             }
         }

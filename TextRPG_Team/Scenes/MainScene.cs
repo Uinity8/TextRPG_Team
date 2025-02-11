@@ -1,5 +1,7 @@
 
 
+using TextRPG_Team.Manager;
+
 namespace TextRPG_Team.Scenes;
 using static Utility.Alignment;
 using static ConsoleColor;
@@ -7,7 +9,6 @@ using TextRPG_Team.Objects;
 
 public class MainScene : IScene
 {
-    private Stats _stats;
     private readonly GameState _gameState;
 
     public MainScene(GameState gameState) // DI 의존성 주입
@@ -60,8 +61,10 @@ public class MainScene : IScene
                 _gameState.PlayerLevelBeforeDungeon = _gameState.Player.GetStats.Lv;
                 _gameState.Spawner.AddRandomEnemies();
                 return new BattleScene(_gameState); // 배틀 시작
-            case 0:
-                return null; // 저장 / 종료
+            case 0:// 저장 / 종료
+                LoadManager.SavePlayerData(_gameState.Player);
+                Environment.Exit(0);
+                return null; 
             default:
                 return null; // 잘못된 입력 처리
         }

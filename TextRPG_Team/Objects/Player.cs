@@ -133,6 +133,12 @@ public class Player : ICharacter
 
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
     }
+    public bool IsDodge()  //회피 
+    {
+        var isDodge = new Random().NextDouble() < 0.1; // 랜덤 확률 적용(10%)
+        
+        return isDodge;
+    }
     /// <summary>적 처치 시 경험치 획득</summary>
     public void GainExp(int amount)
     {

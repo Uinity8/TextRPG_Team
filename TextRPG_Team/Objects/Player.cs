@@ -13,20 +13,20 @@ public class Player : ICharacter
     public string Job { get; set; }
 
     /// <summary>소지 금액</summary>
-    public int Gold { get; private set; }
+    public int Gold { get; set; }
 
     /// <summary>현재 체력</summary>
-    public float Health { get; private set; }
+    public float Health { get;  set; }
 
     /// <summary>최종 공격력 (스탯 기반, 치명타 미적용)</summary>
     public float Power => GetStats.Atk;
 
     /// <summary>소유 아이템 목록</summary>
     public List<Item> Inventory { get; }
-    
-    
+
+
     // ====== 스탯 ======
-    private Stats _stats; // 기본 스탯
+    public Stats _stats; // 기본 스탯
     private Stats AddStats { get; set; } // 추가 스탯
 
     /// <summary>기본 스탯과 추가 스탯을 합친 최종 스탯 반환</summary>

@@ -11,7 +11,8 @@ using static ConsoleColor;
 public enum ItemType
 {
     Weapon, // 무기
-    Armor // 방어구
+    Armor, // 방어구
+    Double // 공+방
 }
 
 public class Item
@@ -39,7 +40,7 @@ public class Item
         itemEquip = false;
         Id = id;
 
-        string[] icon = { " 🗡️", " 🛡️" };
+        string[] icon = { " 🗡️", " 🛡️", "🗡️🛡️" };
         Icon = icon[(int)Type];
         SellPrice = (int)(price * 0.85f);
     }
@@ -56,6 +57,7 @@ public class Item
         string str = (Type == ItemType.Weapon
             ? $"공격력 +{Effect.Atk}"
             : $"방어력 +{Effect.Def}"); // 타입이 무기면 공격력 / 아니면 방어력 출력
+        str = (Type != ItemType.Double ? str : $"공격력 + {Effect.Atk} | 방어력 +{Effect.Def}");
         return str;
     }
 

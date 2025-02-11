@@ -193,7 +193,7 @@ public class BattleScene : IScene
             Console.WriteLine(new string('=', Utility.Width));
             Utility.AlignCenter("⚔️     BATTLE!!   ⚔️\n", Red);
             Console.WriteLine(new string('=', Utility.Width));
-            Console.WriteLine($" 적의 반격!\n");
+            Console.WriteLine($" {enemy.Name}의 반격!\n");
 
             for (int i = 0; i < 2; i++)
                 Console.WriteLine(new string(' ', Utility.Width));

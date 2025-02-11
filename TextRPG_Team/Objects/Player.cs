@@ -97,6 +97,13 @@ public class Player : ICharacter
     /// <param name="target">대상 캐릭터</param>
     public void PerformAttack(ICharacter target)
     {
+        if (target.IsDodge())
+        {
+            string log = $"Lv.{target.GetStats.Lv} {target.Name}을 공격했지만 아무일도 일어나지 않았습니다.\n"; // 공격 로그 생성
+            Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
+            return;
+        }
+        
         // 공격 동작 실행
         var isCritical = new Random().NextDouble() < 0.15; // 랜덤 확률 적용(15%)
         var totalDamage = isCritical ? (float)Math.Floor(Power * 1.6f) : Power;
@@ -111,18 +118,15 @@ public class Player : ICharacter
             string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
         }
-       
 
-
-        target.TakeDamage(Power); // 대상의 TakeDamage 호출
+        target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
 
         if(target.IsDead() && target is Enemy enemy)
         {
             int getExp = enemy.GetStats.Lv * 10;
             GainExp(getExp);
         }
-
-        target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
+        
     }
 
 
@@ -136,6 +140,12 @@ public class Player : ICharacter
         var log = $"Lv.{GetStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
 
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
+    }
+    public bool IsDodge()  //회피 
+    {
+        var isDodge = new Random().NextDouble() < 0.1; // 랜덤 확률 적용(10%)
+        
+        return isDodge;
     }
     /// <summary>적 처치 시 경험치 획득</summary>
     public void GainExp(int amount)
@@ -163,6 +173,7 @@ public class Player : ICharacter
 
     /// <summary>플레이어가 사망했는지 여부를 반환</summary>
     public bool IsDead() => Health <= 0f;
+    
     
     /// <summary>체력을 회복하는 메서드</summary>
     public void Heal(float amount)

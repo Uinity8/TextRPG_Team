@@ -85,21 +85,20 @@ public class Player : ICharacter
         if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
 
         {
-            Utility.AddLog("이미 보유한 아이템 입니다.", ConsoleColor.Red);
+            Utility.AddLog("이미 보유한 아이템 입니다.\n", ConsoleColor.Red);
             return false;
         }
 
         if (Gold < item.Price)
         {
-            Utility.AddLog("골드가 부족합니다", ConsoleColor.Red);
+            Utility.AddLog("골드가 부족합니다\n", ConsoleColor.Red);
             return false;
         }
 
         // 아이템 구매 성공
         Gold -= item.Price;
         Inventory.Add(item);
-        Utility.AddLog("성공적으로 구매하였습니다.", ConsoleColor.Blue);
-        Utility.AddLog($"-{item.Price} G", ConsoleColor.Yellow);
+        Utility.AddLog($"성공적으로 구매하였습니다. -{item.Price} G\n", ConsoleColor.DarkBlue);
         return true;
             
     }

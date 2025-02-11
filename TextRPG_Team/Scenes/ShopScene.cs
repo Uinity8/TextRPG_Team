@@ -72,7 +72,7 @@ public class ShopScene : IScene
                 return new ShopScene(_gameState);
             default:
                 Item item = _gameState._itemList[input - 1];
-                item.itemPurchase = _gameState.Player.TrySell(item);
+                item.itemPurchase = _gameState.Player.BuyItem(item);
                 return this;
         }
     }

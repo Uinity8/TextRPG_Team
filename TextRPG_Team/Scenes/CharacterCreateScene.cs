@@ -34,7 +34,13 @@ namespace TextRPG_Team.Scenes
         private void NamecreateScreen() // 이름 선택 화면
         {
             Console.WriteLine("원하시는 이름을 설정해주세요.\n");
-            _gameState.Player.Name = Console.ReadLine();
+            string name = "";
+            while (string.IsNullOrEmpty(name))
+            {
+                name = Console.ReadLine() ?? "";
+            }
+            _gameState.Player.Name = name;
+
             Console.WriteLine($"\n입력하신 이름은 {_gameState.Player.Name} 입니다.\n");
             Console.WriteLine("1. 저장");
             Console.WriteLine("0. 취소\n");

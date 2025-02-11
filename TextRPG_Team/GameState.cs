@@ -21,4 +21,6 @@ public class GameState
     };
     public readonly Player Player = new Player("Chad", new Stats(100, 10, 5), 1500, "Job");
     public readonly EnemySpawner Spawner = new EnemySpawner();
+    
+    public float PlayerHpBeforeDungeon;
 }

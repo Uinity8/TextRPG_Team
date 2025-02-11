@@ -1,5 +1,6 @@
 namespace TextRPG_Team.Scenes;
 
+using static ConsoleColor;
 
 public class ResultScene : IScene
 {
@@ -28,25 +29,29 @@ public class ResultScene : IScene
 
     private void ShowScreen( )
     {
-        Utility.ColorWriteLine("Battle!! - Result\n", ConsoleColor.Yellow);
+        Console.WriteLine(new string('=', Utility.Width));
+        Utility.AlignCenter("⚔️     BATTLE!!   ⚔️\n", Red);
+        Utility.AlignCenter("RESULT\n");
+        Console.WriteLine(new string('=', Utility.Width));
+        Console.WriteLine();
         
         //Utiltiy.PrintLog로 대체가능
         if (_state == State.Victory)
         {
-            Console.WriteLine("Victory\n");
-            Console.WriteLine("던전에서 몬스터 3마리를 잡았습니다.\n"); 
-            Console.WriteLine("Lv.1 Chad");
-            Console.WriteLine("HP 100 -> 74\n");
+            int enemyCount = _gameState.Spawner.GetSpawnedEnemies().Count;
+            var player = _gameState.Player;
+            Utility.ColorWriteLine(" 🏆  Victory!!\n", Yellow);
+            Console.WriteLine($" 던전에서 몬스터 {enemyCount}마리를 처치했습니다.\n");
         }
         else
         {
-            Console.WriteLine("You Lose\n");
-            Console.WriteLine("Lv.1 Chad");
-            Console.WriteLine("HP 100 -> 0\n");
+            Utility.ColorWriteLine(" 💀 You Lose... \n", DarkRed);
+            Console.WriteLine($" 던전에서 전투에 패배했습니다.\n");
 
         }
+        ShowPlayerInfo();
         
-        Console.WriteLine("0. 다음");
+        Console.WriteLine(" 0. 다음\n");
     }
 
     public IScene? GetNextScene()
@@ -57,5 +62,19 @@ public class ResultScene : IScene
             0 => new MainScene(_gameState), // 메인 씬으로 돌아감
             _ => null // 잘못된 입력 시 종료
         };
+    }
+    
+    private void ShowPlayerInfo()
+    {
+        Console.WriteLine(new string('-', Utility.Width));
+        var player = _gameState.Player;
+        Console.WriteLine(" [ 내정보 ]");
+        Utility.AlignLeft(" ", 4);
+        Utility.AlignLeft($"Lv.{player.GetStats.Lv}", 7);
+        Console.WriteLine($"{player.Name}");
+        Utility.AlignLeft(" ❤️  HP : ", 11);
+        Utility.AlignLeft($" {_gameState.PlayerHpBeforeDungeon} -> {player.Health}\n", 4);
+        Console.WriteLine(new string('-', Utility.Width));
+        Utility.PrintLogs();
     }
 }

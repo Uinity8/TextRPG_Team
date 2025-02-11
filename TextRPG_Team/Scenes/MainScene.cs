@@ -45,15 +45,22 @@ public class MainScene : IScene
     public IScene? GetNextScene()
     {
         int input = Utility.GetInput(1, 4);
-        return input switch
+        switch (input)
         {
-            1 => new StatusScene(_gameState), //상태보기 
-            2 => new InventoryScene(_gameState), //인벤토리
-            3 => new ShopScene(_gameState), //상점
-            4 => new BattleScene(_gameState), //배틀 시작
-
-            0 => null, //저장/ 종료
-            _ => null,
-        };
+            case 1:
+                return new StatusScene(_gameState); // 상태보기
+            case 2:
+                return new InventoryScene(_gameState); // 인벤토리
+            case 3:
+                return new ShopScene(_gameState); // 상점
+            case 4:
+                _gameState.PlayerHpBeforeDungeon = _gameState.Player.Health;
+                _gameState.Spawner.AddRandomEnemies();
+                return new BattleScene(_gameState); // 배틀 시작
+            case 0:
+                return null; // 저장 / 종료
+            default:
+                return null; // 잘못된 입력 처리
+        }
     }
 }

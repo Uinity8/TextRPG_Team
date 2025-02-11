@@ -55,25 +55,26 @@ public class BattleScene : IScene
     }
 
     private IScene? GetInputForPlayerPhase()
+{
+    int max = _gameState.Spawner.GetSpawnedEnemies().Count;
+    int input = Utility.GetInput(0, max, " 공격할 대상을 선택하세요.");
+    switch (input)
     {
-        int max = _gameState.Spawner.GetSpawnedEnemies().Count;
-        int input = Utility.GetInput(0, max, " 공격할 대상을 선택하세요.");
-        switch (input)
-        {
-            case 0:
-                return new BattleScene(_gameState); // 취소 시 기본 상태로 복귀
-            default:
-                var enemy = _gameState.Spawner.GetSpawnedEnemies()[input - 1];
-                if (enemy.IsDead())
-                {
-                    Utility.AddLog("이미 뒤졌는데요\n", ConsoleColor.Red);
-                    return this;
-                }
+        case 0:
+            return new BattleScene(_gameState); // 취소 시 기본 상태로 복귀
+        default:
+            var enemy = _gameState.Spawner.GetSpawnedEnemies()[input - 1];
+            if (enemy.IsDead())
+            {
+                Utility.AddLog("이미 뒤졌는데요\n", ConsoleColor.Red);
+                return this;
+            }
+            _gameState.Player.PerformAttack(enemy);
 
-                _gameState.Player.PerformAttack(enemy); // 특정 적 공격
-                return new BattleScene(_gameState, State.PlayerResult); // 결과 화면으로 이동
-        }
+            //상태를 PlayerResult로 변경하여 공격 반복 방지
+            return new BattleScene(_gameState, State.PlayerResult);
     }
+}
 
     private IScene? GetInputForPlayerResult()
     {
@@ -135,7 +136,6 @@ public class BattleScene : IScene
             else
                 enemy.PrintInfo();
         }
-
         Console.WriteLine();
 
         // 플레이어 정보 표시
@@ -161,7 +161,6 @@ public class BattleScene : IScene
         }
 
         Console.WriteLine();
-
         // 플레이어 정보 표시
         ShowPlayerInfo();
         Console.WriteLine(" 0. 취소");

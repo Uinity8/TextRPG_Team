@@ -6,8 +6,6 @@ using static ConsoleColor;
 public class ResultScene : IScene
 {
     private readonly GameState _gameState;
-    
-    private Stats _stats;
     public enum State
     {
         Victory, // 승리

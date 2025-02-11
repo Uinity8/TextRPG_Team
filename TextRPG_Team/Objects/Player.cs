@@ -48,10 +48,8 @@ public class Player : ICharacter
     private int _exp; //현재 경험치
 
     /// <summary>힐링 포션 (HP 회복)/// </summary>
-    public HealingPotion Potion { get; private set; }
+    public HealingPotion Potion { get; private set; } = new HealingPotion();
     
-    /// <summary>레벨</summary>
-    public int Level = 1;
     public int Exp
     {
         get => _exp;
@@ -78,8 +76,7 @@ public class Player : ICharacter
     /// <param name="stats">초기 스탯</param>
     /// <param name="gold">초기 골드</param>
     /// <param name="job">플레이어 직업</param>
-    /// <param name="level">플레이어 레벨</param>
-    public Player(string name, Stats stats, int gold, string job, int level)
+    public Player(string name, Stats stats, int gold, string job)
     {
         Name = name;
         _stats = stats;
@@ -88,8 +85,7 @@ public class Player : ICharacter
         Inventory = new List<Item>();
         Job = job;
         _exp = 0;
-        Level = level;
-        Potion = new HealingPotion(this);
+        Potion = new HealingPotion();
     }
 
     // ====== 메서드 ======
@@ -119,6 +115,12 @@ public class Player : ICharacter
             int getExp = enemy.GetStats.Lv * 10;
             GainExp(getExp);
         }
+    }
+    public bool IsDodge()  //회피 
+    {
+        var isDodge = new Random().NextDouble() < 0.1; // 랜덤 확률 적용(10%)
+        
+        return isDodge;
     }
 
 
@@ -160,11 +162,11 @@ public class Player : ICharacter
     /// <summary>플레이어가 사망했는지 여부를 반환</summary>
     public bool IsDead() => Health <= 0f;
     
-    /// <summary>체력을 회복하는 메서드</summary>
-    public void Heal(float amount)
+    public void UseHealingPotion()
     {
-        Health = Math.Min(Health + amount, GetStats.MaxHp);
+        Potion.UsePotion(this);
     }
+
 
     /// <summary>아이템 구매 처리 메서드</summary>
     /// <param name="item">구매할 아이템</param>

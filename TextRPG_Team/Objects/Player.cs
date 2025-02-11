@@ -18,8 +18,40 @@ public class Player : ICharacter
     /// <summary>현재 체력</summary>
     public float Health { get;  set; }
 
-    /// <summary>최종 공격력 (스탯 기반, 치명타 미적용)</summary>
-    public float Power => GetStats.Atk;
+    /// <summary>최종 공격력 (스탯 기반, 치명타 적용)</summary>
+    public float Power
+    {
+        get
+        {
+            var baseAtk = RandomizedPower;         // 기본 공격 오차범위 ±10% 
+            var critChance = 0.15f; // 치명타 확률 (15%)
+            var critMultiplier = 1.6f; // 치명타 배율 (160%)
+
+            // 치명타가 적용된 최종 공격력 계산
+            return (float)Math.Floor(baseAtk * (1 + critChance * (critMultiplier - 1)));
+        }
+    }
+    /// <summary>(±10% 범위의 랜덤 값 반영)</summary>
+    public float RandomizedPower
+    {
+        get
+        {
+            float baseAtk = GetStats.Atk; // 기본 공격력
+
+            // ±10% 계산
+            float minAtk = baseAtk * 0.9f; // 최저 공격력 (기본 공격력의 90%)
+            float maxAtk = baseAtk * 1.1f; // 최고 공격력 (기본 공격력의 110%)
+
+            // 랜덤한 값 생성
+            Random random = new Random();
+            float randomizedAtk = (float)(minAtk + (maxAtk - minAtk) * random.NextDouble());
+
+            // 최종값 올림 처리 후 반환
+            return (float)Math.Ceiling(randomizedAtk);
+        }
+    }
+
+
 
     /// <summary>소유 아이템 목록</summary>
     public List<Item> Inventory { get; }
@@ -56,7 +88,9 @@ public class Player : ICharacter
     public void PerformAttack(ICharacter target)
     {
         // 공격 동작 실행
+
         var log = $"{Name}(이)가 Lv.{target.GetStats.Lv} {target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
+
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
 
         target.TakeDamage(Power); // 대상의 TakeDamage 호출
@@ -71,6 +105,7 @@ public class Player : ICharacter
         Health = Math.Max(0, Health - damage);
         string hpStr = Health > 0 ? $"{Health}" : "Dead";
         var log = $"Lv.{GetStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
+
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
     }
 
@@ -83,15 +118,14 @@ public class Player : ICharacter
     public bool BuyItem(Item item)
     {
         if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
-
         {
-            Utility.AddLog("이미 보유한 아이템 입니다.\n", ConsoleColor.Red);
+            Utility.AddLog("이미 보유한 아이템 입니다.\n", Red);
             return false;
         }
 
         if (Gold < item.Price)
         {
-            Utility.AddLog("골드가 부족합니다\n", ConsoleColor.Red);
+            Utility.AddLog("골드가 부족합니다\n", Red);
             return false;
         }
 
@@ -155,6 +189,7 @@ public class Player : ICharacter
         {
             itemStats += item.Effect;
         }
+
         AddStats = itemStats;
     }
 

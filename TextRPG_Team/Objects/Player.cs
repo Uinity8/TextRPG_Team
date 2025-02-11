@@ -290,10 +290,4 @@ public class Player : ICharacter
         Utility.ColorWriteLine(" G", Yellow);
         Console.WriteLine(new string('-', Utility.Width));
     }
-    public bool IsDodge()  //회피 
-    {
-        var isDodge = new Random().NextDouble() < 0.1; // 랜덤 확률 적용(10%)
-
-        return isDodge;
-    }
 }

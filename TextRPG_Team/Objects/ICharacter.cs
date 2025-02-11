@@ -8,7 +8,7 @@ public struct Stats // 체,공,방
     public int Lv { get; set; } //레벨
     public int MaxExp {get; set;}//경험치 
 
-    public Stats(float maxHp, float atk, float def, int lv = 1, int maxExp = 1)
+    public Stats(float maxHp, float atk, float def, int lv = 1, int maxExp = 10)
     {
         MaxHp = maxHp;
         Atk = atk;

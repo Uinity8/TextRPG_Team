@@ -33,11 +33,14 @@ public class TitleScene : IScene
             return new CharacterCreateScene(_gameState);
         
         int input = Utility.GetInput(1, 2);
-        return input switch     
+        switch (input)
         {
-            1 => new MainScene(_gameState), // 메인 씬으로 돌아감
-            2 => new CharacterCreateScene(_gameState), // 캐릭터 생성씬
-            _ => null // 잘못된 입력 시 종료
-        };
+            case 1:
+                _gameState.Player = LoadManager.LoadPlayerData(); //플레이어 데이터 로드
+                return new MainScene(_gameState); // 메인 씬으로 돌아감
+            case 2:
+                return new CharacterCreateScene(_gameState); // 캐릭터 생성씬
+        }
+        return null;
     }
 }

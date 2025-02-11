@@ -35,6 +35,7 @@ namespace TextRPG_Team.Scenes
 
         private void NamecreateScreen() // 이름 선택 화면
         {
+            isCancle = false;
             
             Console.WriteLine("원하시는 이름을 설정해주세요.\n");
             Utility.PrintLogs();

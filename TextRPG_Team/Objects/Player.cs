@@ -110,12 +110,12 @@ public class Player : ICharacter
      
         if (isCritical)
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {Power}의 데미지를 입혔습니다.- 치명타 공격!!\n"; // 공격 로그 생성
+            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.- 치명타 공격!!\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
         }
         else
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {Power}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
+            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
         }
 

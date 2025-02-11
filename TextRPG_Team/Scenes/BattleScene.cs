@@ -45,10 +45,11 @@ public class BattleScene : IScene
 
     private IScene? GetInputForDefault()
     {
-        int input = Utility.GetInput(1, 1); // 사용자 입력 받음
+        int input = Utility.GetInput(1, 2); // 사용자 입력 받음
         return input switch
         {
             1 => new BattleScene(_gameState, State.PlayerPhase), // 플레이어 턴으로 이동
+            2 => new MainScene(_gameState),
             _ => null
         };
     }
@@ -141,6 +142,7 @@ public class BattleScene : IScene
         ShowPlayerInfo();
 
         Console.WriteLine(" 1. ⚔️   공격");
+        Console.WriteLine(" 2. ⚔️   빤쓰런");
     }
 
     private void PlayerPhaseScreen()

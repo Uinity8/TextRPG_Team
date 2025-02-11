@@ -108,11 +108,11 @@ public class InventoryScene : IScene
                     EquipScreen(); // 장착 관리 화면 출력
                     break;
             }
+
         }
         switch (_state)
         {
             case State.Default:
-                DefaultScreen(); // 기본 화면 출력
                 Console.WriteLine(new string('-', Utility.Width));
                 Console.WriteLine(" 1. 장착관리");
                 Console.WriteLine(" 2. 회복하기");
@@ -120,66 +120,66 @@ public class InventoryScene : IScene
                 Console.WriteLine(new string('-', Utility.Width));
                 break;
             case State.Equip:
-                EquipScreen(); // 장착 관리 화면 출력
                 Console.WriteLine(new string('-', Utility.Width));
                 Console.WriteLine(" 0. 취소");
                 Console.WriteLine(new string('-', Utility.Width));
                 break;
         }
+
         Utility.PrintLogs();
     }
+
 
     // 기본 상태 화면 출력
     private void DefaultScreen()
     {
         // 아이템 목록 표시
-        int i = 1;
-        foreach (var item in _gameState.Player.Inventory)
+        var invetory = _gameState.Player.Inventory;
+        for (int i = 0; i < 10; i++)
         {
-            if (i >= _gameState.Player.Inventory.Count)
+            if (i >= invetory.Count)
             {
                 Console.WriteLine(new string(' ', Utility.Width));
                 continue;
             }
+
             ConsoleColor color = White;
-            if (item.itemEquip)
+            if (invetory[i].itemEquip)
                 color = DarkGreen;
 
-            Utility.AlignLeft(item.Icon, 7);
-            item.PrintNameAndEffect(color);
-            if (item.itemEquip)
+            Utility.AlignLeft(invetory[i].Icon, 7);
+            invetory[i].PrintNameAndEffect(color);
+            if (invetory[i].itemEquip)
                 Utility.ColorWrite("[E]", color);
             Console.WriteLine();
-            item.PrintInfo();
+            invetory[i].PrintInfo();
         }
-
     }
 
     // 장착 관리 상태 화면 출력
     private void EquipScreen()
     {
         // 아이템 목록 표시
-        int i = 1;
-        foreach (var item in _gameState.Player.Inventory)
+        var invetory = _gameState.Player.Inventory;
+        for (int i = 0; i < 10; i++)
         {
-            if (i >= _gameState.Player.Inventory.Count)
+            if (i >= invetory.Count)
             {
                 Console.WriteLine(new string(' ', Utility.Width));
                 continue;
             }
 
             ConsoleColor color = White;
-            if (item.itemEquip)
+            if (invetory[i].itemEquip)
                 color = DarkGreen;
 
-            Utility.AlignLeft(item.Icon, 7);
-            Utility.ColorWrite($"{(i++)}. ", DarkMagenta);
-            item.PrintNameAndEffect(color);
-            if (item.itemEquip)
+            Utility.AlignLeft(invetory[i].Icon, 7);
+            Utility.ColorWrite($"{(i + 1)}. ", DarkMagenta);
+            invetory[i].PrintNameAndEffect(color);
+            if (invetory[i].itemEquip)
                 Utility.ColorWrite("[E]", color);
             Console.WriteLine();
-            item.PrintInfo();
+            invetory[i].PrintInfo();
         }
-        
     }
 }

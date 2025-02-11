@@ -40,7 +40,7 @@ public class Item
         itemEquip = false;
         Id = id;
 
-        string[] icon = { " 🗡️", " 🛡️", "🗡️🛡️" };
+        string[] icon = { " 🗡️", " 🛡️", " 🗡️ 🛡️" };
         Icon = icon[(int)Type];
         SellPrice = (int)(price * 0.85f);
     }

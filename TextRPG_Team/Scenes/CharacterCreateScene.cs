@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TextRPG_Team.Objects;
 
 namespace TextRPG_Team.Scenes
 {
@@ -48,8 +49,9 @@ namespace TextRPG_Team.Scenes
         private void JobcreateScreen() // 직업 선택 화면
         {
             Console.WriteLine($"{_gameState.Player.Name}님 원하시는 직업을 설정해주세요.\n");
-            Console.WriteLine("1. 전사");
-            Console.WriteLine("2. 도적\n");
+            Console.WriteLine("1. 계백수");
+            Console.WriteLine("2. 고딩");
+            Console.WriteLine("2. 직딩\n");
         }
         private void ShowScreen() //화면 상태 전환
         {
@@ -86,14 +88,33 @@ namespace TextRPG_Team.Scenes
         }
         private IScene? GetInputJob() // 직업 선택 입력
         {
-            int input = Utility.GetInput(1, 2);
+            int input = Utility.GetInput(1, 3);
+            Player player = _gameState.Player;
             switch (input)
-            {
+            {// (string name, Stats stats, int gold, string job)
                 case 1:
-                    _gameState.Player.Job = "전사";
+                    player._stats.MaxHp = 120;
+                    player._stats.Atk = 8;
+                    player._stats.Def = 10;
+                    player.Gold = 0;
+                    player.Job = "계백수";
+                    player.Health = player._stats.MaxHp;
                     break;
                 case 2:
-                    _gameState.Player.Job = "도적";
+                    player._stats.MaxHp = 100;
+                    player._stats.Atk = 10;
+                    player._stats.Def = 5;
+                    player.Gold = 1500;
+                    player.Job = "고딩";
+                    player.Health = player._stats.MaxHp;
+                    break;
+                case 3:
+                    player._stats.MaxHp = 80;
+                    player._stats.Atk = 10;
+                    player._stats.Def = 2;
+                    player.Gold = 10000;
+                    player.Job = "직딩";
+                    player.Health = player._stats.MaxHp;
                     break;
                 default: return this;
             };

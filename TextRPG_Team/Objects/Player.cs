@@ -281,9 +281,7 @@ public class Player : ICharacter
             Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.DarkYellow);
         else
             Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.Yellow);
-        if (AddStats.MaxExp > 0) Utility.ColorWrite($"(+{AddStats.MaxExp})", ConsoleColor.DarkCyan);
-
-         Utility.AlignLeft("\n 공격력", width);
+        Utility.AlignLeft("\n 공격력", width);
         Console.Write($": {GetStats.Atk}");
         if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", ConsoleColor.DarkBlue);
         else if(AddStats.Atk < 0) Utility.ColorWrite($"({AddStats.Atk})", ConsoleColor.DarkRed);
@@ -297,5 +295,11 @@ public class Player : ICharacter
         Utility.AlignRight($"{Gold}", Utility.Width - 5);
         Utility.ColorWriteLine(" G", Yellow);
         Console.WriteLine(new string('-', Utility.Width));
+    }
+    public bool IsDodge()  //회피 
+    {
+        var isDodge = new Random().NextDouble() < 0.1; // 랜덤 확률 적용(10%)
+
+        return isDodge;
     }
 }

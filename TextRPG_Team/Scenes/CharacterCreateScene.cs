@@ -49,9 +49,10 @@ namespace TextRPG_Team.Scenes
         private void JobcreateScreen() // 직업 선택 화면
         {
             Console.WriteLine($"{_gameState.Player.Name}님 원하시는 직업을 설정해주세요.\n");
-            Console.WriteLine("1. 계백수");
-            Console.WriteLine("2. 고딩");
-            Console.WriteLine("2. 직딩\n");
+            Console.WriteLine("\n1. 계백수 - 말 그대롭니다. 백수 그 자체\n");
+            Console.WriteLine("\n2. 고3딩 - 세상을 다 산듯한 얼굴 그렇습니다. 고3이네요.\n");
+            Console.WriteLine("\n3. 직딩 - 4년차 직장인이라 그런지 눈에 안광이 없는거 같다.\n\n");
+
         }
         private void ShowScreen() //화면 상태 전환
         {
@@ -105,7 +106,7 @@ namespace TextRPG_Team.Scenes
                     player._stats.Atk = 10;
                     player._stats.Def = 5;
                     player.Gold = 1500;
-                    player.Job = "고딩";
+                    player.Job = "고3딩";
                     player.Health = player._stats.MaxHp;
                     break;
                 case 3:

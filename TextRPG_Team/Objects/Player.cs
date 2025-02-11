@@ -132,7 +132,7 @@ public class Player : ICharacter
         // 아이템 구매 성공
         Gold -= item.Price;
         Inventory.Add(item);
-        Utility.AddLog($"성공적으로 구매하였습니다.-{item.Price} G\n", DarkBlue);
+        Utility.AddLog($"성공적으로 구매하였습니다. -{item.Price} G\n", ConsoleColor.DarkBlue);
         return true;
             
     }

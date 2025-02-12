@@ -200,6 +200,7 @@ public class InventoryScene : IScene
             if (item is EquipableItem equipItem && equipItem.itemEquip)
                 color = Green; //아이템 장착착여부에 따라 초록/화이트
             Utility.AlignLeft($"{item.GetItemDisplay()}", Utility.Width - (15 + strNum.Length), color);
+            
             Console.WriteLine();
             item.PrintInfo();
         }

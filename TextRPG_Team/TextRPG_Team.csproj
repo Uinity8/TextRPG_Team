@@ -12,8 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="resources\Items.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <None Update="resources\items.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 

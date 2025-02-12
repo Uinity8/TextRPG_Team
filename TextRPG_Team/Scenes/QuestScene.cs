@@ -212,7 +212,6 @@ public class QuestScene : IScene
                 }
                 break;
             case 3:
-                    _gameState.QuestList[input].Clear = true;
                 break;
             default: 
                 break;

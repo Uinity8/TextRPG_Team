@@ -1,11 +1,14 @@
 namespace TextRPG_Team.Scenes;
 
+using TextRPG_Team.Manager;
 using TextRPG_Team.Objects;
 using static ConsoleColor;
 
 public class ResultScene : IScene
 {
     private readonly GameState _gameState;
+    private readonly List<Item> _getItem;
+    Random random = new Random();
 
     public enum State
     {
@@ -18,6 +21,7 @@ public class ResultScene : IScene
     {
         _gameState = gameState;
         _state = state;
+        _getItem = LoadManager.LoadItems();
     }
 
     public void Run()
@@ -45,10 +49,6 @@ public class ResultScene : IScene
         //Utiltiy.PrintLog로 대체가능
         if (_state == State.Victory)
         {
-            // int enemyCount = _gameState.Spawner.GetSpawnedEnemies().Count;
-            // var player = _gameState.Player;
-            // Utility.ColorWriteLine(" 🏆  Victory!!\n", Yellow);
-            // Console.WriteLine($" 던전에서 몬스터 {enemyCount}마리를 처치했습니다.\n");
             HandleVictoryRewards();
         }
         else
@@ -67,8 +67,10 @@ public class ResultScene : IScene
         int potionCount = 0;
         var player = _gameState.Player;
         var enemies = _gameState.Spawner.GetSpawnedEnemies();
-        Random random = new Random();
+        List<string> rewardItems = new List<string>();
 
+        Utility.ColorWriteLine(" 🏆  Victory!!\n", Yellow);
+        Console.WriteLine($" 던전에서 몬스터 {enemies.Count}마리를 처치했습니다.\n");
         foreach (var enemy in enemies)
         {
             if (enemy.IsDead())
@@ -78,19 +80,38 @@ public class ResultScene : IScene
                 {
                     potionCount++;
                 }
+
+                if(random.Next(0, 100) < 10) //10% 확률
+                {
+                    GetRandomItem(player, rewardItems);
+                }
             }
         }
-        player.Gold += totalGold;
-        Utility.ColorWriteLine(" 🏆  Victory!!\n", Yellow);
-        Console.WriteLine($" 던전에서 몬스터 {enemies.Count}마리를 처치했습니다.\n");
-        Console.WriteLine($" 보상: {totalGold} 골드 획득");
         if (potionCount > 0)
         {
             player.Potion.Count += potionCount;
-            Console.WriteLine($" 추가 보상: 포션 {potionCount}개 획득!");
+            Console.WriteLine($" 보상: 포션 {potionCount}개 획득!");
+        }
+        player.Gold += totalGold;
+        Console.WriteLine($" 보상: {totalGold} 골드 획득");
+
+        if (rewardItems.Count > 0)
+        {
+            Console.WriteLine($" 아이템을 얻었습니다 : {string.Join(", ", rewardItems)}");
         }
         _gameState.Spawner.clearNum += 1;
     }
+    private void GetRandomItem(Player player, List<string> rewardItems)
+    {
+        if(_getItem.Count > 0)
+        {
+            int randomIdx = random.Next(_getItem.Count);
+            Item randomItem = _getItem[randomIdx];
+            player.Inventory.Add(randomItem);
+            rewardItems.Add(randomItem.Name);
+        }
+    }
+    
     public IScene? GetNextScene()
     {
         int input = Utility.GetInput(0, 0);

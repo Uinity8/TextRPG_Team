@@ -24,7 +24,6 @@ public class HealthPotion : ConsumableItem
             Utility.AddLog($"이미 최대 체력 입니다.\n", ConsoleColor.Blue);
             return;
         }
-
         Count--;
         player.Heal(HealValue);
         string log = $"{Name}을(를) 사용했습니다! {HealValue}만큼 회복되었습니다.(현재 HP: {player.Health})\n";

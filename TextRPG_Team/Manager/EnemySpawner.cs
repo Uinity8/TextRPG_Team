@@ -23,9 +23,9 @@ namespace TextRPG_Team.Manager
             baseEnemies.Clear();
 
             int  i = clearNum / 3;
-            baseEnemies.Add(new Enemy("미니언", new Stats(15 + i, 5 + i, 0, 2 + i), 0)); // Lv 2
-            baseEnemies.Add(new Enemy("공허충", new Stats(10 + i, 9 + i, 0, 3 + i), 1)); // Lv 3
-            baseEnemies.Add(new Enemy("대포미니언", new Stats(25 + i, 8 + i, 0, 5 + i), 2)); // Lv 5
+            baseEnemies.Add(new Enemy("상사 (밖에서 만나니 별로 기쁘지 않다. 아는 척 안 했으면...!) ", new Stats(15 + i, 5 + i, 0, 2 + i), 0)); // Lv 2
+            baseEnemies.Add(new Enemy("선생님 ( 야자를 튄게 들킨거 같다. 엄청난 기세를 가지고 다가온다.) ", new Stats(10 + i, 9 + i, 0, 3 + i), 1)); // Lv 3
+            baseEnemies.Add(new Enemy("명절에 만난 친척( 조언인 척 하는 잔소리를 자꾸 내뱉는다. 윽! 고통스러워! ) ", new Stats(25 + i, 8 + i, 0, 5 + i), 2)); // Lv 5
         }
 
         // 기본 적 리스트 가져오기

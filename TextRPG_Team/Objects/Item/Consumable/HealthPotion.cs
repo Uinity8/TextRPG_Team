@@ -2,8 +2,8 @@ namespace TextRPG_Team.Objects;
 
 public class HealthPotion : ConsumableItem
 {
-    public HealthPotion(int id, string name, string info, int price, int healValue)
-        : base(id, name, info, price, healValue)
+    public HealthPotion(int id, string name, string info, int healValue, int price)
+        : base(id, name, info, healValue,price)
     {
         Icon = " 🍷  ";
     }

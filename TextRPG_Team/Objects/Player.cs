@@ -87,6 +87,9 @@ public class Player : ICharacter
         Gold = gold;
         Health = _stats.MaxHp;
         Job = job;
+        
+        //초기 체력포션 3개 부여
+        //HealthPotion hpPotion = 
     }
 
     // ====== 메서드 ======
@@ -197,18 +200,12 @@ public class Player : ICharacter
             // 아이템 구매 성공
             Gold -= item.Price;
 
-            if (Inventory.FirstOrDefault(i => i.Id == item.Id) is ConsumableItem findItem)
-            {
-                findItem.Count++;
-            }
-            else
-            {
-                Inventory.Add(consumableItem);
-                findItem = consumableItem;
-            }
+         
 
-            
-            Utility.AddLog($"성공적으로 구매하였습니다. (현재 개수 :{findItem.Count}) -{findItem.Price} G\n", DarkBlue);
+           
+           var addItem = AddPotion(consumableItem);
+           
+            Utility.AddLog($"성공적으로 구매하였습니다. (보유 개수 {addItem.Count}) -{addItem.Price} G\n", DarkBlue);
         }
 
         return true;
@@ -298,6 +295,18 @@ public class Player : ICharacter
     }
 
 
+    public ConsumableItem AddPotion(ConsumableItem item)
+    {
+        if (Inventory.FirstOrDefault(i => i.Id == item.Id) is ConsumableItem findItem)
+        {
+            findItem.Count++;
+        }
+        else
+        {
+            Inventory.Add(item);
+        }
+    }
+    
     //아이템 사용
     public void UseItem(Item item)
     {

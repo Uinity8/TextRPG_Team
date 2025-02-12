@@ -135,7 +135,7 @@ public class InventoryScene : IScene
     {
         // 아이템 목록 표시
         var invetory = _gameState.Player.Inventory;
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 5; i++)
         {
             if (i >= invetory.Count)
             {

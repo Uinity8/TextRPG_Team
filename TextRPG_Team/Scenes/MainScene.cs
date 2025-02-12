@@ -1,5 +1,7 @@
 
 
+using TextRPG_Team.Manager;
+
 namespace TextRPG_Team.Scenes;
 using static Utility.Alignment;
 using static ConsoleColor;
@@ -8,7 +10,6 @@ using TextRPG_Team.Manager;
 
 public class MainScene : IScene
 {
-    private Stats _stats;
     private readonly GameState _gameState;
 
     public MainScene(GameState gameState) // DI 의존성 주입
@@ -47,7 +48,7 @@ public class MainScene : IScene
     // 다음 씬 결정
     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(1, 4);
+        int input = Utility.GetInput(0, 4);
         switch (input)
         {
             case 1:
@@ -57,12 +58,14 @@ public class MainScene : IScene
             case 3:
                 return new ShopScene(_gameState); // 상점
             case 4:
-                _gameState.PlayerHpBeforeDungeon = _gameState.Player.Health;
-                _gameState.PlayerLevelBeforeDungeon = _gameState.Player.GetStats.Lv;
+                Player player = _gameState.Player;
+                _gameState.PlayerBeforeDungeon = new Player(player.Name, player.GetStats, player.Gold, player.Job); 
                 _gameState.Spawner.AddRandomEnemies();
                 return new BattleScene(_gameState); // 배틀 시작
-            case 0:
-                return null; // 저장 / 종료
+            case 0:// 저장 / 종료
+                LoadManager.SavePlayerData(_gameState.Player);
+                Environment.Exit(0);
+                return null; 
             default:
                 return null; // 잘못된 입력 처리
         }

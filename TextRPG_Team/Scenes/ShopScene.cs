@@ -57,8 +57,6 @@ public class ShopScene : IScene
         }
         _maxPage = (_allItems.Count/ ItemsPerPage);
         _page = page;
-        
-        _gameState.Player.Gold = 10000000;
     }
 
     public void Run()

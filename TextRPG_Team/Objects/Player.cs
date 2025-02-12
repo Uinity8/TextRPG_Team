@@ -1,3 +1,5 @@
+using TextRPG_Team.Manager;
+
 namespace TextRPG_Team.Objects;
 
 using static ConsoleColor;
@@ -87,9 +89,6 @@ public class Player : ICharacter
         Gold = gold;
         Health = _stats.MaxHp;
         Job = job;
-        
-        //초기 체력포션 3개 부여
-        //HealthPotion hpPotion = 
     }
 
     // ====== 메서드 ======
@@ -295,17 +294,27 @@ public class Player : ICharacter
     }
 
 
-    public ConsumableItem AddPotion(ConsumableItem item)
+    public ConsumableItem AddPotion(ConsumableItem item, int num = 1)
     {
-        if (Inventory.FirstOrDefault(i => i.Id == item.Id) is ConsumableItem findItem)
+        // 인벤토리에서 동일한 ID의 아이템 검색
+        var findItem = Inventory.OfType<ConsumableItem>().FirstOrDefault(i => i.Id == item.Id);
+    
+        if (findItem != null)
         {
-            findItem.Count++;
+            // 기존 아이템이 있을 경우 수량만 증가
+            findItem.Count += num;
         }
         else
         {
+            // 새로운 아이템 추가 (Count 초기화)
+            item.Count = num; // `Count`는 직접 `num`만큼 설정
             Inventory.Add(item);
+            findItem = item;
         }
+
+        return findItem;
     }
+
     
     //아이템 사용
     public void UseItem(Item item)

@@ -10,17 +10,18 @@ public class ConsumableItem : Item
     {
         HealValue = healValue;
     }
+    
+    public override string GetItemDisplay()
+    {
+        return $"{Name} | {GetEffectDisplay()} x{Count}";
+    }
 
     // 소비 아이템만의 효과 표시
     public override string GetEffectDisplay()
     {
-        return $"+{HealValue} 회복";
+        return $"+{HealValue} ";
     }
-
-    public string GetCountDisplay()
-    {
-        return $"x{Count}";
-    }
+    
     // 소비 아이템 사용 메서드
     public virtual void Use(Player player)
     {

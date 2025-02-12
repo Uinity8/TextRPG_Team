@@ -1,4 +1,4 @@
-﻿namespace TextRPG_Team.Objects;
+﻿namespace TextRPG_Team.Objects.Items;
 
 public class Item
 {
@@ -9,7 +9,7 @@ public class Item
     public int SellPrice { get; } // 판매 가격
     public string Icon { get; set; } // 아이템 아이콘
 
-    protected  Item(int id, string name, string info, int price)
+    protected Item(int id, string name, string info, int price)
     {
         Icon = "     ";
         Id = id;
@@ -36,4 +36,11 @@ public class Item
     {
         return "";
     }
+    
+    //얕은복사
+    public Item ShallowCopy()
+    {
+        return (Item)this.MemberwiseClone();
+    }
+
 }

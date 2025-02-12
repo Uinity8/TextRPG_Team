@@ -1,6 +1,9 @@
+using TextRPG_Team.Objects.Items;
+using TextRPG_Team.Objects.Items.Consumable;
+using TextRPG_Team.Objects.Items.Equipable;
+
 namespace TextRPG_Team.Scenes;
 
-using Objects;
 using static ConsoleColor;
 
 public class ShopScene : IScene
@@ -12,13 +15,13 @@ public class ShopScene : IScene
         Sell,
     }
 
-    State _state;
+    readonly State _state;
     private readonly GameState _gameState;
-    private string _strTitle = "";
+    private readonly string _strTitle = "";
     
     //page 관련 필드 추가
-    private int _maxPage = 0;
-    private int _page = 0;// 현재 페이지 번호
+    private readonly int _maxPage;
+    private int _page;// 현재 페이지 번호
     private const int ItemsPerPage = 5; // 페이지당 표시할 항목 수
     int Page
     {
@@ -33,7 +36,7 @@ public class ShopScene : IScene
                 _page = value;
         }
     }
-    private List<Item> _allItems = new List<Item>();
+    private readonly List<Item> _allItems = new List<Item>();
 
 
     public ShopScene(GameState gameState,int page = 0, State state = State.Default) //DI 의존성 주입
@@ -43,11 +46,11 @@ public class ShopScene : IScene
         switch (_state)
         {
             case State.Default:
-                _allItems = _gameState._itemList;
+                _allItems = _gameState.ItemList;
                 _strTitle = "필요한 아이템을 얻을 수 있는 상점입니다.\n";
                 break;
             case State.Buy:
-                _allItems = _gameState._itemList;
+                _allItems = _gameState.ItemList;
                 _strTitle = "[ 구매하기 ]\n";
                 break;
             case State.Sell:
@@ -144,7 +147,7 @@ public class ShopScene : IScene
         return null;
     }
 
-    private IScene? GetInputForBuy() // 구매하기
+    private IScene GetInputForBuy() // 구매하기
     {
         var pagedItems = GetPagedItemList(_allItems);
         int input = Utility.GetInput(0, pagedItems.Count, " 구매하실 아이템을 선택해주세요.");
@@ -154,12 +157,12 @@ public class ShopScene : IScene
                 return new ShopScene(_gameState,Page);
             default:
                 Item item =pagedItems[input-1];
-                _gameState.Player.BuyItem(item) ;
+                _gameState.Player.BuyItem(item.ShallowCopy()) ;
                 return this;
         }
     }
 
-    private IScene? GetInputForSell() // 판매하기
+    private IScene GetInputForSell() // 판매하기
     {
         var pagedItems = GetPagedItemList(_allItems);
         int input = Utility.GetInput(0, pagedItems.Count," 판매하실 아이템을 선택해주세요.");
@@ -216,7 +219,7 @@ public class ShopScene : IScene
 
     
     //화면에 아이템 리스트 표시
-    private void DisplayItemList(List<Item> allItems, bool isNumer = false, bool isSell = false)
+    private void DisplayItemList(List<Item> allItems, bool isNumber = false, bool isSell = false)
     {
 
         var pagedItems = GetPagedItemList(allItems);
@@ -225,7 +228,7 @@ public class ShopScene : IScene
         {
             Console.Write(pagedItems[i].Icon);
             string strNum = "";
-            if (isNumer)
+            if (isNumber)
                 strNum = (i+1).ToString() + ". ";
             Utility.ColorWrite(strNum, DarkMagenta);
             
@@ -247,7 +250,7 @@ public class ShopScene : IScene
     {
         if (IsPlayerHaveItem(item.Id) && !isSell && item is EquipableItem)  //플레이어가 해당아이템을 보유중이라면 "구매완료" 표시
         {
-            Utility.AlignRight($"구매완료\n", 5); // 가격 정렬
+            Utility.AlignRight($"보유중\n", 5); // 가격 정렬
         }
         else //플레이어가 가진 골드에 따라 색상출력 (화이트,레드)
         {

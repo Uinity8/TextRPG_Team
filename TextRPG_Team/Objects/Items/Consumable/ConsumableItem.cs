@@ -1,16 +1,11 @@
-namespace TextRPG_Team.Objects;
+namespace TextRPG_Team.Objects.Items.Consumable;
 
-public class ConsumableItem : Item
+public class ConsumableItem(int id, string name, string info, int healValue, int price)
+    : Item(id, name, info, price)
 {
-    public int HealValue { get; } // 회복량
+    public int HealValue { get; } = healValue; // 회복량
     public int Count { get; set; } = 1;
 
-    public ConsumableItem(int id, string name, string info, int healValue, int price)
-        : base(id, name, info, price)
-    {
-        HealValue = healValue;
-    }
-    
     public override string GetItemDisplay()
     {
         return $"{Name} | {GetEffectDisplay()} x{Count}";

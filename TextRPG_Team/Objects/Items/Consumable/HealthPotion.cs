@@ -1,4 +1,4 @@
-namespace TextRPG_Team.Objects;
+namespace TextRPG_Team.Objects.Items.Consumable;
 
 public class HealthPotion : ConsumableItem
 {

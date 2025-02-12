@@ -17,19 +17,19 @@ public enum ItemType
 
 public class Item
 {
-    
-    public int Id { get; set; } //아이템 ID
+    public Stats Effect { get; } // 능력치 값
     public string Name { get; } // 이름
     public ItemType Type { get; } // 아이템 종류 (무기 or 방어구)
-    public Stats Effect { get; } // 능력치 값
     public string Info { get; } // 아이템 정보
     public int Price { get; } // 가격
     public int SellPrice { get; } //판매 가격
     public bool itemPurchase { get; set; } // 아이템 구매 여부
     public bool itemEquip { get; set; } // 아이템 장착 여부
+
+    public int Id { get; set; } //아이템 ID
     public string Icon { get; set; }
 
-    public Item(int id,string name, ItemType type, Stats effect, string info, int price)
+    public Item(string name, ItemType type, Stats effect, string info, int price, int id)
     {
         Name = name;
         Type = type;

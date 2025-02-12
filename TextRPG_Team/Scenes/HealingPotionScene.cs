@@ -27,7 +27,7 @@ namespace TextRPG_Team.Scenes
 
                 if (input == "1")
                 {
-                    _player.UseHealingPotion();
+                    _player.Potion.UsePotion();
                 }
                 else if (input == "0")
                 {

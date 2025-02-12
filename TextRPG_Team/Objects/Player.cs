@@ -300,10 +300,12 @@ public class Player : ICharacter
         if (Inventory.FirstOrDefault(i => i.Id == item.Id) is ConsumableItem findItem)
         {
             findItem.Count++;
+            return findItem;
         }
         else
         {
             Inventory.Add(item);
+            return item;
         }
     }
     

@@ -37,6 +37,8 @@ public class MainScene : IScene
         Console.WriteLine("상 점\n");
         Utility.AlignLeft(" 4.", width);
         Console.WriteLine("전투시작\n");
+        Utility.AlignLeft(" 5.", width);
+        Console.WriteLine("퀘스트\n");
         Console.WriteLine(new string('-',Utility.Width));
         Console.WriteLine("\n 0. 💾 저장/종료\n");
     }
@@ -44,7 +46,7 @@ public class MainScene : IScene
     // 다음 씬 결정
     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(1, 4);
+        int input = Utility.GetInput(1, 5);
         switch (input)
         {
             case 1:
@@ -57,6 +59,8 @@ public class MainScene : IScene
                 _gameState.PlayerHpBeforeDungeon = _gameState.Player.Health;
                 _gameState.Spawner.AddRandomEnemies();
                 return new BattleScene(_gameState); // 배틀 시작
+            case 5:
+                return new QuestScene(_gameState);
             case 0:
                 return null; // 저장 / 종료
             default:

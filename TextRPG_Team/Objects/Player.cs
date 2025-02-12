@@ -71,7 +71,7 @@ public class Player : ICharacter
 
     // ====== 스탯 ======
     public Stats _stats; // 기본 스탯
-    private Stats AddStats { get; set; } // 추가 스탯
+    public Stats AddStats { get; set; } // 추가 스탯
 
     /// <summary>기본 스탯과 추가 스탯을 합친 최종 스탯 반환</summary>
     public Stats TotalStats => _stats + AddStats;
@@ -305,6 +305,7 @@ public class Player : ICharacter
         {
             // 기존 아이템이 있을 경우 수량만 증가
             findItem.Count += num;
+            return findItem;
         }
         else
         {
@@ -312,6 +313,7 @@ public class Player : ICharacter
             item.Count = num; // `Count`는 직접 `num`만큼 설정
             Inventory.Add(item);
             findItem = item;
+            return item;
         }
 
         return findItem;

@@ -17,15 +17,15 @@ public class Enemy : ICharacter
 
     private Stats _stats; // 기본 스탯
 
-    public Stats GetStats => _stats;
+    public Stats TotalStats => _stats;
 
-    public float Power => GetStats.Atk; // 적 공경력  
+    public float Power => TotalStats.Atk; // 적 공경력  
 
     public Enemy(string name, Stats stats, int id)
     {
         Name = name;
         _stats = stats;
-        Health = GetStats.MaxHp; // 최대 체력 초기화
+        Health = TotalStats.MaxHp; // 최대 체력 초기화
         Id = id;
     }
 
@@ -62,7 +62,7 @@ public class Enemy : ICharacter
         float preHp = Health;
         Health = Math.Max(0, Health - damage);
         string hpStr = Health > 0 ? Health.ToString() : "Dead";
-        var log = $"{Icon[Id]} Lv.{GetStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
+        var log = $"{Icon[Id]} Lv.{TotalStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
         Utility.AddLog(log, Blue); // 로그 출력
     }
 
@@ -80,7 +80,7 @@ public class Enemy : ICharacter
     public void PrintInfo(ConsoleColor color = White)
     {
         Utility.AlignLeft(Icon[Id], 4, color);
-        Utility.AlignLeft($" Lv.{GetStats.Lv}", 6, color);
+        Utility.AlignLeft($" Lv.{TotalStats.Lv}", 6, color);
         Utility.AlignLeft(Name, 15, color);
         string hpStr = Health > 0 ? Health.ToString() : "Dead";
         Utility.AlignLeft($"HP : {hpStr}", 2, color);

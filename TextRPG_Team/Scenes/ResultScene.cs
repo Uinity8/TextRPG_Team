@@ -16,7 +16,7 @@ public class ResultScene : IScene
         Lose, // 패배
     }
     State _state;
-    
+
     public ResultScene(GameState gameState, State state) //DI 의존성 주입
     {
         _gameState = gameState;
@@ -42,8 +42,8 @@ public class ResultScene : IScene
         var player = _gameState.Player;
         var beforePlayer = _gameState.PlayerBeforeDungeon ?? player;
         
-        if (beforePlayer.GetStats.Lv < player.GetStats.Lv)
-            Utility.AddLog($"LEVEL UP!!! LV.{beforePlayer.GetStats.Lv} -> Lv.{player.GetStats.Lv}\n", Yellow);
+        if (beforePlayer.TotalStats.Lv < player.TotalStats.Lv)
+            Utility.AddLog($"LEVEL UP!!! LV.{beforePlayer.TotalStats.Lv} -> Lv.{player.TotalStats.Lv}\n", Yellow);
         
 
         //Utiltiy.PrintLog로 대체가능
@@ -75,7 +75,7 @@ public class ResultScene : IScene
         {
             if (enemy.IsDead())
             {
-                totalGold += enemy.GetStats.Lv * 100;
+                totalGold += enemy.TotalStats.Lv * 100;
                 if (random.Next(0, 100) < 30) // 30% 확률로 포션 획득
                 {
                     potionCount++;
@@ -89,15 +89,10 @@ public class ResultScene : IScene
         }
         if (potionCount > 0)
         {
+            Item rewardItem = _gameState._itemList.Find(x => x.Id == 6);
+            player.Inventory.Add(rewardItem);
             player.Potion.Count += potionCount;
-            Console.WriteLine($" 보상: 포션 {potionCount}개 획득!");
-        }
-        player.Gold += totalGold;
-        Console.WriteLine($" 보상: {totalGold} 골드 획득");
-
-        if (rewardItems.Count > 0)
-        {
-            Console.WriteLine($" 아이템을 얻었습니다 : {string.Join(", ", rewardItems)}");
+            Console.WriteLine($" 추가 보상: 포션 {potionCount}개 획득!");
         }
         _gameState.Spawner.clearNum += 1;
     }
@@ -132,12 +127,12 @@ public class ResultScene : IScene
 
         Console.WriteLine(" [ 내정보 ]");
         Utility.AlignLeft(" ", 5);
-        Utility.AlignLeft($"Lv.{player.GetStats.Lv}", 7);
+        Utility.AlignLeft($"Lv.{player.TotalStats.Lv}", 7);
         Console.WriteLine($"{player.Name}");
         Utility.AlignLeft(" ❤️   HP : ", 11);
         Utility.AlignLeft($" {beforePlayer.Health} -> {player.Health}\n", 4);
         Utility.AlignLeft(" 🆙  lv : ", 11);
-        Utility.AlignLeft($" {beforePlayer.GetStats.Lv} -> {player.GetStats.Lv}\n", 4);
+        Utility.AlignLeft($" {beforePlayer.TotalStats.Lv} -> {player.TotalStats.Lv}\n", 4);
         Utility.AlignLeft(" 💰  Gold : ", 11);
         Utility.AlignLeft($" {beforePlayer.Gold} -> {player.Gold}\n", 4);
         Console.WriteLine(new string('-', Utility.Width));

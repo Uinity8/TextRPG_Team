@@ -5,6 +5,9 @@ using static ConsoleColor;
 public class Player : ICharacter
 {
     // ====== 필드 ======
+    int _exp; //현재 경험치
+    float _health; //현재 체력
+
     // ====== 속성 ======
     /// <summary>캐릭터 이름</summary>
     public string Name { get; set; }
@@ -16,14 +19,18 @@ public class Player : ICharacter
     public int Gold { get; set; }
 
     /// <summary>현재 체력</summary>
-    public float Health { get; set; }
+    public float Health
+    {
+        get => _health;
+        set => _health = Math.Min(value, TotalStats.MaxHp);
+    }
 
     /// <summary>최종 공격력 (±10% 범위의 랜덤 값)</summary>
     public float Power
     {
         get
         {
-            float baseAtk = GetStats.Atk; // 기본 공격력
+            float baseAtk = TotalStats.Atk; // 기본 공격력
 
             // ±10% 계산
             float minAtk = baseAtk * 0.9f; // 최저 공격력 (기본 공격력의 90%)
@@ -40,37 +47,30 @@ public class Player : ICharacter
 
 
     /// <summary>소유 아이템 목록</summary>
-    public List<Item> Inventory { get; }
+    public List<Item> Inventory { get; } = new List<Item>();
 
-    
-    /// <summary>경험치</summary>
-    private int _exp; //현재 경험치
-
-    /// <summary>힐링 포션 (HP 회복)/// </summary>
-    public HealingPotion Potion { get; private set; } = new HealingPotion();
-    
     public int Exp
     {
         get => _exp;
         private set
         {
-            if (value >= GetStats.MaxExp)
+            if (value >= TotalStats.MaxExp)
             {
-                value -= GetStats.MaxExp;
+                value -= TotalStats.MaxExp;
                 LevelUp();
             }
 
             _exp = value;
         }
     }
-    
+
 
     // ====== 스탯 ======
     public Stats _stats; // 기본 스탯
     private Stats AddStats { get; set; } // 추가 스탯
 
     /// <summary>기본 스탯과 추가 스탯을 합친 최종 스탯 반환</summary>
-    public Stats GetStats => _stats + AddStats;
+    public Stats TotalStats => _stats + AddStats;
 
     // ====== 생성자 ======
     /// <summary>
@@ -86,10 +86,7 @@ public class Player : ICharacter
         _stats = stats;
         Gold = gold;
         Health = _stats.MaxHp;
-        Inventory = new List<Item>();
         Job = job;
-        _exp = 0;
-        Potion = new HealingPotion();
     }
 
     // ====== 메서드 ======
@@ -100,29 +97,30 @@ public class Player : ICharacter
         // 공격 동작 실행
         var isCritical = new Random().NextDouble() < 0.15; // 랜덤 확률 적용(15%)
         var totalDamage = isCritical ? (float)Math.Floor(Power * 1.6f) : Power;
-     
+
         if (isCritical)
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다 -치명타 공격!!\n"; // 공격 로그 생성
-            Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
+            string log = $"Lv.{target.TotalStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다 -치명타 공격!!\n"; // 공격 로그 생성
+            Utility.AddLog(log, Yellow); // 로그 출력
         }
         else
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
-            Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
+            string log = $"Lv.{target.TotalStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
+            Utility.AddLog(log, Blue); // 로그 출력
         }
-       
+
         target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
 
-        if(target.IsDead() && target is Enemy enemy)
+        if (target.IsDead() && target is Enemy enemy)
         {
-            Exp += enemy.GetStats.Lv * 2;
+            Exp += enemy.TotalStats.Lv*2;
         }
     }
-    public bool IsDodge()  //회피 
+
+    public bool IsDodge() //회피 
     {
         var isDodge = new Random().NextDouble() < 0.1; // 랜덤 확률 적용(10%)
-        
+
         return isDodge;
     }
 
@@ -134,9 +132,9 @@ public class Player : ICharacter
         float preHp = Health;
         Health = Math.Max(0, Health - damage);
         string hpStr = Health > 0 ? $"{Health}" : "Dead";
-        var log = $"Lv.{GetStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
+        var log = $"Lv.{TotalStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
 
-        Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
+        Utility.AddLog(log, Blue); // 로그 출력
     }
     /// <summary>적 처치 시 경험치 획득</summary>
     public void GainExp(int amount)
@@ -161,102 +159,88 @@ public class Player : ICharacter
 
     // 플레이어가 사망했는지 여부를 반환
     public bool IsDead() => Health <= 0f;
-    
-    public void UseHealingPotion()
-    {
-        Potion.UsePotion(this);
-    }
 
 
     /// <summary>아이템 구매 처리 메서드</summary>
     /// <param name="item">구매할 아이템</param>
     public bool BuyItem(Item item)
     {
-        if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
+        
+        if (item is EquipableItem equipableItem) // 장비 아이템인지 확인
         {
-            Utility.AddLog("이미 보유한 아이템 입니다.\n", Red);
-            return false;
+            if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
+            {
+                Utility.AddLog("이미 보유한 아이템 입니다.\n", Red);
+                return false;
+            }
+
+            if (Gold < item.Price)
+            {
+                Utility.AddLog("골드가 부족합니다\n", Red);
+                return false;
+            }
+
+            // 아이템 구매 성공
+            Gold -= item.Price;
+            Inventory.Add(equipableItem);
+            Utility.AddLog($"성공적으로 구매하였습니다. -{equipableItem.Price} G\n", DarkBlue);
+        }
+        else if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
+        {
+            
+            if (Gold < item.Price)
+            {
+                Utility.AddLog("골드가 부족합니다\n", Red);
+                return false;
+            }
+
+            // 아이템 구매 성공
+            Gold -= item.Price;
+
+            if (Inventory.FirstOrDefault(i => i.Id == item.Id) is ConsumableItem findItem)
+            {
+                findItem.Count++;
+            }
+            else
+            {
+                Inventory.Add(consumableItem);
+                findItem = consumableItem;
+            }
+
+            
+            Utility.AddLog($"성공적으로 구매하였습니다. (현재 개수 :{findItem.Count}) -{findItem.Price} G\n", DarkBlue);
         }
 
-        if (Gold < item.Price)
-        {
-            Utility.AddLog("골드가 부족합니다\n", Red);
-            return false;
-        }
-
-        // 아이템 구매 성공
-        Gold -= item.Price;
-        Inventory.Add(item);
-        Utility.AddLog($"성공적으로 구매하였습니다. -{item.Price} G\n", ConsoleColor.DarkBlue);
         return true;
     }
 
-    /// <summary>아이템 장착/해제</summary>
-    public void EquipItem(int index)
-    {
-        var equpItem = Inventory[index];
-        // 기존 장착 해제
-        foreach (var invItem in Inventory)
-        {
-            if (invItem.Type == equpItem.Type && invItem.itemEquip)
-            {
-                invItem.itemEquip = false;
-            }
-        }
-
-        equpItem.itemEquip = !equpItem.itemEquip;
-        CalculateAddStats();
-    }
-
-    public bool TrySell(Item item)
-    {
-        bool canSell = !item.itemPurchase;
-
-        int index = Inventory.FindIndex(i => i.Id == item.Id);
-        EquipItem(index);
-        SellItem(item);
-        return canSell;
-    }
-
-    /// <summary>아이템 판매 처리 메서드</summary>
-    /// <param name="item">판매할 아이템</param>
+    //아이템 판매 메서드
     public void SellItem(Item item)
     {
-        Item? sell = Inventory.Find(i => i.Id == item.Id);
-        if (sell == null) return;
+        if (item == null) return;
 
-        if (sell.itemEquip)
-        {
-            sell.itemEquip = false;
-            CalculateAddStats();
-        }
+        //판매 아이템이 장착아이템&장착 중이라면 장착해제
+        if (item is EquipableItem equipableItem && equipableItem.itemEquip)
+            equipableItem.Unequip(this);
 
-        Gold += (int)(sell.Price * 0.85);
-        Inventory.Remove(sell);
-        Utility.AddLog($"성공적으로 판매하였습니다.(+{item.Price} G)\n", ConsoleColor.DarkBlue);
-        ;
+        Gold += (int)(item.SellPrice);
+        Inventory.Remove(item);
+
+        //판매 로그 저장
+        Utility.AddLog($"성공적으로 판매하였습니다.(+{item.Price} G)\n", DarkBlue);
     }
-
-    /// <summary>아이템 장착 효과를 계산해 추가 스탯에 반영</summary>
-    private void CalculateAddStats()
-    {
-        var itemStats = new Stats(0, 0, 0);
-        foreach (var item in Inventory.FindAll(i => i.itemEquip))
-        {
-            itemStats += item.Effect;
-        }
-
-        AddStats = itemStats;
-    }
-
 
     /// <summary>현재 플레이어의 정보를 문자열로 반환</summary>
     public override string ToString()
     {
-        return $"Lv.{GetStats.Lv} : {Name} [{Job}]" + "\n" +
-               $"HP : {Health} / {GetStats.MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
-               $"공격력 : {GetStats.Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : (AddStats.Atk != 0 ? $"(-{AddStats.Atk})" : "")) + "\n" +
-               $"방어력 : {GetStats.Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : (AddStats.Def != 0 ? $"(-{AddStats.Def})" : "")) + "\n" +
+        return $"Lv.{TotalStats.Lv} : {Name} [{Job}]" + "\n" +
+               $"HP : {Health} / {TotalStats.MaxHp}" + (TotalStats.MaxHp > 0 ? $"(+{TotalStats.MaxHp})" : "") + "\n" +
+               $"공격력 : {TotalStats.Atk}" +
+               (TotalStats.Atk > 0 ? $"(+{TotalStats.Atk})" : (TotalStats.Atk != 0 ? $"(-{TotalStats.Atk})" : "")) +
+               "\n" +
+               $"방어력 : {TotalStats.Def}" +
+               (TotalStats.Def > 0 ? $"(+{TotalStats.Def})" : (TotalStats.Def != 0 ? $"(-{TotalStats.Def})" : "")) +
+               "\n" +
                $"Gold : {Gold} G";
     }
 
@@ -265,37 +249,97 @@ public class Player : ICharacter
         int width = 10;
 
         Console.WriteLine();
-        Console.Write($" [ Lv.{GetStats.Lv} ] {Name}  ");
+        Console.Write($" [ Lv.{TotalStats.Lv} ] {Name}  ");
         Utility.ColorWriteLine($"( {Job} )", Cyan);
         Console.WriteLine();
         Console.WriteLine(new string('-', Utility.Width));
+
         Utility.AlignLeft($"\n HP", width);
         Console.Write($": ");
-        if (Health == GetStats.MaxHp)
-            Utility.ColorWrite($"{Health} / {GetStats.MaxHp}", ConsoleColor.DarkGreen);
+        if (Health == TotalStats.MaxHp)
+            Utility.ColorWrite($"{Health} / {TotalStats.MaxHp}", DarkGreen);
         else
-            Utility.ColorWrite($"{Health} / {GetStats.MaxHp}", ConsoleColor.DarkRed);
-        if (AddStats.MaxHp > 0) Utility.ColorWrite($"(+{AddStats.MaxHp})", ConsoleColor.DarkBlue);
+            Utility.ColorWrite($"{Health} / {TotalStats.MaxHp}", DarkRed);
+        if (AddStats.MaxHp > 0) Utility.ColorWrite($"(+{AddStats.MaxHp})", DarkBlue);
 
-        Utility.AlignLeft($"\n Exp",width);
+        Utility.AlignLeft($"\n Exp", width);
         Console.Write($": ");
-        if (Exp == GetStats.MaxExp)
-            Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.DarkYellow);
+        if (Exp == TotalStats.MaxExp)
+            Utility.ColorWrite($"{Exp} / {TotalStats.MaxExp}", DarkYellow);
         else
-            Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.Yellow);
+            Utility.ColorWrite($"{Exp} / {TotalStats.MaxExp}", Yellow);
+
         Utility.AlignLeft("\n 공격력", width);
-        Console.Write($": {GetStats.Atk}");
-        if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", ConsoleColor.DarkBlue);
-        else if(AddStats.Atk < 0) Utility.ColorWrite($"({AddStats.Atk})", ConsoleColor.DarkRed);
+        Console.Write($": {TotalStats.Atk}");
+        if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", DarkBlue);
+        else if (AddStats.Atk < 0) Utility.ColorWrite($"({AddStats.Atk})", DarkRed);
+
         Utility.AlignLeft("\n 방어력", width);
-        Console.Write($": {GetStats.Def}");
-        if (AddStats.Def > 0) Utility.ColorWrite($"(+{AddStats.Def})", ConsoleColor.DarkBlue);
-        else if (AddStats.Def < 0) Utility.ColorWrite($"({AddStats.Def})", ConsoleColor.DarkRed);
+        Console.Write($": {TotalStats.Def}");
+        if (AddStats.Def > 0) Utility.ColorWrite($"(+{AddStats.Def})", DarkBlue);
+        else if (TotalStats.Def < 0) Utility.ColorWrite($"({AddStats.Def})", DarkRed);
         Console.WriteLine("\n");
+
         Console.WriteLine(new string('-', Utility.Width));
         //Utility.AlignLeft(" Gold", width-1);
         Utility.AlignRight($"{Gold}", Utility.Width - 5);
         Utility.ColorWriteLine(" G", Yellow);
         Console.WriteLine(new string('-', Utility.Width));
     }
-}
+
+    public void EquipStats(Stats effect)
+    {
+        AddStats += effect;
+    }
+
+    public void UnEquipStats(Stats effect)
+    {
+        AddStats -= effect;
+    }
+
+
+    //아이템 사용
+    public void UseItem(Item item)
+    {
+        if (item is EquipableItem equipableItem) // 장비 아이템인지 확인
+        {
+            EquipItem(equipableItem);  
+        }
+       else  if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
+        {
+            consumableItem.Use(this);
+            if(consumableItem.Count <= 0)
+                Inventory.Remove(consumableItem);
+        }
+    }
+
+    /// <summary>아이템 장착/해제</summary>
+        public void EquipItem(EquipableItem item)
+        {
+            // 장비가 이미 장착되어 있으면 해제
+            if (item.itemEquip)
+                item.Unequip(this);
+
+            //장착중이 아니라면 조건 검사
+            else
+            {
+                // 같은 클래스의 장비를 모두 해제
+                foreach (var invItem in Inventory.FindAll(i => i.GetType() == item.GetType()))
+                {
+                    if (invItem is EquipableItem otherEquipable && otherEquipable.itemEquip) // itemEquip에 안전하게 접근
+                    {
+                        otherEquipable.Unequip(this); // 모든 같은 클래스의 아이템 해제
+                    }
+                }
+
+
+                // 선택된 아이템 장착
+                item.Equip(this);
+            }
+        }
+
+        public void Heal(int healValue)
+        {
+            Health += healValue;
+        }
+    }

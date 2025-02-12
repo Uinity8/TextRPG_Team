@@ -29,6 +29,17 @@ public struct Stats // 체,공,방
             MaxExp = s1.MaxExp + s2.MaxExp
         };
     }
+    public static Stats operator -(Stats s1, Stats s2)
+    {
+        return new Stats
+        {
+            MaxHp = s1.MaxHp - s2.MaxHp,
+            Atk = s1.Atk - s2.Atk,
+            Def = s1.Def - s2.Def,
+            Lv = s1.Lv - s2.Lv,
+            MaxExp = s1.MaxExp - s2.MaxExp
+        };
+    }
 }
 
 public interface ICharacter
@@ -36,7 +47,7 @@ public interface ICharacter
     string Name { get;  }   //이름
     float Health { get; }   //현재 체력
     float Power { get;  }   //최종 데미지
-    Stats GetStats { get; } // 최종 스텟
+    Stats TotalStats { get; } // 최종 스텟
     
     void PerformAttack(ICharacter target); //공격
     void TakeDamage(float damage);  //피해

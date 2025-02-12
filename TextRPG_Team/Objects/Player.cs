@@ -6,6 +6,8 @@ using static ConsoleColor;
 
 public class Player : ICharacter
 {
+    public event Action<object> itemUsed;
+
     // ====== 필드 ======
     int _exp; //현재 경험치
     float _health; //현재 체력
@@ -325,8 +327,9 @@ public class Player : ICharacter
         }
        else  if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
         {
+            itemUsed.Invoke(this);
             consumableItem.Use(this);
-            if(consumableItem.Count <= 0)
+            if (consumableItem.Count <= 0)
                 Inventory.Remove(consumableItem);
         }
     }

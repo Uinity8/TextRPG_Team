@@ -47,17 +47,20 @@ public class Player : ICharacter
     private int _exp; //현재 경험치
 
     /// <summary>힐링 포션 (HP 회복)/// </summary>
-    public HealingPotion Potion { get; private set; }
+    public HealingPotion Potion { get; private set; } = new HealingPotion();
     
-    /// <summary>레벨</summary>
-    public int Level = 1;
     public int Exp
     {
         get => _exp;
         private set
         {
+            if (value >= GetStats.MaxExp)
+            {
+                value -= GetStats.MaxExp;
+                LevelUp();
+            }
+
             _exp = value;
-            CheckLevelUp();
         }
     }
     
@@ -77,8 +80,7 @@ public class Player : ICharacter
     /// <param name="stats">초기 스탯</param>
     /// <param name="gold">초기 골드</param>
     /// <param name="job">플레이어 직업</param>
-    /// <param name="level">플레이어 레벨</param>
-    public Player(string name, Stats stats, int gold, string job, int level)
+    public Player(string name, Stats stats, int gold, string job)
     {
         Name = name;
         _stats = stats;
@@ -87,8 +89,7 @@ public class Player : ICharacter
         Inventory = new List<Item>();
         Job = job;
         _exp = 0;
-        Level = level;
-        Potion = new HealingPotion(this);
+        Potion = new HealingPotion();
     }
 
     // ====== 메서드 ======
@@ -102,7 +103,7 @@ public class Player : ICharacter
      
         if (isCritical)
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.- 치명타 공격!!\n"; // 공격 로그 생성
+            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다 -치명타 공격!!\n"; // 공격 로그 생성
             Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
         }
         else
@@ -115,9 +116,14 @@ public class Player : ICharacter
 
         if(target.IsDead() && target is Enemy enemy)
         {
-            int getExp = enemy.GetStats.Lv * 10;
-            GainExp(getExp);
+            Exp += enemy.GetStats.Lv;
         }
+    }
+    public bool IsDodge()  //회피 
+    {
+        var isDodge = new Random().NextDouble() < 0.1; // 랜덤 확률 적용(10%)
+        
+        return isDodge;
     }
 
 
@@ -132,12 +138,6 @@ public class Player : ICharacter
 
         Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
     }
-    public bool IsDodge()  //회피 
-    {
-        var isDodge = new Random().NextDouble() < 0.1; // 랜덤 확률 적용(10%)
-        
-        return isDodge;
-    }
     /// <summary>적 처치 시 경험치 획득</summary>
     public void GainExp(int amount)
     {
@@ -151,25 +151,37 @@ public class Player : ICharacter
         {
             _exp -= _stats.MaxExp; // 남은 경험치 계산
             _stats.Lv++; // 레벨 증가
-            _stats.MaxExp = (int)(_stats.MaxExp * 2.0); // MaxExp 2배 증가
-            _stats.MaxHp += 10; // 최대 체력 증가
-            _stats.Atk += 2; // 공격력 증가
-            _stats.Def += 1; // 방어력 증가
-            Health = _stats.MaxHp; // 체력 회복
+        _stats.MaxExp = (5 * (_stats.Lv * _stats.Lv - _stats.Lv)) / 2 + 10;
+        _stats.MaxHp += 5; // 최대 체력 증가
+        _stats.Atk += 0.5f; // 공격력 증가
+        _stats.Def += 1; // 방어력 증가
+        Health = _stats.MaxHp; // 체력 회복
 
-            Utility.AddLog($"🎉 {Name}이(가) 레벨업! (Lv.{_stats.Lv})\n", ConsoleColor.Green);
+        Utility.AddLog($"🎉 {Name}이(가) 레벨업! (Lv.{_stats.Lv})\n", ConsoleColor.Green);
             Utility.AddLog($" {Name}의 체력이 회복되며 모든 스텟이 상승합니다.\n", ConsoleColor.DarkCyan);
         }
     }
 
-    /// <summary>플레이어가 사망했는지 여부를 반환</summary>
+
+    /// 레벨업 체크 및 처리
+    private void LevelUp()
+    {
+        _stats.Lv++; // 레벨 증가
+        _stats.MaxExp = (5 * (_stats.Lv * _stats.Lv - _stats.Lv)) / 2 + 10;
+        _stats.MaxHp += 5; // 최대 체력 증가
+        _stats.Atk += 0.5f; // 공격력 증가
+        _stats.Def += 1; // 방어력 증가
+        Health = _stats.MaxHp; // 체력 회복
+    }
+
+    // 플레이어가 사망했는지 여부를 반환
     public bool IsDead() => Health <= 0f;
     
-    /// <summary>체력을 회복하는 메서드</summary>
-    public void Heal(float amount)
+    public void UseHealingPotion()
     {
-        Health = Math.Min(Health + amount, GetStats.MaxHp);
+        Potion.UsePotion(this);
     }
+
 
     /// <summary>아이템 구매 처리 메서드</summary>
     /// <param name="item">구매할 아이템</param>
@@ -286,9 +298,7 @@ public class Player : ICharacter
             Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.DarkYellow);
         else
             Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.Yellow);
-        if (AddStats.MaxExp > 0) Utility.ColorWrite($"(+{AddStats.MaxExp})", ConsoleColor.DarkCyan);
-
-         Utility.AlignLeft("\n 공격력", width);
+        Utility.AlignLeft("\n 공격력", width);
         Console.Write($": {GetStats.Atk}");
         if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", ConsoleColor.DarkBlue);
         else if(AddStats.Atk < 0) Utility.ColorWrite($"({AddStats.Atk})", ConsoleColor.DarkRed);

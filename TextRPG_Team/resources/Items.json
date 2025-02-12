@@ -1,0 +1,92 @@
+[
+  {
+    "Id": 1,
+    "Name": "노트북",
+    "Type": 0,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 20.0,
+      "Def": 0.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Info": "보기보다 가벼운게 아마도 L* gr*m 인거 같다. ",
+    "Price": 2800,
+    "SellPrice": 2380,
+    "itemPurchase": false,
+    "itemEquip": false,
+    "Icon": " 🗡️"
+  },
+  {
+    "Id": 2,
+    "Name": "수특책",
+    "Type": 0,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 15.0,
+      "Def": 0.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Info": "앞표지만 너덜거린다. 올해 수능이 며칠 남은거지 ? ",
+    "Price": 1700,
+    "SellPrice": 1445,
+    "itemPurchase": false,
+    "itemEquip": false,
+    "Icon": " 🗡️"
+  },
+  {
+    "Id": 3,
+    "Name": "책가방",
+    "Type": 2,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": -10.0,
+      "Def": 30.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Info": "매우 크고 무겁다. 등에 매면 거북이처럼 변할 수 있을거 같다. ",
+    "Price": 2300,
+    "SellPrice": 1955,
+    "itemPurchase": false,
+    "itemEquip": false,
+    "Icon": " ☠️"
+  },
+  {
+    "Id": 4,
+    "Name": "수상한 텀블러",
+    "Type": 2,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 15.0,
+      "Def": -10.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Info": "누군가의 각성제로 쓰이는거 같다. 이 냄새는 알코올 ? ",
+    "Price": 800,
+    "SellPrice": 680,
+    "itemPurchase": false,
+    "itemEquip": false,
+    "Icon": " ☠️"
+  },
+  {
+    "Id": 5,
+    "Name": "회사 다이어리",
+    "Type": 0,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 10.0,
+      "Def": 0.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Info": "00회사 창립 00주년 이라 적혀있다. 펼쳐보니 이곳 저곳 욕이 적혀있다. ",
+    "Price": 1500,
+    "SellPrice": 1275,
+    "itemPurchase": false,
+    "itemEquip": false,
+    "Icon": " 🗡️"
+  }
+]

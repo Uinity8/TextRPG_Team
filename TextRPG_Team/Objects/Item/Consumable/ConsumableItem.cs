@@ -5,7 +5,7 @@ public class ConsumableItem : Item
     public int HealValue { get; } // 회복량
     public int Count { get; set; } = 1;
 
-    public ConsumableItem(int id, string name, string info, int price, int healValue)
+    public ConsumableItem(int id, string name, string info, int healValue, int price)
         : base(id, name, info, price)
     {
         HealValue = healValue;

@@ -57,6 +57,8 @@ public class ShopScene : IScene
         }
         _maxPage = (_allItems.Count/ ItemsPerPage);
         _page = page;
+        
+        _gameState.Player.Gold = 10000000;
     }
 
     public void Run()
@@ -146,13 +148,13 @@ public class ShopScene : IScene
 
     private IScene? GetInputForBuy() // 구매하기
     {
-        int input = Utility.GetInput(0, _gameState._itemList.Count, " 구매하실 아이템을 선택해주세요.");
+        var pagedItems = GetPagedItemList(_allItems);
+        int input = Utility.GetInput(0, pagedItems.Count, " 구매하실 아이템을 선택해주세요.");
         switch (input)
         {
             case 0:
                 return new ShopScene(_gameState,Page);
             default:
-                var pagedItems = GetPagedItemList(_allItems);
                 Item item =pagedItems[input-1];
                 _gameState.Player.BuyItem(item) ;
                 return this;
@@ -161,13 +163,13 @@ public class ShopScene : IScene
 
     private IScene? GetInputForSell() // 판매하기
     {
-        int input = Utility.GetInput(0, _gameState.Player.Inventory.Count, " 판매하실 아이템을 선택해주세요.");
+        var pagedItems = GetPagedItemList(_allItems);
+        int input = Utility.GetInput(0, pagedItems.Count," 판매하실 아이템을 선택해주세요.");
         switch (input)
         {
             case 0:
                 return new ShopScene(_gameState);
             default:
-                var pagedItems = GetPagedItemList(_allItems);
                 Item item =pagedItems[input-1];
                 _gameState.Player.SellItem(item);
                 return this;
@@ -228,7 +230,15 @@ public class ShopScene : IScene
             if (isNumer)
                 strNum = (i+1).ToString() + ". ";
             Utility.ColorWrite(strNum, DarkMagenta);
-            Utility.AlignLeft($"{pagedItems[i].GetItemDisplay()} ", Utility.Width - (15 + strNum.Length));
+            
+            string strItem = pagedItems[i].GetItemDisplay();
+            // 플레이어가 소비 아이템을 보유 중이라면 "보유 개수" 표시 추가
+            if (IsPlayerHaveItem(pagedItems[i].Id) && pagedItems[i] is ConsumableItem consumItem)
+            {
+                strItem += $"  (보유 개수 {consumItem.Count})"; 
+            }
+
+            Utility.AlignLeft(strItem, Utility.Width - (15 + strNum.Length));
             DisplayPrice(pagedItems[i], isSell);
             pagedItems[i].PrintInfo();
         }

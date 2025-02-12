@@ -9,7 +9,7 @@ public static class LoadManager
 {
     private static string itemFilePath =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "items.json");
     private static string playerFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "playerData.json");
-    
+    public static List<Item> AllItemList = new();
     public static List<Item> LoadItems()
     {
         // Console.WriteLine($"현재 작업 디렉터리: {Directory.GetCurrentDirectory()}");
@@ -22,10 +22,10 @@ public static class LoadManager
         }
         
         string json = File.ReadAllText(itemFilePath);
-        List<Item> items= JsonConvert.DeserializeObject<List<Item>>(json) ?? new ();
+        AllItemList = JsonConvert.DeserializeObject<List<Item>>(json) ?? new ();
         Console.WriteLine("아이템 데이터 로드 완료!");
         Thread.Sleep(1000);
-        return items;
+        return AllItemList;
     }
     public static void SaveItemsData(List<Item> items)
     {

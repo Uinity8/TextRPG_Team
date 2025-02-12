@@ -18,13 +18,13 @@ public class HealingPotion
             return;
         }
 
-        if (player.Health >= player.GetStats.MaxHp)
+        if (player.Health >= player.TotalStats.MaxHp)
         {
             Console.WriteLine("이미 체력이 가득 찼습니다.");
             return;
         }
 
-        float healAmount = Math.Min(RecoveryAmount, player.GetStats.MaxHp - player.Health);
+        float healAmount = Math.Min(RecoveryAmount, player.TotalStats.MaxHp - player.Health);
         player.Health += healAmount; // 프로퍼티 값을 직접 수정
         Count--;
 

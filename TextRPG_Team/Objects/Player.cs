@@ -24,7 +24,7 @@ public class Player : ICharacter
     {
         get
         {
-            float baseAtk = GetStats.Atk; // 기본 공격력
+            float baseAtk = TotalStats.Atk; // 기본 공격력
 
             // ±10% 계산
             float minAtk = baseAtk * 0.9f; // 최저 공격력 (기본 공격력의 90%)
@@ -41,7 +41,7 @@ public class Player : ICharacter
 
 
     /// <summary>소유 아이템 목록</summary>
-    public List<Item> Inventory { get; }
+    public List<Item> Inventory { get;}
 
     
     /// <summary>경험치</summary>
@@ -55,9 +55,9 @@ public class Player : ICharacter
         get => _exp;
         private set
         {
-            if (value >= GetStats.MaxExp)
+            if (value >= TotalStats.MaxExp)
             {
-                value -= GetStats.MaxExp;
+                value -= TotalStats.MaxExp;
                 LevelUp();
             }
 
@@ -71,7 +71,7 @@ public class Player : ICharacter
     private Stats AddStats { get; set; } // 추가 스탯
 
     /// <summary>기본 스탯과 추가 스탯을 합친 최종 스탯 반환</summary>
-    public Stats GetStats => _stats + AddStats;
+    public Stats TotalStats => _stats + AddStats;
 
     // ====== 생성자 ======
     /// <summary>
@@ -104,20 +104,20 @@ public class Player : ICharacter
      
         if (isCritical)
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다 -치명타 공격!!\n"; // 공격 로그 생성
-            Utility.AddLog(log, ConsoleColor.Yellow); // 로그 출력
+            string log = $"Lv.{target.TotalStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다 -치명타 공격!!\n"; // 공격 로그 생성
+            Utility.AddLog(log, Yellow); // 로그 출력
         }
         else
         {
-            string log = $"Lv.{target.GetStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
-            Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
+            string log = $"Lv.{target.TotalStats.Lv} {target.Name}에게 {totalDamage}의 데미지를 입혔습니다.\n"; // 공격 로그 생성
+            Utility.AddLog(log, Blue); // 로그 출력
         }
        
         target.TakeDamage(totalDamage); // 대상의 TakeDamage 호출
 
         if(target.IsDead() && target is Enemy enemy)
         {
-            Exp += enemy.GetStats.Lv;
+            Exp += enemy.TotalStats.Lv;
         }
     }
     public bool IsDodge()  //회피 
@@ -135,9 +135,9 @@ public class Player : ICharacter
         float preHp = Health;
         Health = Math.Max(0, Health - damage);
         string hpStr = Health > 0 ? $"{Health}" : "Dead";
-        var log = $"Lv.{GetStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
+        var log = $"Lv.{TotalStats.Lv} {Name} HP {preHp} -> {hpStr}\n";
 
-        Utility.AddLog(log, ConsoleColor.Blue); // 로그 출력
+        Utility.AddLog(log, Blue); // 로그 출력
     }
 
     /// 레벨업 체크 및 처리
@@ -179,76 +179,63 @@ public class Player : ICharacter
         // 아이템 구매 성공
         Gold -= item.Price;
         Inventory.Add(item);
-        Utility.AddLog($"성공적으로 구매하였습니다. -{item.Price} G\n", ConsoleColor.DarkBlue);
+        Utility.AddLog($"성공적으로 구매하였습니다. -{item.Price} G\n", DarkBlue);
         return true;
     }
 
     /// <summary>아이템 장착/해제</summary>
     public void EquipItem(int index)
     {
-        var equpItem = Inventory[index];
-        // 기존 장착 해제
-        foreach (var invItem in Inventory)
+        var item = Inventory[index];
+
+        if (item is EquipableItem equipableItem) // 장비 아이템인지 확인
         {
-            if (invItem.Type == equpItem.Type && invItem.itemEquip)
+            // 장비가 이미 장착되어 있으면 해제
+            if (equipableItem.itemEquip)
+                equipableItem.Unequip(this);
+            
+            //장착중이 아니라면 조건 검사
+            else
             {
-                invItem.itemEquip = false;
+                // 같은 클래스의 장비를 모두 해제
+                foreach (var invItem in Inventory.FindAll(i => i.GetType() == item.GetType()))
+                {
+                    if (invItem is EquipableItem otherEquipable && otherEquipable.itemEquip) // itemEquip에 안전하게 접근
+                    {
+                        otherEquipable.Unequip(this); // 모든 같은 클래스의 아이템 해제
+                    }
+                }
+
+
+                // 선택된 아이템 장착
+                equipableItem.Equip(this);
             }
         }
-
-        equpItem.itemEquip = !equpItem.itemEquip;
-        CalculateAddStats();
     }
 
-    public bool TrySell(Item item)
-    {
-        bool canSell = !item.itemPurchase;
-
-        int index = Inventory.FindIndex(i => i.Id == item.Id);
-        EquipItem(index);
-        SellItem(item);
-        return canSell;
-    }
-
-    /// <summary>아이템 판매 처리 메서드</summary>
-    /// <param name="item">판매할 아이템</param>
+    //아이템 판매 메서드
     public void SellItem(Item item)
     {
-        Item? sell = Inventory.Find(i => i.Id == item.Id);
-        if (sell == null) return;
-
-        if (sell.itemEquip)
-        {
-            sell.itemEquip = false;
-            CalculateAddStats();
-        }
-
-        Gold += (int)(sell.Price * 0.85);
-        Inventory.Remove(sell);
-        Utility.AddLog($"성공적으로 판매하였습니다.(+{item.Price} G)\n", ConsoleColor.DarkBlue);
-        ;
+        if (item == null) return;
+        
+        //판매 아이템이 장착아이템&장착 중이라면 장착해제
+        if (item is EquipableItem equipableItem && equipableItem.itemEquip) 
+            equipableItem.Unequip(this);
+        
+        Gold += (int)(item.SellPrice);
+        Inventory.Remove(item);
+        
+        //판매 로그 저장
+        Utility.AddLog($"성공적으로 판매하였습니다.(+{item.Price} G)\n", DarkBlue);
     }
-
-    /// <summary>아이템 장착 효과를 계산해 추가 스탯에 반영</summary>
-    private void CalculateAddStats()
-    {
-        var itemStats = new Stats(0, 0, 0);
-        foreach (var item in Inventory.FindAll(i => i.itemEquip))
-        {
-            itemStats += item.Effect;
-        }
-
-        AddStats = itemStats;
-    }
-
 
     /// <summary>현재 플레이어의 정보를 문자열로 반환</summary>
     public override string ToString()
     {
-        return $"Lv.{GetStats.Lv} : {Name} [{Job}]" + "\n" +
-               $"HP : {Health} / {GetStats.MaxHp}" + (AddStats.MaxHp > 0 ? $"(+{AddStats.MaxHp})" : "") + "\n" +
-               $"공격력 : {GetStats.Atk}" + (AddStats.Atk > 0 ? $"(+{AddStats.Atk})" : (AddStats.Atk != 0 ? $"(-{AddStats.Atk})" : "")) + "\n" +
-               $"방어력 : {GetStats.Def}" + (AddStats.Def > 0 ? $"(+{AddStats.Def})" : (AddStats.Def != 0 ? $"(-{AddStats.Def})" : "")) + "\n" +
+        return $"Lv.{TotalStats.Lv} : {Name} [{Job}]" + "\n" +
+               $"HP : {Health} / {TotalStats.MaxHp}" + (TotalStats.MaxHp > 0 ? $"(+{TotalStats.MaxHp})" : "") + "\n" +
+               $"공격력 : {TotalStats.Atk}" + (TotalStats.Atk > 0 ? $"(+{TotalStats.Atk})" : (TotalStats.Atk != 0 ? $"(-{TotalStats.Atk})" : "")) + "\n" +
+               $"방어력 : {TotalStats.Def}" + (TotalStats.Def > 0 ? $"(+{TotalStats.Def})" : (TotalStats.Def != 0 ? $"(-{TotalStats.Def})" : "")) + "\n" +
                $"Gold : {Gold} G";
     }
 
@@ -257,37 +244,51 @@ public class Player : ICharacter
         int width = 10;
 
         Console.WriteLine();
-        Console.Write($" [ Lv.{GetStats.Lv} ] {Name}  ");
+        Console.Write($" [ Lv.{TotalStats.Lv} ] {Name}  ");
         Utility.ColorWriteLine($"( {Job} )", Cyan);
         Console.WriteLine();
         Console.WriteLine(new string('-', Utility.Width));
+        
         Utility.AlignLeft($"\n HP", width);
         Console.Write($": ");
-        if (Health == GetStats.MaxHp)
-            Utility.ColorWrite($"{Health} / {GetStats.MaxHp}", ConsoleColor.DarkGreen);
+        if (Health == TotalStats.MaxHp)
+            Utility.ColorWrite($"{Health} / {TotalStats.MaxHp}", DarkGreen);
         else
-            Utility.ColorWrite($"{Health} / {GetStats.MaxHp}", ConsoleColor.DarkRed);
-        if (AddStats.MaxHp > 0) Utility.ColorWrite($"(+{AddStats.MaxHp})", ConsoleColor.DarkBlue);
+            Utility.ColorWrite($"{Health} / {TotalStats.MaxHp}", DarkRed);
+        if (AddStats.MaxHp > 0) Utility.ColorWrite($"(+{AddStats.MaxHp})", DarkBlue);
 
         Utility.AlignLeft($"\n Exp",width);
         Console.Write($": ");
-        if (Exp == GetStats.MaxExp)
-            Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.DarkYellow);
+        if (Exp == TotalStats.MaxExp)
+            Utility.ColorWrite($"{Exp} / {TotalStats.MaxExp}", DarkYellow);
         else
-            Utility.ColorWrite($"{Exp} / {GetStats.MaxExp}", ConsoleColor.Yellow);
+            Utility.ColorWrite($"{Exp} / {TotalStats.MaxExp}", Yellow);
+        
         Utility.AlignLeft("\n 공격력", width);
-        Console.Write($": {GetStats.Atk}");
-        if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", ConsoleColor.DarkBlue);
-        else if(AddStats.Atk < 0) Utility.ColorWrite($"({AddStats.Atk})", ConsoleColor.DarkRed);
+        Console.Write($": {TotalStats.Atk}");
+        if (AddStats.Atk > 0) Utility.ColorWrite($"(+{AddStats.Atk})", DarkBlue);
+        else if(AddStats.Atk < 0) Utility.ColorWrite($"({AddStats.Atk})", DarkRed);
+        
         Utility.AlignLeft("\n 방어력", width);
-        Console.Write($": {GetStats.Def}");
-        if (AddStats.Def > 0) Utility.ColorWrite($"(+{AddStats.Def})", ConsoleColor.DarkBlue);
-        else if (AddStats.Def < 0) Utility.ColorWrite($"({AddStats.Def})", ConsoleColor.DarkRed);
+        Console.Write($": {TotalStats.Def}");
+        if (AddStats.Def > 0) Utility.ColorWrite($"(+{AddStats.Def})", DarkBlue);
+        else if (TotalStats.Def < 0) Utility.ColorWrite($"({AddStats.Def})", DarkRed);
         Console.WriteLine("\n");
+        
         Console.WriteLine(new string('-', Utility.Width));
         //Utility.AlignLeft(" Gold", width-1);
         Utility.AlignRight($"{Gold}", Utility.Width - 5);
         Utility.ColorWriteLine(" G", Yellow);
         Console.WriteLine(new string('-', Utility.Width));
+    }
+
+    public void EquipStats(Stats effect)
+    {
+        AddStats += effect;
+    }
+
+    public void UnEquipStats(Stats effect)
+    {
+        AddStats -= effect;
     }
 }

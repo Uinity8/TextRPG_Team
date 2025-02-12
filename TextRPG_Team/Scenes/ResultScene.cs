@@ -39,8 +39,8 @@ public class ResultScene : IScene
         var player = _gameState.Player;
         var beforePlayer = _gameState.PlayerBeforeDungeon ?? player;
         
-        if (beforePlayer.GetStats.Lv < player.GetStats.Lv)
-            Utility.AddLog($"LEVEL UP!!! LV.{beforePlayer.GetStats.Lv} -> Lv.{player.GetStats.Lv}\n", Yellow);
+        if (beforePlayer.TotalStats.Lv < player.TotalStats.Lv)
+            Utility.AddLog($"LEVEL UP!!! LV.{beforePlayer.TotalStats.Lv} -> Lv.{player.TotalStats.Lv}\n", Yellow);
         
 
         //Utiltiy.PrintLog로 대체가능
@@ -80,12 +80,12 @@ public class ResultScene : IScene
 
         Console.WriteLine(" [ 내정보 ]");
         Utility.AlignLeft(" ", 5);
-        Utility.AlignLeft($"Lv.{player.GetStats.Lv}", 7);
+        Utility.AlignLeft($"Lv.{player.TotalStats.Lv}", 7);
         Console.WriteLine($"{player.Name}");
         Utility.AlignLeft(" ❤️   HP : ", 11);
         Utility.AlignLeft($" {beforePlayer.Health} -> {player.Health}\n", 4);
         Utility.AlignLeft(" 🆙  Exp : ", 11);
-        Utility.AlignLeft($" {beforePlayer.GetStats.Lv} -> {player.GetStats.Lv}\n", 4);
+        Utility.AlignLeft($" {beforePlayer.TotalStats.Lv} -> {player.TotalStats.Lv}\n", 4);
         Utility.AlignLeft(" 💰  Gold : ", 11);
         Utility.AlignLeft($" {beforePlayer.Gold} -> {player.Gold}\n", 4);
         Console.WriteLine(new string('-', Utility.Width));

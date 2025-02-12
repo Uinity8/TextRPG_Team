@@ -44,9 +44,9 @@ namespace TextRPG_Team.Scenes
             }
         }
 
-        public IScene? GetNextScene() 
+        public IScene? GetNextScene()
         {
-            return new InventoryScene(_gameState);
+            return null; //new InventoryScene(_gameState);
         }
     }
 

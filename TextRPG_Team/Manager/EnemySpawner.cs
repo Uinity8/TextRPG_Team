@@ -49,7 +49,7 @@ namespace TextRPG_Team.Manager
                 var randomEnemy = baseEnemies[random.Next(baseEnemies.Count)];
 
                 // 새 객체로 적을 생성 (복제)
-                var newEnemy = new Enemy(randomEnemy.Name, randomEnemy.GetStats, randomEnemy.Id);
+                var newEnemy = new Enemy(randomEnemy.Name, randomEnemy.TotalStats, randomEnemy.Id);
 
                 // 생성된 적 리스트에 추가
                 spawnedEnemies.Add(newEnemy);

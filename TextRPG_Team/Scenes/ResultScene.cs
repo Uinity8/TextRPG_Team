@@ -115,7 +115,7 @@ public class ResultScene : IScene
         Console.WriteLine($"{player.Name}");
         Utility.AlignLeft(" ❤️   HP : ", 11);
         Utility.AlignLeft($" {beforePlayer.Health} -> {player.Health}\n", 4);
-        Utility.AlignLeft(" 🆙  Exp : ", 11);
+        Utility.AlignLeft(" 🆙  lv : ", 11);
         Utility.AlignLeft($" {beforePlayer.GetStats.Lv} -> {player.GetStats.Lv}\n", 4);
         Utility.AlignLeft(" 💰  Gold : ", 11);
         Utility.AlignLeft($" {beforePlayer.Gold} -> {player.Gold}\n", 4);

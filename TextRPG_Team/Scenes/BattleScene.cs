@@ -47,8 +47,8 @@ public class BattleScene : IScene
         int input = Utility.GetInput(0, 1); // 사용자 입력 받음
         return input switch
         {
+            0 => RunAway(),
             1 => new BattleScene(_gameState, State.PlayerPhase), // 플레이어 턴으로 이동
-            2 => RunAway(),
             _ => null
         };
     }

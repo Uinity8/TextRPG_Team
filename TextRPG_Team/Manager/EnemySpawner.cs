@@ -22,10 +22,10 @@ namespace TextRPG_Team.Manager
         {
             baseEnemies.Clear();
 
-            int  i = clearNum;
-            baseEnemies.Add(new Enemy("미니언", new Stats(15 + (i*2), 5 + i, 0, 2 + i), 0)); // Lv 2
-            baseEnemies.Add(new Enemy("공허충", new Stats(10 + (i*2), 9 + i, 0, 3 + i), 1)); // Lv 3
-            baseEnemies.Add(new Enemy("대포미니언", new Stats(25 + (i*2), 8 + i, 0, 5 + i), 2)); // Lv 5
+            int  i = clearNum / 3;
+            baseEnemies.Add(new Enemy("미니언", new Stats(15 + i, 5 + i, 0, 2 + i), 0)); // Lv 2
+            baseEnemies.Add(new Enemy("공허충", new Stats(10 + i, 9 + i, 0, 3 + i), 1)); // Lv 3
+            baseEnemies.Add(new Enemy("대포미니언", new Stats(25 + i, 8 + i, 0, 5 + i), 2)); // Lv 5
         }
 
         // 기본 적 리스트 가져오기

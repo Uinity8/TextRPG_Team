@@ -4,18 +4,16 @@ public abstract class Item
 {
     public int Id { get; set; } // 아이템 ID
     public string Name { get; } // 이름
-    public Stats Effect { get; } // 능력치 값
     public string Info { get; } // 아이템 정보
     public int Price { get; } // 가격
     public int SellPrice { get; } // 판매 가격
     public string Icon { get; set; } // 아이템 아이콘
 
-    protected Item(int id, string name, Stats effect, string info, int price)
+    protected Item(int id, string name, string info, int price)
     {
-        Icon = "";
+        Icon = "     ";
         Id = id;
         Name = name;
-        Effect = effect;
         Info = info;
         Price = price;
         SellPrice = (int)(price * 0.85f);

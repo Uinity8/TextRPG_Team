@@ -5,7 +5,7 @@ public class Armor : EquipableItem
     public Armor(int id, string name, Stats effect, string info, int price)
         : base(id, name, effect, info, price)
     {
-        Icon = " 🛡️"; // 방어구 아이콘
+        Icon = " 🛡   "; // 방어구 아이콘
     }
 
     public override string GetEffectDisplay()

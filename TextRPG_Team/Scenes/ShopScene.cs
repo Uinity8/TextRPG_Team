@@ -182,7 +182,7 @@ public class ShopScene : IScene
         int i = 1;
         foreach (var item in itemList)
         {
-            Utility.AlignLeft(item.Icon, 7);
+            Console.Write(item.Icon);
             string strNum = "";
             if (isNumer)
                 strNum = i++.ToString() + ". ";
@@ -204,7 +204,7 @@ public class ShopScene : IScene
         {
             ConsoleColor color = _gameState.Player.Gold >= item.Price ? White : Red;
 
-            int price = isSell ? item.Price : item.SellPrice;
+            int price = isSell ? item.SellPrice: item.Price;
             Utility.AlignRight($"{price}", 5,color); // 가격 정렬
             Utility.ColorWriteLine("G", ConsoleColor.Yellow); // "G"을 출력
         }

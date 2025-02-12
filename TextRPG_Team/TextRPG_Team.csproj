@@ -17,8 +17,4 @@
       </None>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Objects\Item\Consumable\" />
-    </ItemGroup>
-
 </Project>

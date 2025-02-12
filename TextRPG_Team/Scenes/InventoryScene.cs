@@ -13,15 +13,25 @@ public class InventoryScene : IScene
         Equip // 장착 관리 상태
     }
 
+    public enum InvType
+    {
+        Equip,
+        Consume,
+        End,
+    }
+
+
     private State _state; // 현재 상태
+    private InvType _invType;
     private readonly GameState _gameState; // 게임 상태 공유
     private string _strTitle = "";
 
     // 생성자 (DI 의존성 주입)
-    public InventoryScene(GameState gameState, State state = State.Default)
+    public InventoryScene(GameState gameState, State state = State.Default, InvType invType = InvType.Equip)
     {
         _gameState = gameState;
         _state = state;
+        _invType = invType;
         switch (_state)
         {
             case State.Default:
@@ -65,13 +75,20 @@ public class InventoryScene : IScene
     private IScene? GetInputForDefault()
     {
         int input = Utility.GetInput(0, 2);
-        return input switch
+        switch (input)
         {
-            1 => new InventoryScene(_gameState, State.Equip), // 장착 관리 상태로 이동
-            2 => new HealingPotionScene(_gameState), // 회복 포션 화면으로 이동
-            0 => new MainScene(_gameState), // 메인 화면으로 복귀
-            _ => null
-        };
+            case 1:
+                return new InventoryScene(_gameState, State.Equip, _invType); // 장착 관리 상태로 이동
+            case 2:
+                _invType++;
+                if (_invType >= InvType.End)
+                    _invType = InvType.Equip;
+                return this;
+            case 0:
+                return new MainScene(_gameState); // 메인 화면으로 복귀
+        }
+
+        return null;
     }
 
     // 장착 관리 상태에서 입력 처리
@@ -84,7 +101,9 @@ public class InventoryScene : IScene
             case 0:
                 return new InventoryScene(_gameState); // 기본 상태로 복귀
             default:
-                _gameState.Player.EquipItem(input - 1);
+                var itemList = FilteredItemList(_gameState.Player.Inventory);
+                Item item = itemList[input - 1];
+                    _gameState.Player.UseItem(item);
                 return this;
         }
     }
@@ -137,21 +156,22 @@ public class InventoryScene : IScene
 
     // 아이템 리스트 출력
     //화면에 아이템 리스트 표시
-    private void DisplayItemList(List<Item> itemList, bool isNumer = false)
+    private void DisplayItemList(List<Item> allItems, bool isNumer = false)
     {
+        var itemList = FilteredItemList(allItems);
         int i = 1;
         foreach (var item in itemList)
         {
-            Utility.AlignLeft(item.Icon, 7);
+            Console.Write(item.Icon);
             string strNum = "";
             if (isNumer)
                 strNum = i++.ToString() + ". ";
             Utility.ColorWrite(strNum, DarkMagenta);
 
             ConsoleColor color = White;
-            if(item is EquipableItem equipItem && equipItem.itemEquip)
+            if (item is EquipableItem equipItem && equipItem.itemEquip)
                 color = Green; //아이템 장착착여부에 따라 초록/화이트
-            Utility.AlignLeft($"{item.GetItemDisplay()}", Utility.Width - (15 + strNum.Length),color);
+            Utility.AlignLeft($"{item.GetItemDisplay()}", Utility.Width - (15 + strNum.Length), color);
             Console.WriteLine();
             item.PrintInfo();
         }
@@ -164,14 +184,36 @@ public class InventoryScene : IScene
         switch (_state)
         {
             case State.Default:
-                Console.WriteLine(" 1. 장착관리");
-                Console.WriteLine(" 2. 회복하기");
+
+                if (_invType == InvType.Equip)
+                {
+                    Console.WriteLine(" 1. 장착관리");
+                    Console.WriteLine(" 2. 소비아이템");
+                }
+                else if (_invType == InvType.Consume)
+                {
+                    Console.WriteLine(" 1. 아이템사용");
+                    Console.WriteLine(" 2. 장비아이템");
+                }
+
                 Console.WriteLine(" 0. 나가기");
                 break;
             case State.Equip:
                 Console.WriteLine(" 0. 취소");
                 break;
         }
+
         Console.WriteLine(new string('-', Utility.Width));
+    }
+
+    // 현재 _invType에 맞는 아이템 리스트 반환
+    private List<Item> FilteredItemList(List<Item> allItems)
+    {
+        return _invType switch
+        {
+            InvType.Equip => allItems.OfType<EquipableItem>().Cast<Item>().ToList(),
+            InvType.Consume => allItems.OfType<ConsumableItem>().Cast<Item>().ToList(),
+            _ => new List<Item>() // 기본 빈 리스트
+        };
     }
 }

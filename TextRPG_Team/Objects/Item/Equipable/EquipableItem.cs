@@ -3,11 +3,13 @@ namespace TextRPG_Team.Objects;
 public class EquipableItem : Item
 {
     public bool itemEquip { get; set; } // 아이템 장착 여부
+    public Stats Effect { get; } // 능력치 값
 
     public EquipableItem(int id, string name, Stats effect, string info, int price)
-        : base(id, name, effect, info, price)
+        : base(id, name, info, price)
     {
         itemEquip = false;
+        Effect = effect;
     }
 
     // 출력 메서드

@@ -137,7 +137,8 @@ public class InventoryScene : IScene
     // 상태에 따라 UI 처리
     private void ShowScreen()
     {
-        if (_gameState.Player.Inventory.Count == 0)
+        var itemList = FilteredItemList(_gameState.Player.Inventory);
+        if (itemList.Count == 0)
         {
             DisplayEmptyInventory();
         }

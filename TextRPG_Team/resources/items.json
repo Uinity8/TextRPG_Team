@@ -1,0 +1,188 @@
+[
+  {
+    "$type": "TextRPG_Team.Objects.Weapon, TextRPG_Team",
+    "itemEquip": false,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 20.0,
+      "Def": 0.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Id": 1,
+    "Name": "노트북",
+    "Info": "보기보다 가벼운게 아마도 L* gr*m 인거 같다.",
+    "Price": 2800,
+    "SellPrice": 2380,
+    "Icon": " 🗡️   "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.Weapon, TextRPG_Team",
+    "itemEquip": false,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 15.0,
+      "Def": 0.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Id": 2,
+    "Name": "수특책",
+    "Info": "앞표지만 너덜거린다. 올해 수능이 며칠 남은거지 ?",
+    "Price": 1700,
+    "SellPrice": 1445,
+    "Icon": " 🗡️   "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.Weapon, TextRPG_Team",
+    "itemEquip": false,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 10.0,
+      "Def": 0.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Id": 3,
+    "Name": "회사 다이어리",
+    "Info": "00회사 창립 00주년 이라 적혀있다. 펼쳐보니 이곳 저곳 욕이 적혀있다. ",
+    "Price": 1500,
+    "SellPrice": 1275,
+    "Icon": " 🗡️   "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.Armor, TextRPG_Team",
+    "itemEquip": false,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 0.0,
+      "Def": 20.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Id": 4,
+    "Name": "책가방",
+    "Info": "매우 크고 무겁다. 등에 매면 거북이처럼 변할 수 있을거 같다.",
+    "Price": 2300,
+    "SellPrice": 1955,
+    "Icon": " 🛡   "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.Armor, TextRPG_Team",
+    "itemEquip": false,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 0.0,
+      "Def": 15.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Id": 5,
+    "Name": "면접용 정장",
+    "Info": " 팔 다리 부분이 짧은거 같다. 기분탓인가?",
+    "Price": 2800,
+    "SellPrice": 2380,
+    "Icon": " 🛡   "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.Armor, TextRPG_Team",
+    "itemEquip": false,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 0.0,
+      "Def": 10.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Id": 6,
+    "Name": "블루라이트 차단 안경",
+    "Info": "왠지 이걸 쓰면 눈이 덜 피로한거 같다.",
+    "Price": 1700,
+    "SellPrice": 1445,
+    "Icon": " 🛡   "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.CursedItem, TextRPG_Team",
+    "itemEquip": false,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": 15.0,
+      "Def": -10.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Id": 7,
+    "Name": "수상한텀블러",
+    "Info": "누군가의 각성제로 쓰이는거 같다. 이 냄새는 알코올?",
+    "Price": 2300,
+    "SellPrice": 1955,
+    "Icon": " ☠️   "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.CursedItem, TextRPG_Team",
+    "itemEquip": false,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": -10.0,
+      "Def": 15.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Id": 8,
+    "Name": "스터디 플래너",
+    "Info": "계획은 완벽하다! ...실행만 안 됐을 뿐",
+    "Price": 1800,
+    "SellPrice": 1530,
+    "Icon": " ☠️   "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.CursedItem, TextRPG_Team",
+    "itemEquip": false,
+    "Effect": {
+      "MaxHp": 0.0,
+      "Atk": -15.0,
+      "Def": 10.0,
+      "Lv": 1,
+      "MaxExp": 10
+    },
+    "Id": 9,
+    "Name": "SNS 알고리즘",
+    "Info": "이상하게 내 취향을 너무 잘 안다. 진짜 이것만 봐야지",
+    "Price": 1500,
+    "SellPrice": 1275,
+    "Icon": " ☠️   "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.HealthPotion, TextRPG_Team",
+    "HealValue": 20,
+    "Count": 1,
+    "Id": 10,
+    "Name": "박사",
+    "Info": "박ㅋ스와 사이다를 섞은 음료. 캬~!",
+    "Price": 100,
+    "SellPrice": 85,
+    "Icon": " 🍷  "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.HealthPotion, TextRPG_Team",
+    "HealValue": 50,
+    "Count": 1,
+    "Id": 11,
+    "Name": "엄마가 끓인 카레",
+    "Info": "먹어도 먹어도 줄지 않는다. 양이 더 늘었나...?",
+    "Price": 500,
+    "SellPrice": 425,
+    "Icon": " 🍷  "
+  },
+  {
+    "$type": "TextRPG_Team.Objects.HealthPotion, TextRPG_Team",
+    "HealValue": 300,
+    "Count": 1,
+    "Id": 12,
+    "Name": "유명 쉐프의 오마카세",
+    "Info": "티켓팅을 뚫고 겨우 예약한 보람이 있다.",
+    "Price": 100000,
+    "SellPrice": 85000,
+    "Icon": " 🍷  "
+  }
+]

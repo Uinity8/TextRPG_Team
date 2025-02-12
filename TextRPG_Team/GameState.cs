@@ -10,7 +10,6 @@ public class GameState
     //씬전환간에 필요한 인스터스들
 
     //Objects
-
     public readonly List<Item> _itemList = LoadManager.AllItemList;
     public  Player Player = new Player("Chad", new Stats(100, 10, 5, 1), 1500, "Job");
     public readonly EnemySpawner Spawner = new EnemySpawner();

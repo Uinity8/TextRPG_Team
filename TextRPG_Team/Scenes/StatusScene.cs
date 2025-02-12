@@ -2,14 +2,9 @@ namespace TextRPG_Team.Scenes;
 
 using static ConsoleColor;
 
-public class StatusScene : IScene
+public class StatusScene(GameState gameState) : IScene
 {
-    private readonly GameState _gameState;
-
-    public StatusScene(GameState gameState) //DI 의존성 주입
-    {
-        _gameState = gameState;
-    }
+    //DI 의존성 주입
 
     public void Run()
     {
@@ -24,7 +19,7 @@ public class StatusScene : IScene
         Utility.AlignCenter("상태보기\n", DarkCyan);
         Utility.AlignCenter("플레이어의 정보를 확인할 수 있습니다.\n");
         Console.WriteLine(new string('=',Utility.Width));
-        _gameState.Player.PrintInfo();
+        gameState.Player.PrintInfo();
         Console.WriteLine();
         Console.WriteLine(" 0. 나가기\n");
     }
@@ -35,7 +30,7 @@ public class StatusScene : IScene
         int input = Utility.GetInput(0, 0);
         return input switch
         {
-            0 => new MainScene(_gameState), // MainScene()
+            0 => new MainScene(gameState), // MainScene()
             _ => null // 잘못된 입력 시 종료
         };
     }

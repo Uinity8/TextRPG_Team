@@ -3,7 +3,7 @@ namespace TextRPG_Team;
 //수정원할시 사전 공지
 static class Utility
 {
-    public static int Width = Console.WindowWidth;
+    public static readonly int Width = Console.WindowWidth;
     private static Queue<(string, ConsoleColor)> Logs { get; } = new(); //Log Info를 저장할 Queue입니다.
 
     /// <summary>
@@ -15,7 +15,6 @@ static class Utility
     /// <returns></returns>
     public static int GetInput(int min, int max, string prompt = " 원하시는 행동을 입력해주세요.")
     {
-        int cursorTop = Console.GetCursorPosition().Top; // 커서 위치 저장
         Console.Write(prompt); // 줄바꿈 없이 출력
             while (true)
             {
@@ -63,8 +62,7 @@ static class Utility
     }
     
     // 정렬 옵션 열거형
-    public enum Alignment { Left, Right, Center }
-    
+
     // 문자열 정렬 함수
     // 좌측 정렬(오른쪽공백)
     public static void AlignLeft(string text, int width,ConsoleColor color = ConsoleColor.White)
@@ -91,7 +89,7 @@ static class Utility
         if (spaces > 0)
         {
             int leftPadding = spaces / 2;
-            int rightPadding = spaces - leftPadding;
+            //int rightPadding = spaces - leftPadding;
             text = new string(' ', leftPadding) + text;// + new string(' ', rightPadding);
         }
         ColorWrite(text, color);

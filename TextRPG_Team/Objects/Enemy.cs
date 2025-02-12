@@ -10,8 +10,9 @@ public class Enemy : ICharacter
     string[] Icon = { " 🦠", " 🎯", " 🐀" };
     public int Id { get; }
     public string Name { get; private set; }
-
-    //삭제 부탁(Stat 구조체로 이동)public int Level { get; private set; } //삭제 부탁(Stat 구조체로 이동)
+    
+    public string Info { get; } // 아이템 정보
+    
     public float Health { get; private set; }
     public Action<ICharacter, float>? AttackAction { get; set; } // 공격 시 동작을 정의하는 액션
 
@@ -21,12 +22,13 @@ public class Enemy : ICharacter
 
     public float Power => TotalStats.Atk; // 적 공경력  
 
-    public Enemy(string name, Stats stats, int id)
+    public Enemy(string name, string info, Stats stats, int id)
     {
         Name = name;
         _stats = stats;
         Health = TotalStats.MaxHp; // 최대 체력 초기화
         Id = id;
+        Info = info;
     }
 
     // 공격
@@ -85,6 +87,8 @@ public class Enemy : ICharacter
         string hpStr = Health > 0 ? Health.ToString() : "Dead";
         Utility.AlignLeft($"HP : {hpStr}", 2, color);
         Console.WriteLine();
+        Utility.AlignLeft("", 5);
+        Utility.ColorWriteLine($"└ {Info}", ConsoleColor.DarkGray);
     }
 }
 

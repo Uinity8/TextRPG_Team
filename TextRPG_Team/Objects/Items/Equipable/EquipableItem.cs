@@ -1,16 +1,10 @@
-namespace TextRPG_Team.Objects;
+namespace TextRPG_Team.Objects.Items.Equipable;
 
-public class EquipableItem : Item
+public class EquipableItem(int id, string name, Stats effect, string info, int price)
+    : Item(id, name, info, price)
 {
-    public bool itemEquip { get; set; } // 아이템 장착 여부
-    public Stats Effect { get; } // 능력치 값
-
-    public EquipableItem(int id, string name, Stats effect, string info, int price)
-        : base(id, name, info, price)
-    {
-        itemEquip = false;
-        Effect = effect;
-    }
+    public bool itemEquip { get; set; } = false; // 아이템 장착 여부
+    public Stats Effect { get; } = effect; // 능력치 값
 
     // 출력 메서드
     public override string GetItemDisplay()

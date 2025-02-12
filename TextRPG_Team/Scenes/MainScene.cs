@@ -62,7 +62,7 @@ public class MainScene : IScene
                 return new ShopScene(_gameState); // 상점
             case 4:
                 Player player = _gameState.Player;
-                _gameState.PlayerBeforeDungeon = new Player(player.Name, player.GetStats, player.Gold, player.Job); 
+                _gameState.PlayerBeforeDungeon = new Player(player.Name, player.TotalStats, player.Gold, player.Job); 
                 _gameState.Spawner.AddRandomEnemies();
                 return new BattleScene(_gameState); // 배틀 시작
             case 0:// 저장 / 종료

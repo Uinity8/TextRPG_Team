@@ -204,10 +204,10 @@ public class QuestScene : IScene
                     _gameState.QuestList[input-1].Clear = true;
                 break;    
             case 2:
-                for(int i = 0; i < _gameState.Player.Inventory.Count; i++)
+                foreach (var item in _gameState.Player.Inventory.OfType<EquipableItem>())
                 {
-                    if (_gameState.Player.Inventory[i].itemEquip)
-                        _gameState.QuestList[input-1].Clear = true;
+                    if (item.itemEquip)
+                        _gameState.QuestList[Select+1].Clear = true;
                 }
                 break;
             case 3: 

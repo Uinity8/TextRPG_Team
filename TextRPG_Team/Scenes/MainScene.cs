@@ -40,7 +40,10 @@ public class MainScene : IScene
         Utility.AlignLeft(" 3.", width);
         Console.WriteLine("상 점\n");
         Utility.AlignLeft(" 4.", width);
-        Console.WriteLine($"전투시작(현재 층수 : {_gameState.Spawner.clearNum}층)");
+        Console.WriteLine("전투시작\n");
+        Console.WriteLine($"전투시작(현재 층수 : {_gameState.Spawner.clearNum}층)\n");
+        Utility.AlignLeft(" 5.", width);
+        Console.WriteLine("퀘스트\n");
         Console.WriteLine(new string('-',Utility.Width));
         Console.WriteLine("\n 0. 💾 저장/종료\n");
     }
@@ -48,7 +51,7 @@ public class MainScene : IScene
     // 다음 씬 결정
     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(0, 4);
+        int input = Utility.GetInput(0, 5);
         switch (input)
         {
             case 1:
@@ -59,13 +62,15 @@ public class MainScene : IScene
                 return new ShopScene(_gameState); // 상점
             case 4:
                 Player player = _gameState.Player;
-                _gameState.PlayerBeforeDungeon = new Player(player.Name, player.GetStats, player.Gold, player.Job); 
+                _gameState.PlayerBeforeDungeon = new Player(player.Name, player.TotalStats, player.Gold, player.Job); 
                 _gameState.Spawner.AddRandomEnemies();
                 return new BattleScene(_gameState); // 배틀 시작
             case 0:// 저장 / 종료
                 LoadManager.SavePlayerData(_gameState.Player);
                 Environment.Exit(0);
                 return null; 
+            case 5:
+                return new QuestScene(_gameState);
             default:
                 return null; // 잘못된 입력 처리
         }

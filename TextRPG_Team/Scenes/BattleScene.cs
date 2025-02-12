@@ -67,7 +67,7 @@ public class BattleScene : IScene
             Utility.AlignCenter("⚔️     도저히 못 이길 것 같다! 빤쓰런!   ⚔️\n", Red);
             Console.WriteLine(new string('=', Utility.Width));
             Console.WriteLine("");
-            Utility.AlignCenter($" LV.{enemy.GetStats.Lv} {enemy.Name} 의 기습공격!\n");
+            Utility.AlignCenter($" LV.{enemy.TotalStats.Lv} {enemy.Name} 의 기습공격!\n");
 
             enemy.PerformAttack(_gameState.Player);
             Utility.PrintLogs();
@@ -232,7 +232,7 @@ public class BattleScene : IScene
             Utility.AlignCenter("⚔️     BATTLE!!   ⚔️\n", Red);
             Console.WriteLine(new string('=', Utility.Width));
             Console.WriteLine("");
-            Utility.AlignCenter($" LV.{enemy.GetStats.Lv} {enemy.Name}의 반격!\n");
+            Utility.AlignCenter($" LV.{enemy.TotalStats.Lv} {enemy.Name}의 반격!\n");
 
             for (int i = 0; i < 2; i++)
                 Console.WriteLine(new string(' ', Utility.Width));
@@ -260,18 +260,14 @@ public class BattleScene : IScene
         var player = _gameState.Player;
         Console.WriteLine(" [ 내정보 ]");
         Utility.AlignLeft(" ", 4);
-        Utility.AlignLeft($"Lv.{player.GetStats.Lv}", 7);
+        Utility.AlignLeft($"Lv.{player.TotalStats.Lv}", 7);
         Console.WriteLine($"{player.Name}");
-        Utility.AlignLeft(" ❤️  HP : ", 12);
-        Utility.AlignLeft($"{player.Health}", 3);
-        Console.WriteLine($" / {player.GetStats.MaxHp}");
-        Utility.AlignLeft("   Exp : ", 12);
-        Utility.AlignLeft($"{player.Exp}", 3);
-        Console.WriteLine($" / {player.GetStats.MaxExp}");
-        Utility.AlignLeft("   ATK : ", 12);
-        Utility.AlignLeft($"{player.GetStats.Atk}\n", 3);
-        Utility.AlignLeft("   DEF : ", 12);
-        Utility.AlignLeft($"{player.GetStats.Def}\n", 3);
+        Utility.AlignLeft(" ❤️  HP : ", 10);
+        Utility.AlignLeft($"{player.Health}", 2);
+        Console.WriteLine($" / {player.TotalStats.MaxHp}");
+        Utility.AlignLeft(" 🆙  Exp : ", 10);
+        Utility.AlignLeft($"{player.Exp}", 2);
+        Console.WriteLine($"/ {player.TotalStats.MaxExp}");
         Console.WriteLine(new string('-', Utility.Width));
         Utility.PrintLogs();
     }

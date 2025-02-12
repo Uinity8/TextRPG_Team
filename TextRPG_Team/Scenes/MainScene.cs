@@ -6,6 +6,7 @@ namespace TextRPG_Team.Scenes;
 using static Utility.Alignment;
 using static ConsoleColor;
 using TextRPG_Team.Objects;
+using TextRPG_Team.Manager;
 
 public class MainScene : IScene
 {
@@ -39,7 +40,7 @@ public class MainScene : IScene
         Utility.AlignLeft(" 3.", width);
         Console.WriteLine("상 점\n");
         Utility.AlignLeft(" 4.", width);
-        Console.WriteLine("전투시작\n");
+        Console.WriteLine($"전투시작(현재 층수 : {_gameState.Spawner.clearNum}층)");
         Console.WriteLine(new string('-',Utility.Width));
         Console.WriteLine("\n 0. 💾 저장/종료\n");
     }

@@ -48,12 +48,11 @@ public class BattleScene : IScene
         return input switch
         {
             1 => new BattleScene(_gameState, State.PlayerPhase), // 플레이어 턴으로 이동
-            0 => RunAway(),
+            2 => RunAway(),
             _ => null
         };
     }
-
-    private IScene RunAway()
+     private IScene RunAway()
     {
         var enemies = _gameState.Spawner.GetSpawnedEnemies();
 
@@ -83,11 +82,11 @@ public class BattleScene : IScene
             }
         }
 
-        // 플레이어가 살아있으면 메인 씬으로 이동
-        return _gameState.Player.IsDead()
-            ? new ResultScene(_gameState, ResultScene.State.Lose)
-            : new MainScene(_gameState);
-    }
+    // 플레이어가 살아있으면 메인 씬으로 이동
+    return _gameState.Player.IsDead() 
+        ? new ResultScene(_gameState, ResultScene.State.Lose) 
+        : new MainScene(_gameState);
+}
 
     private IScene? GetInputForPlayerPhase()
     {
@@ -255,7 +254,7 @@ public class BattleScene : IScene
         }
     }
 
-    public void ShowPlayerInfo()
+     public void ShowPlayerInfo()
     {
         Console.WriteLine(new string('-', Utility.Width));
         var player = _gameState.Player;
@@ -263,12 +262,16 @@ public class BattleScene : IScene
         Utility.AlignLeft(" ", 4);
         Utility.AlignLeft($"Lv.{player.GetStats.Lv}", 7);
         Console.WriteLine($"{player.Name}");
-        Utility.AlignLeft(" ❤️  HP : ", 10);
-        Utility.AlignLeft($"{player.Health}", 2);
+        Utility.AlignLeft(" ❤️  HP : ", 12);
+        Utility.AlignLeft($"{player.Health}", 3);
         Console.WriteLine($" / {player.GetStats.MaxHp}");
-        Utility.AlignLeft(" 🆙  Exp : ", 10);
-        Utility.AlignLeft($"{player.Exp}", 2);
-        Console.WriteLine($"/ {player.GetStats.MaxExp}");
+        Utility.AlignLeft("   Exp : ", 12);
+        Utility.AlignLeft($"{player.Exp}", 3);
+        Console.WriteLine($" / {player.GetStats.MaxExp}");
+        Utility.AlignLeft("   ATK : ", 12);
+        Utility.AlignLeft($"{player.GetStats.Atk}\n", 3);
+        Utility.AlignLeft("   DEF : ", 12);
+        Utility.AlignLeft($"{player.GetStats.Def}\n", 3);
         Console.WriteLine(new string('-', Utility.Width));
         Utility.PrintLogs();
     }

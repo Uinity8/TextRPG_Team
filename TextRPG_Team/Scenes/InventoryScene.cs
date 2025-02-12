@@ -25,6 +25,24 @@ public class InventoryScene : IScene
     private InvType _invType;
     private readonly GameState _gameState; // 게임 상태 공유
     private string _strTitle = "";
+    
+    //page 관련 필드 추가
+    private int _maxPage = 0;
+    private int _page = 0;// 현재 페이지 번호
+    private const int ItemsPerPage = 5; // 페이지당 표시할 항목 수
+    int Page
+    {
+        get => _page;
+        set
+        {
+            if (value < 0)
+                _page = 0;
+            else if (value > _maxPage)
+                _page = _maxPage;
+            else
+                _page = value;
+        }
+    }
 
     // 생성자 (DI 의존성 주입)
     public InventoryScene(GameState gameState, State state = State.Default, InvType invType = InvType.Equip)
@@ -32,6 +50,7 @@ public class InventoryScene : IScene
         _gameState = gameState;
         _state = state;
         _invType = invType;
+       // _maxPage = (int)Math.Ceiling(FilteredItemList(_gameState.Player.Inventory).Count / 6.0);
         switch (_state)
         {
             case State.Default:
@@ -69,12 +88,13 @@ public class InventoryScene : IScene
         Utility.AlignCenter("인벤토리\n", DarkCyan);
         Utility.AlignCenter(_strTitle);
         Console.WriteLine(new string('=', Utility.Width));
+        Console.WriteLine($" [ Page {Page+1} / {_maxPage+1} ]");
     }
 
     // 기본 상태에서 입력 처리
     private IScene? GetInputForDefault()
     {
-        int input = Utility.GetInput(0, 2);
+        int input = Utility.GetInput(0, 4);
         switch (input)
         {
             case 1:
@@ -84,8 +104,14 @@ public class InventoryScene : IScene
                 if (_invType >= InvType.End)
                     _invType = InvType.Equip;
                 return this;
+            case 3:
+                Page--;
+                return this;
+            case 4:
+                Page++;
+                return this;
             case 0:
-                return new MainScene(_gameState); // 메인 화면으로 복귀
+                return new MainScene(_gameState);
         }
 
         return null;
@@ -102,7 +128,8 @@ public class InventoryScene : IScene
                 return new InventoryScene(_gameState); // 기본 상태로 복귀
             default:
                 var itemList = FilteredItemList(_gameState.Player.Inventory);
-                Item item = itemList[input - 1];
+                var pagedItems = GetPagedItemList(itemList);
+                Item item =pagedItems[input-1];
                     _gameState.Player.UseItem(item);
                 return this;
         }
@@ -159,8 +186,10 @@ public class InventoryScene : IScene
     private void DisplayItemList(List<Item> allItems, bool isNumer = false)
     {
         var itemList = FilteredItemList(allItems);
+        var pagedItems = GetPagedItemList(itemList);
+        
         int i = 1;
-        foreach (var item in itemList)
+        foreach (var item in pagedItems)
         {
             Console.Write(item.Icon);
             string strNum = "";
@@ -187,16 +216,19 @@ public class InventoryScene : IScene
 
                 if (_invType == InvType.Equip)
                 {
-                    Console.WriteLine(" 1. 장착관리");
-                    Console.WriteLine(" 2. 소비아이템");
+                     Utility.AlignLeft(" 1. 장착관리", 16);
+                     Utility.AlignLeft(" 2. 소비아이템", 16);
                 }
                 else if (_invType == InvType.Consume)
                 {
-                    Console.WriteLine(" 1. 아이템사용");
-                    Console.WriteLine(" 2. 장비아이템");
+                     Utility.AlignLeft(" 1. 아이템사용", 16);
+                     Utility.AlignLeft(" 2. 장비아이템", 16);
                 }
 
-                Console.WriteLine(" 0. 나가기");
+                Utility.AlignLeft(" 0. 나가기", 16);
+                Console.WriteLine();
+                Utility.AlignLeft(" 3. 이전페이지", 16);
+                Utility.AlignLeft(" 4. 다음 페이지\n", 16);
                 break;
             case State.Equip:
                 Console.WriteLine(" 0. 취소");
@@ -216,4 +248,14 @@ public class InventoryScene : IScene
             _ => new List<Item>() // 기본 빈 리스트
         };
     }
+    
+    //현재페이지 맞는 아이템리스트
+    private List<Item> GetPagedItemList(List<Item> allItems)
+    {
+        return allItems
+            .Skip(_page * ItemsPerPage) // 현재 페이지에 해당하는 첫 항목을 건너뜀
+            .Take(ItemsPerPage)        // 현재 페이지에서 표시할 항목 수만큼 선택
+            .ToList();
+    }
+
 }

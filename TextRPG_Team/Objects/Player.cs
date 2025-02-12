@@ -47,14 +47,7 @@ public class Player : ICharacter
 
 
     /// <summary>소유 아이템 목록</summary>
-    public List<Item> Inventory { get; } = new()
-    {
-        new Armor(3, "책가방", new Stats(0, -10, 30), "매우 크고 무겁다. 등에 매면 거북이처럼 변할 수 있을거 같다. ", 2300),
-        new Weapon(1, "노트북", new Stats(0, 20, 0), "보기보다 가벼운게 아마도 L* gr*m 인거 같다. ", 2800),
-        new Weapon(2, "수특책", new Stats(0, 15, 0), "앞표지만 너덜거린다. 올해 수능이 며칠 남은거지 ? ", 1700),
-        new HealthPotion(6, "체력 포션", "00회사 창립 00주년 이라 적혀있다. 펼쳐보니 이곳 저곳 욕이 적혀있다. ", 100, 100),
-    };
-
+    public List<Item> Inventory { get; } = new List<Item>();
 
     public int Exp
     {
@@ -172,22 +165,52 @@ public class Player : ICharacter
     /// <param name="item">구매할 아이템</param>
     public bool BuyItem(Item item)
     {
-        if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
+        
+        if (item is EquipableItem equipableItem) // 장비 아이템인지 확인
         {
-            Utility.AddLog("이미 보유한 아이템 입니다.\n", Red);
-            return false;
+            if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
+            {
+                Utility.AddLog("이미 보유한 아이템 입니다.\n", Red);
+                return false;
+            }
+
+            if (Gold < item.Price)
+            {
+                Utility.AddLog("골드가 부족합니다\n", Red);
+                return false;
+            }
+
+            // 아이템 구매 성공
+            Gold -= item.Price;
+            Inventory.Add(equipableItem);
+            Utility.AddLog($"성공적으로 구매하였습니다. -{equipableItem.Price} G\n", DarkBlue);
+        }
+        else if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
+        {
+            
+            if (Gold < item.Price)
+            {
+                Utility.AddLog("골드가 부족합니다\n", Red);
+                return false;
+            }
+
+            // 아이템 구매 성공
+            Gold -= item.Price;
+
+            if (Inventory.FirstOrDefault(i => i.Id == item.Id) is ConsumableItem findItem)
+            {
+                findItem.Count++;
+            }
+            else
+            {
+                Inventory.Add(consumableItem);
+                findItem = consumableItem;
+            }
+
+            
+            Utility.AddLog($"성공적으로 구매하였습니다. (현재 개수 :{findItem.Count}) -{findItem.Price} G\n", DarkBlue);
         }
 
-        if (Gold < item.Price)
-        {
-            Utility.AddLog("골드가 부족합니다\n", Red);
-            return false;
-        }
-
-        // 아이템 구매 성공
-        Gold -= item.Price;
-        Inventory.Add(item);
-        Utility.AddLog($"성공적으로 구매하였습니다. -{item.Price} G\n", DarkBlue);
         return true;
     }
 
@@ -285,6 +308,8 @@ public class Player : ICharacter
        else  if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
         {
             consumableItem.Use(this);
+            if(consumableItem.Count <= 0)
+                Inventory.Remove(consumableItem);
         }
     }
 

@@ -14,27 +14,49 @@ public class ShopScene : IScene
 
     State _state;
     private readonly GameState _gameState;
-
     private string _strTitle = "";
     
-    public ShopScene(GameState gameState, State state = State.Default) //DI 의존성 주입
+    //page 관련 필드 추가
+    private int _maxPage = 0;
+    private int _page = 0;// 현재 페이지 번호
+    private const int ItemsPerPage = 5; // 페이지당 표시할 항목 수
+    int Page
+    {
+        get => _page;
+        set
+        {
+            if (value < 0)
+                _page = 0;
+            else if (value > _maxPage)
+                _page = _maxPage;
+            else
+                _page = value;
+        }
+    }
+    private List<Item> _allItems = new List<Item>();
+
+
+    public ShopScene(GameState gameState,int page = 0, State state = State.Default) //DI 의존성 주입
     {
         _gameState = gameState;
         _state = state;
         switch (_state)
         {
             case State.Default:
+                _allItems = _gameState._itemList;
                 _strTitle = "필요한 아이템을 얻을 수 있는 상점입니다.\n";
                 break;
             case State.Buy:
+                _allItems = _gameState._itemList;
                 _strTitle = "[ 구매하기 ]\n";
                 break;
             case State.Sell:
+                _allItems = _gameState.Player.Inventory;
                 _strTitle = "[ 판매하기 ]\n";
                 break;
         }
-        
-        _gameState.Player.Gold = 10000;
+        _maxPage = (_allItems.Count/ ItemsPerPage);
+        _page = page;
     }
 
     public void Run()
@@ -71,9 +93,12 @@ public class ShopScene : IScene
         switch (_state)
         {
             case State.Default:
-                Console.WriteLine(" 1. 아이템 구매");
-                Console.WriteLine(" 2. 아이템 판매");
-                Console.WriteLine(" 0. 나가기");
+                Utility.AlignLeft(" 1. 아이템 구매", 16);
+                Utility.AlignLeft(" 2. 아이템 판매", 16);
+                Utility.AlignLeft(" 0. 나가기", 16);
+                Console.WriteLine();
+                Utility.AlignLeft(" 3. 이전페이지", 16);
+                Utility.AlignLeft(" 4. 다음 페이지\n", 16);
                 break;
             case State.Buy:
                 Console.WriteLine(" 0. 취소");
@@ -99,14 +124,24 @@ public class ShopScene : IScene
 
     private IScene? GetInputForDefault() // 기본상태
     {
-        int input = Utility.GetInput(0, 2);
-        return input switch
+        int input = Utility.GetInput(0, 4);
+        switch (input)
         {
-            1 => new ShopScene(_gameState, State.Buy),
-            2 => new ShopScene(_gameState, State.Sell),
-            0 => new MainScene(_gameState),
-            _ => null
-        };
+            case 1:
+                return new ShopScene(_gameState, Page,State.Buy);
+            case 2:
+                return new ShopScene(_gameState, 0,State.Sell);
+            case 3:
+                Page--;
+                return this;
+            case 4:
+                Page++;
+                return this;
+            case 0:
+                return new MainScene(_gameState);
+        }
+
+        return null;
     }
 
     private IScene? GetInputForBuy() // 구매하기
@@ -115,10 +150,11 @@ public class ShopScene : IScene
         switch (input)
         {
             case 0:
-                return new ShopScene(_gameState);
+                return new ShopScene(_gameState,Page);
             default:
-                Item item = _gameState._itemList[input - 1];
-                _gameState.Player.BuyItem(item) ;// item.itemPurchase = true;
+                var pagedItems = GetPagedItemList(_allItems);
+                Item item =pagedItems[input-1];
+                _gameState.Player.BuyItem(item) ;
                 return this;
         }
     }
@@ -131,7 +167,8 @@ public class ShopScene : IScene
             case 0:
                 return new ShopScene(_gameState);
             default:
-                Item item = _gameState.Player.Inventory[input - 1];
+                var pagedItems = GetPagedItemList(_allItems);
+                Item item =pagedItems[input-1];
                 _gameState.Player.SellItem(item);
                 return this;
         }
@@ -139,22 +176,22 @@ public class ShopScene : IScene
 
     private void DefaultScreen() //기본화면
     {
-        DisplayItemList(_gameState._itemList);
+        DisplayItemList(_allItems);
     }
 
     private void BuyScreen() //구매하기
     {
-        DisplayItemList(_gameState._itemList, true);
+        DisplayItemList(_allItems, true);
     }
 
     
     private void SellScreen() //판매하기
     {
         //플레이어 인벤토리가 비었으면
-        if (_gameState.Player.Inventory.Count == 0)
+        if (_allItems.Count == 0)
             Utility.AlignCenter("보유중인 아이템이 없습니다.\n");
         else
-            DisplayItemList(_gameState.Player.Inventory, true, true);
+            DisplayItemList(_allItems, true, true);
     }
     
     
@@ -172,31 +209,35 @@ public class ShopScene : IScene
         Utility.AlignRight($"💰", Utility.Width - 11);
         Utility.AlignRight($"{playerGold}", 7);
         Utility.ColorWriteLine(" G", Yellow);
+        
+        Console.WriteLine($" [ Page {Page+1} / {_maxPage+1} ]");
         Console.WriteLine(new string('-', Utility.Width));
     }
 
     
     //화면에 아이템 리스트 표시
-    private void DisplayItemList(List<Item> itemList, bool isNumer = false, bool isSell = false)
+    private void DisplayItemList(List<Item> allItems, bool isNumer = false, bool isSell = false)
     {
-        int i = 1;
-        foreach (var item in itemList)
+
+        var pagedItems = GetPagedItemList(allItems);
+
+        for (int i = 0; i<pagedItems.Count; i++)
         {
-            Console.Write(item.Icon);
+            Console.Write(pagedItems[i].Icon);
             string strNum = "";
             if (isNumer)
-                strNum = i++.ToString() + ". ";
+                strNum = (i+1).ToString() + ". ";
             Utility.ColorWrite(strNum, DarkMagenta);
-            Utility.AlignLeft($"{item.GetItemDisplay()} ", Utility.Width - (15 + strNum.Length));
-            DisplayPrice(item, isSell);
-            item.PrintInfo();
+            Utility.AlignLeft($"{pagedItems[i].GetItemDisplay()} ", Utility.Width - (15 + strNum.Length));
+            DisplayPrice(pagedItems[i], isSell);
+            pagedItems[i].PrintInfo();
         }
     }
 
     //가격 표시(가격,구매완료)
     private void DisplayPrice(Item item, bool isSell)
     {
-        if (IsPlayerHaveItem(item.Id) && !isSell)  //플레이어가 해당아이템을 보유중이라면 "구매완료" 표시
+        if (IsPlayerHaveItem(item.Id) && !isSell && item is EquipableItem)  //플레이어가 해당아이템을 보유중이라면 "구매완료" 표시
         {
             Utility.AlignRight($"구매완료\n", 5); // 가격 정렬
         }
@@ -216,4 +257,11 @@ public class ShopScene : IScene
         return _gameState.Player.Inventory.Find(x => x.Id == itemId) != null;
     }
     
+    private List<Item> GetPagedItemList(List<Item> allItems)
+    {
+        return allItems
+            .Skip(_page * ItemsPerPage) // 현재 페이지에 해당하는 첫 항목을 건너뜀
+            .Take(ItemsPerPage)        // 현재 페이지에서 표시할 항목 수만큼 선택
+            .ToList();
+    }
 }

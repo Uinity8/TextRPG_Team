@@ -186,9 +186,9 @@ public class QuestScene : IScene
             case 1:
                 break;    
             case 2:
-                for(int i = 0; i < _gameState.Player.Inventory.Count; i++)
+                foreach (var item in _gameState.Player.Inventory.OfType<EquipableItem>())
                 {
-                    if (_gameState.Player.Inventory[i].itemEquip)
+                    if (item.itemEquip)
                         _gameState.QuestList[Select+1].Clear = true;
                 }
                 break;

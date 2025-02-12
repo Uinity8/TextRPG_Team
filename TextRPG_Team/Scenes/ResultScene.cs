@@ -73,7 +73,7 @@ public class ResultScene : IScene
         {
             if (enemy.IsDead())
             {
-                totalGold += enemy.GetStats.Lv * 100;
+                totalGold += enemy.TotalStats.Lv * 100;
                 if (random.Next(0, 100) < 30) // 30% 확률로 포션 획득
                 {
                     potionCount++;
@@ -86,7 +86,8 @@ public class ResultScene : IScene
         Console.WriteLine($" 보상: {totalGold} 골드 획득");
         if (potionCount > 0)
         {
-            player.Potion.Count += potionCount;
+            Item rewardItem = _gameState._itemList.Find(x => x.Id == 6);
+            player.Inventory.Add(rewardItem);
             Console.WriteLine($" 추가 보상: 포션 {potionCount}개 획득!");
         }
         _gameState.Spawner.clearNum += 1;

@@ -32,7 +32,6 @@ public static class LoadManager
         Thread.Sleep(1000);
         return AllItemList;
     }
-
     
     public static void SaveItemsData(List<Item> items)
     {
@@ -47,7 +46,6 @@ public static class LoadManager
         Console.WriteLine("아이템 데이터가 저장되었습니다.");
         Thread.Sleep(1000);
     }
-
     
     public static void SavePlayerData(Player player)
     {

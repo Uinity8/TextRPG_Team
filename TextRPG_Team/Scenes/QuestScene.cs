@@ -184,12 +184,14 @@ public class QuestScene : IScene
         switch (input)
         {
             case 1:
+                if(_gameState.Spawner.clearNum > 0)
+                    _gameState.QuestList[input-1].Clear = true;
                 break;    
             case 2:
                 for(int i = 0; i < _gameState.Player.Inventory.Count; i++)
                 {
                     if (_gameState.Player.Inventory[i].itemEquip)
-                        _gameState.QuestList[Select+1].Clear = true;
+                        _gameState.QuestList[input-1].Clear = true;
                 }
                 break;
             case 3: 

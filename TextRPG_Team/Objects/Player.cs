@@ -73,7 +73,7 @@ public class Player : ICharacter
 
     // ====== 스탯 ======
     public Stats Stats; // 기본 스탯
-    Stats AddStats { get; set; } // 추가 스탯
+    public Stats AddStats { get; set; } // 추가 스탯
 
     /// <summary>기본 스탯과 추가 스탯을 합친 최종 스탯 반환</summary>
     public Stats TotalStats => Stats + AddStats;

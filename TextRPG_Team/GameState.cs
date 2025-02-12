@@ -4,13 +4,12 @@ using TextRPG_Team.Manager;
 using TextRPG_Team.Objects;
 using TextRPG_Team.Objects.Items;
 using TextRPG_Team.Objects.Items.Consumable;
+using TextRPG_Team.Objects.Items.Equipable;
 
 namespace TextRPG_Team;
 
 public class GameState
 {
-    //씬전환간에 필요한 인스터스들
-
     //Objects
     public readonly List<Item> ItemList = LoadManager.AllItemList;
     public  Player Player = new("Chad", new Stats(100, 10, 5), 1500, "Job");

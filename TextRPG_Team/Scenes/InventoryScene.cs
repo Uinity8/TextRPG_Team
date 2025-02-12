@@ -47,12 +47,14 @@ public class InventoryScene : IScene
     }
 
     // 생성자 (DI 의존성 주입)
-    public InventoryScene(GameState gameState, State state = State.Default, InvType invType = InvType.Equip)
+    public InventoryScene(GameState gameState,int page = 0, State state = State.Default, InvType invType = InvType.Equip)
     {
         _gameState = gameState;
         _state = state;
         _invType = invType;
-       // _maxPage = (int)Math.Ceiling(FilteredItemList(_gameState.Player.Inventory).Count / 6.0);
+        var itemList = FilteredItemList(_gameState.Player.Inventory);
+        _maxPage = (itemList.Count/ (ItemsPerPage+1));
+        _page = page;
         switch (_state)
         {
             case State.Default:
@@ -100,7 +102,7 @@ public class InventoryScene : IScene
         switch (input)
         {
             case 1:
-                return new InventoryScene(_gameState, State.Equip, _invType); // 장착 관리 상태로 이동
+                return new InventoryScene(_gameState, Page, State.Equip, _invType); // 장착 관리 상태로 이동
             case 2:
                 _invType++;
                 if (_invType >= InvType.End)
@@ -131,7 +133,7 @@ public class InventoryScene : IScene
         switch (input)
         {
             case 0:
-                return new InventoryScene(_gameState); // 기본 상태로 복귀
+                return new InventoryScene(_gameState, Page); // 기본 상태로 복귀
             default:
                 Item item =pagedItems[input-1];
                     _gameState.Player.UseItem(item);

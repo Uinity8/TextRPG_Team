@@ -303,7 +303,6 @@ public class Player : ICharacter
         {
             // 기존 아이템이 있을 경우 수량만 증가
             findItem.Count += num;
-            return findItem;
         }
         else
         {
@@ -311,7 +310,6 @@ public class Player : ICharacter
             item.Count = num; // `Count`는 직접 `num`만큼 설정
             Inventory.Add(item);
             findItem = item;
-            return item;
         }
 
         return findItem;

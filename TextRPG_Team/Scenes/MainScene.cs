@@ -41,9 +41,9 @@ public class MainScene : IScene
         Console.WriteLine("상 점\n");
         Utility.AlignLeft(" 4.", width);
         Console.WriteLine("전투시작\n");
+        Console.WriteLine($"전투시작(현재 층수 : {_gameState.Spawner.clearNum}층)\n");
         Utility.AlignLeft(" 5.", width);
         Console.WriteLine("퀘스트\n");
-        Console.WriteLine($"전투시작(현재 층수 : {_gameState.Spawner.clearNum}층)");
         Console.WriteLine(new string('-',Utility.Width));
         Console.WriteLine("\n 0. 💾 저장/종료\n");
     }
@@ -51,7 +51,7 @@ public class MainScene : IScene
     // 다음 씬 결정
     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(1, 5);
+        int input = Utility.GetInput(0, 5);
         switch (input)
         {
             case 1:
@@ -71,8 +71,6 @@ public class MainScene : IScene
                 return null; 
             case 5:
                 return new QuestScene(_gameState);
-            case 0:
-                return null; // 저장 / 종료
             default:
                 return null; // 잘못된 입력 처리
         }

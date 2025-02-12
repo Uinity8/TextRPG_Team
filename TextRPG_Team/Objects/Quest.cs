@@ -14,16 +14,18 @@ namespace TextRPG_Team.Objects
         public bool Accep { get; set; }
 
         public bool Clear { get; set; }
+        public bool Acquisition {  get; set; }
 
         public int Compensation { get; set; }
         public int Id {  get; set; }
 
-        public Quest(string name, string info, bool accap, bool clear, int compensation, int id)
+        public Quest(string name, string info, bool accap, bool clear, bool acquisitionint, int compensation, int id)
         {
             Name = name;
             Info = info;
             Accep = accap;
             Clear = clear;
+            Acquisition = acquisitionint;
             Compensation = compensation;
             Id = id;
         }

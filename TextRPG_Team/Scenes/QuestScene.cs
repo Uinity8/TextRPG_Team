@@ -9,6 +9,7 @@ using TextRPG_Team.Objects;
 using System.Runtime.ConstrainedExecution;
 using System.Xml.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.ComponentModel;
 
 public class QuestScene : IScene
 {
@@ -79,33 +80,36 @@ public class QuestScene : IScene
             Console.WriteLine($"- Q{_gameState.QuestList.FindIndex(i => i.Id == quest.Id)+1}. {quest.Name}\n");
         }
         Console.WriteLine(new string('=', Utility.Width) + "\n");
-        Console.WriteLine(" 0. 나가기\n");
+        Console.WriteLine(" 0. 나가기");
+        Utility.PrintLogs();
+        Console.WriteLine(new string('=', Utility.Width) + "\n");
+
     }
     void AccepScreen() // 퀘스트 수락 스크린
     {
-        PrintScene(Select);
+        PrintScene();
         Console.Write(" 1. 수락");
-        Console.WriteLine(" 2. 거절\n");
+        Console.WriteLine(" 2. 거절");
         Utility.PrintLogs();
         Console.WriteLine(new string('=', Utility.Width) + "\n");
     }
     void CompensationScreen() // 퀘스트 완료 스크린
     {
-        PrintScene(Select);
+        PrintScene();
         Console.Write(" 1. 보상 받기");
-        Console.WriteLine(" 2. 돌아가기\n");
+        Console.WriteLine(" 2. 돌아가기");
         Utility.PrintLogs();
         Console.WriteLine(new string('=', Utility.Width) + "\n");
     }
-    void PrintScene(int input) // 퀘스트 출력
+    void PrintScene() // 퀘스트 출력
     {
         var quest= _gameState.QuestList;
-        Console.WriteLine($"{quest[input].Name}\n");
-        Console.Write($"{quest[input].Info}");
-        if (!quest[input].Clear) Utility.AlignRight("N / Y\n", Utility.Width-15);
+        Console.WriteLine($"{quest[Select].Name}\n");
+        Console.Write($"{quest[Select].Info}");
+        if (!quest[Select].Clear) Utility.AlignRight("N / Y\n", Utility.Width-15);
         else Utility.AlignRight("Y / Y\n", Utility.Width-15);
         Utility.AlignCenter("- 보상 -\n");
-        Utility.AlignCenter($"{quest[input].Compensation}G\n");
+        Utility.AlignCenter($"{quest[Select].Compensation}G\n");
         Console.WriteLine(new string('=', Utility.Width) + "\n");
     }
 
@@ -121,15 +125,20 @@ public class QuestScene : IScene
     }
     private IScene? GetInputForDefault() // 기본화면 입력
     {
-        ClearCheck();
         int input = Utility.GetInput(0, _gameState.QuestList.Count, " 원하시는 행동을 입력해주세요.");
         switch (input)
         {
             case 0:
                 return new MainScene(_gameState);
             default:
-                if (!_gameState.QuestList[input - 1].Clear) return new QuestScene(_gameState, State.Accep, input-1);
-                else return new QuestScene(_gameState, State.Compensation, input-1);
+                if (_gameState.QuestList[input - 1].Acquisition) 
+                {
+                    Utility.AddLog($"\n{_gameState.QuestList[input - 1].Name}은 이미 클리어한 퀘스트입니다\n",ConsoleColor.Red);
+                    return new QuestScene(_gameState);
+                }
+                if(_gameState.QuestList[input - 1].Accep)ClearCheck(input);
+                if (!_gameState.QuestList[input - 1].Clear ) return new QuestScene(_gameState, State.Accep,input-1);
+                else return new QuestScene(_gameState, State.Compensation,input-1);
         }
     }
 
@@ -142,19 +151,20 @@ public class QuestScene : IScene
                 AccepCheck();
                 return new QuestScene(_gameState,State.Accep, Select);
             default:
-                return new QuestScene(_gameState);
+                return new QuestScene(_gameState,State.Default, Select);
         }
     }
 
-    private IScene? GetInputForAccepCompensation() // 완료화면 입력
+    private IScene? GetInputForAccepCompensation() // 보상화면 입력
     {
         int input = Utility.GetInput(1, 2, " 원하시는 행동을 입력해주세요.");
         switch (input)
         {
             case 1:
+                CompensationCheck();
                 return new QuestScene(_gameState, State.Compensation, Select);
             default:
-                return new QuestScene(_gameState);
+                return new QuestScene(_gameState, State.Default,Select);
         }
     }
 
@@ -162,40 +172,44 @@ public class QuestScene : IScene
     {
         if (_gameState.QuestList[Select].Accep)
         {
-            Utility.AddLog("이미 수락한 퀘스트입니다.\n", ConsoleColor.Red);
+            Utility.AddLog("\n이미 수락한 퀘스트입니다.\n", ConsoleColor.Red);
             return;
         }
-        Utility.AddLog("퀘스트를 수락하셨습니다.\n", ConsoleColor.Blue);
+        Utility.AddLog("\n퀘스트를 수락하셨습니다.\n", ConsoleColor.Blue);
         _gameState.QuestList[Select].Accep = !_gameState.QuestList[Select].Accep;
     }
 
-    public bool ClearCheck() // 클리어 확인
+    public void ClearCheck(int input) // 클리어 확인
     {
-        bool str = false;
-        
-        switch (Select)
+        switch (input)
         {
             case 1:
-                break;
+                break;    
             case 2:
-                str = _gameState.Player.Inventory.Count > 0 ? true : false;                      
+                for(int i = 0; i < _gameState.Player.Inventory.Count; i++)
+                {
+                    if (_gameState.Player.Inventory[i].itemEquip)
+                        _gameState.QuestList[Select+1].Clear = true;
+                }
                 break;
-            case 3:
+            case 3: 
+                break;
+            default: 
                 break;
         }
-
-        return str;
     }
 
     public void CompensationCheck() // 보상 확인
     {
-        if (_gameState.QuestList[Select].Accep)
+        if (_gameState.QuestList[Select].Acquisition)
         {
-            Utility.AddLog("이미 수락한 퀘스트입니다.\n", ConsoleColor.Red);
+            Utility.AddLog("\n이미 수령한 보상입니다.\n", ConsoleColor.Red);
             return;
         }
+        Utility.AddLog($"{_gameState.QuestList[Select].Name} 퀘스트 클리어 ! .\n", ConsoleColor.Blue);
         Utility.AddLog("보상을 획득했습니다.\n", ConsoleColor.Blue);
         Utility.AddLog($"{_gameState.QuestList[Select].Compensation}G \n", ConsoleColor.Yellow);
-        _gameState.QuestList[Select].Accep = !_gameState.QuestList[Select].Accep;
+        _gameState.Player.Gold += _gameState.QuestList[Select].Compensation;
+        _gameState.QuestList[Select].Acquisition = !_gameState.QuestList[Select].Acquisition;
     }
 }

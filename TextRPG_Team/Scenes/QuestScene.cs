@@ -10,6 +10,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Xml.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 public class QuestScene : IScene
 {
@@ -106,7 +107,7 @@ public class QuestScene : IScene
     {
         PrintScene();
         Console.Write(" 1. 수락");
-        Console.WriteLine(" 2. 거절");
+        Console.WriteLine(" 2. 돌아가기");
         Utility.PrintLogs();
         Console.WriteLine(new string('=', Utility.Width) + "\n");
     }
@@ -123,8 +124,8 @@ public class QuestScene : IScene
         var quest= _gameState.QuestList;
         Console.WriteLine($"{quest[Select].Name}\n");
         Console.Write($"{quest[Select].Info}");
-        if (!quest[Select].Clear) Utility.AlignRight("N / Y\n", Utility.Width-15);
-        else Utility.AlignRight("Y / Y\n", Utility.Width-15);
+        if (!quest[Select].Clear) Utility.AlignRight("N / Y\n", Utility.Width-25);
+        else Utility.AlignRight("Y / Y\n", Utility.Width-25);
         Utility.AlignCenter("- 보상 -\n");
         Utility.AlignCenter($"{quest[Select].Compensation}G\n");
         Console.WriteLine(new string('=', Utility.Width) + "\n");
@@ -201,16 +202,17 @@ public class QuestScene : IScene
         {
             case 1:
                 if(_gameState.Spawner.clearNum > 0)
-                    _gameState.QuestList[input-1].Clear = true;
+                    _gameState.QuestList[input].Clear = true;
                 break;    
             case 2:
                 foreach (var item in _gameState.Player.Inventory.OfType<EquipableItem>())
                 {
                     if (item.itemEquip)
-                        _gameState.QuestList[Select+1].Clear = true;
+                        _gameState.QuestList[input].Clear = true;
                 }
                 break;
-            case 3: 
+            case 3:
+                    _gameState.QuestList[input].Clear = true;
                 break;
             default: 
                 break;

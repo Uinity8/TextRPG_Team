@@ -1,3 +1,5 @@
+using TextRPG_Team.Sound;
+
 namespace TextRPG_Team.Scenes;
 
 using static ConsoleColor;
@@ -9,6 +11,8 @@ public class MainScene(GameState gameState) : IScene
     // 씬 실행 메서드
     public void Run()
     {
+        // 배경 음악 재생
+        SoundManager.PlayBackgroundMusic("resources/Sounds/BattleBgm.wav", true);
         Console.Clear(); // 화면 초기화
         ShowScreen(); // 메뉴 출력
     }

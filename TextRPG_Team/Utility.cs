@@ -1,3 +1,6 @@
+using TextRPG_Team.Manager;
+using TextRPG_Team.Sound;
+
 namespace TextRPG_Team;
 
 //수정원할시 사전 공지
@@ -16,15 +19,18 @@ static class Utility
     public static int GetInput(int min, int max, string prompt = " 원하시는 행동을 입력해주세요.")
     {
         Console.Write(prompt); // 줄바꿈 없이 출력
-            while (true)
+        while (true)
+        {
+            Console.WriteLine();
+            ColorWrite(" >> ", ConsoleColor.Yellow);
+
+            if (int.TryParse(Console.ReadLine(), out int input) && (input >= min) && (input <= max))
             {
-                Console.WriteLine();
-                ColorWrite(" >> ", ConsoleColor.Yellow);
+                SoundManager.PlayEffect("resources/Sounds/click.wav");
+                return input;
+            }
 
-                if (int.TryParse(Console.ReadLine(), out int input) && (input >= min) && (input <= max))
-                    return input;
-
-                // 이전 두 줄 지우기
+        // 이전 두 줄 지우기
                 Console.Write("\u001b[1A");  // 위로 이동
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.Write("\u001b[1A");  // 위로 이동

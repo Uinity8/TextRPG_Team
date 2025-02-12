@@ -1,3 +1,6 @@
+using TextRPG_Team.Manager;
+using TextRPG_Team.Sound;
+
 namespace TextRPG_Team.Scenes;
 
 using static ConsoleColor;
@@ -18,6 +21,7 @@ public class BattleScene(GameState gameState, BattleScene.State state = BattleSc
 
     public void Run()
     {
+        SoundManager.PlayBackgroundMusic("resources/Sounds/BattleBgm.wav");
         Console.Clear(); // 화면 초기화
         ShowScreen(); // 현재 상태에 맞는 화면 출력
         Console.WriteLine();

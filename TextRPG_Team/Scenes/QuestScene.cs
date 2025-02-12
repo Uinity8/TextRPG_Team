@@ -77,7 +77,24 @@ public class QuestScene : IScene
     {
         foreach (var quest in _gameState.QuestList)
         {
-            Console.WriteLine($"- Q{_gameState.QuestList.FindIndex(i => i.Id == quest.Id)+1}. {quest.Name}\n");
+            ClearCheck(quest.Id);
+            if (quest.Acquisition)
+            {
+                Console.Write($"- Q{_gameState.QuestList.FindIndex(i => i.Id == quest.Id) + 1}. {quest.Name}");
+                Utility.ColorWriteLine(" (이미 보상을 획득한 퀘스트입니다.)\n", ConsoleColor.Red);
+            }
+            else if (quest.Clear && quest.Accep)
+            {
+                Console.Write($"- Q{_gameState.QuestList.FindIndex(i => i.Id == quest.Id) + 1}. {quest.Name}");
+                Utility.ColorWriteLine(" (클리어한 퀘스트입니다.)\n", ConsoleColor.Blue);
+            }
+            else if (quest.Accep)
+            {
+                Console.Write($"- Q{_gameState.QuestList.FindIndex(i => i.Id == quest.Id) + 1}. {quest.Name}");
+                Utility.ColorWriteLine(" (수락한 퀘스트입니다.)\n", ConsoleColor.Green);
+            }
+            else
+                Console.WriteLine($"- Q{_gameState.QuestList.FindIndex(i => i.Id == quest.Id) + 1}. {quest.Name}\n");
         }
         Console.WriteLine(new string('=', Utility.Width) + "\n");
         Console.WriteLine(" 0. 나가기");
@@ -136,9 +153,8 @@ public class QuestScene : IScene
                     Utility.AddLog($"\n{_gameState.QuestList[input - 1].Name}은 이미 클리어한 퀘스트입니다\n",ConsoleColor.Red);
                     return new QuestScene(_gameState);
                 }
-                if(_gameState.QuestList[input - 1].Accep)ClearCheck(input);
-                if (!_gameState.QuestList[input - 1].Clear ) return new QuestScene(_gameState, State.Accep,input-1);
-                else return new QuestScene(_gameState, State.Compensation,input-1);
+                if (_gameState.QuestList[input - 1].Clear && _gameState.QuestList[input - 1].Accep) return new QuestScene(_gameState, State.Compensation, input - 1);
+                else return new QuestScene(_gameState, State.Accep, input - 1);
         }
     }
 
@@ -208,7 +224,7 @@ public class QuestScene : IScene
             Utility.AddLog("\n이미 수령한 보상입니다.\n", ConsoleColor.Red);
             return;
         }
-        Utility.AddLog($"{_gameState.QuestList[Select].Name} 퀘스트 클리어 ! .\n", ConsoleColor.Blue);
+        Utility.AddLog($"{_gameState.QuestList[Select].Name} 퀘스트 클리어 ! \n", ConsoleColor.Blue);
         Utility.AddLog("보상을 획득했습니다.\n", ConsoleColor.Blue);
         Utility.AddLog($"{_gameState.QuestList[Select].Compensation}G \n", ConsoleColor.Yellow);
         _gameState.Player.Gold += _gameState.QuestList[Select].Compensation;

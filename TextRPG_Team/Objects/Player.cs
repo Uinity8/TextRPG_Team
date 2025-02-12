@@ -329,10 +329,14 @@ public class Player : ICharacter
         }
        else  if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
         {
-            itemUsed.Invoke(this);
+            int temp = consumableItem.Count;
             consumableItem.Use(this);
             if (consumableItem.Count <= 0)
                 Inventory.Remove(consumableItem);
+            if(temp != consumableItem.Count)
+            {
+                itemUsed?.Invoke(this);
+            }
         }
     }
 

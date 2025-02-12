@@ -86,7 +86,7 @@ public class ResultScene : IScene
         Console.WriteLine($" 보상: {totalGold} 골드 획득");
         if (potionCount > 0)
         {
-            Item rewardItem = _gameState._itemList.Find(x => x.Id == 6);
+            Item rewardItem = _gameState._itemList.Find(x => x.Id == 10); //박사 id 10
             player.Inventory.Add(rewardItem);
             Console.WriteLine($" 추가 보상: 포션 {potionCount}개 획득!");
         }

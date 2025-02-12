@@ -119,16 +119,15 @@ public class InventoryScene : IScene
 
     // 장착 관리 상태에서 입력 처리
     private IScene? GetInputForEquip()
-    {
-        int max = _gameState.Player.Inventory.Count;
-        int input = Utility.GetInput(0, max, " 장착할 아이템을 선택하세요.");
+    {      
+        var itemList = FilteredItemList(_gameState.Player.Inventory);
+        var pagedItems = GetPagedItemList(_gameState.Player.Inventory);
+        int input = Utility.GetInput(0, pagedItems.Count," 장착할 아이템을 선택하세요.");
         switch (input)
         {
             case 0:
                 return new InventoryScene(_gameState); // 기본 상태로 복귀
             default:
-                var itemList = FilteredItemList(_gameState.Player.Inventory);
-                var pagedItems = GetPagedItemList(itemList);
                 Item item =pagedItems[input-1];
                     _gameState.Player.UseItem(item);
                 return this;
@@ -201,6 +200,7 @@ public class InventoryScene : IScene
             if (item is EquipableItem equipItem && equipItem.itemEquip)
                 color = Green; //아이템 장착착여부에 따라 초록/화이트
             Utility.AlignLeft($"{item.GetItemDisplay()}", Utility.Width - (15 + strNum.Length), color);
+            
             Console.WriteLine();
             item.PrintInfo();
         }

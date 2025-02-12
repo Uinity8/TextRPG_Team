@@ -15,7 +15,7 @@ public static class LoadManager
         if (!File.Exists(itemFilePath))
         {
             Console.WriteLine("아이템 데이터 파일이 없습니다.");
-            Console.ReadLine();
+            Thread.Sleep(1000);
             return new();
         }
 

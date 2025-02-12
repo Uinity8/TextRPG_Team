@@ -1,6 +1,6 @@
 ﻿namespace TextRPG_Team.Objects;
 
-public abstract class Item
+public class Item
 {
     public int Id { get; set; } // 아이템 ID
     public string Name { get; } // 이름
@@ -32,5 +32,8 @@ public abstract class Item
     }
 
     // 효과 표시 (자식 클래스에서 구현)
-    public abstract string GetEffectDisplay();
+    public virtual string GetEffectDisplay()
+    {
+        return "";
+    }
 }

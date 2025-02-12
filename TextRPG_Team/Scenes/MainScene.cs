@@ -1,8 +1,12 @@
 
 
+using TextRPG_Team.Manager;
+
 namespace TextRPG_Team.Scenes;
 using static Utility.Alignment;
 using static ConsoleColor;
+using TextRPG_Team.Objects;
+using TextRPG_Team.Manager;
 
 public class MainScene : IScene
 {
@@ -39,6 +43,7 @@ public class MainScene : IScene
         Console.WriteLine("전투시작\n");
         Utility.AlignLeft(" 5.", width);
         Console.WriteLine("퀘스트\n");
+        Console.WriteLine($"전투시작(현재 층수 : {_gameState.Spawner.clearNum}층)");
         Console.WriteLine(new string('-',Utility.Width));
         Console.WriteLine("\n 0. 💾 저장/종료\n");
     }
@@ -56,9 +61,14 @@ public class MainScene : IScene
             case 3:
                 return new ShopScene(_gameState); // 상점
             case 4:
-                _gameState.PlayerHpBeforeDungeon = _gameState.Player.Health;
+                Player player = _gameState.Player;
+                _gameState.PlayerBeforeDungeon = new Player(player.Name, player.GetStats, player.Gold, player.Job); 
                 _gameState.Spawner.AddRandomEnemies();
                 return new BattleScene(_gameState); // 배틀 시작
+            case 0:// 저장 / 종료
+                LoadManager.SavePlayerData(_gameState.Player);
+                Environment.Exit(0);
+                return null; 
             case 5:
                 return new QuestScene(_gameState);
             case 0:

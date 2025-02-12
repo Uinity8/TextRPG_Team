@@ -12,7 +12,6 @@ public class ResultScene : IScene
         Victory, // 승리
         Lose, // 패배
     }
-
     State _state;
 
     public ResultScene(GameState gameState, State state) //DI 의존성 주입
@@ -46,9 +45,11 @@ public class ResultScene : IScene
         //Utiltiy.PrintLog로 대체가능
         if (_state == State.Victory)
         {
-            int enemyCount = _gameState.Spawner.GetSpawnedEnemies().Count;
-            Utility.ColorWriteLine(" 🏆  Victory!!\n", Yellow);
-            Console.WriteLine($" 던전에서 몬스터 {enemyCount}마리를 처치했습니다.\n");
+            // int enemyCount = _gameState.Spawner.GetSpawnedEnemies().Count;
+            // var player = _gameState.Player;
+            // Utility.ColorWriteLine(" 🏆  Victory!!\n", Yellow);
+            // Console.WriteLine($" 던전에서 몬스터 {enemyCount}마리를 처치했습니다.\n");
+            HandleVictoryRewards();
         }
         else
         {
@@ -59,7 +60,37 @@ public class ResultScene : IScene
 
         Console.WriteLine(" 0. 다음\n");
     }
+    public void HandleVictoryRewards()
+    {
 
+        int totalGold = 0;
+        int potionCount = 0;
+        var player = _gameState.Player;
+        var enemies = _gameState.Spawner.GetSpawnedEnemies();
+        Random random = new Random();
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy.IsDead())
+            {
+                totalGold += enemy.GetStats.Lv * 100;
+                if (random.Next(0, 100) < 30) // 30% 확률로 포션 획득
+                {
+                    potionCount++;
+                }
+            }
+        }
+        player.Gold += totalGold;
+        Utility.ColorWriteLine(" 🏆  Victory!!\n", Yellow);
+        Console.WriteLine($" 던전에서 몬스터 {enemies.Count}마리를 처치했습니다.\n");
+        Console.WriteLine($" 보상: {totalGold} 골드 획득");
+        if (potionCount > 0)
+        {
+            player.Potion.Count += potionCount;
+            Console.WriteLine($" 추가 보상: 포션 {potionCount}개 획득!");
+        }
+        _gameState.Spawner.clearNum += 1;
+    }
     public IScene? GetNextScene()
     {
         int input = Utility.GetInput(0, 0);
@@ -84,7 +115,7 @@ public class ResultScene : IScene
         Console.WriteLine($"{player.Name}");
         Utility.AlignLeft(" ❤️   HP : ", 11);
         Utility.AlignLeft($" {beforePlayer.Health} -> {player.Health}\n", 4);
-        Utility.AlignLeft(" 🆙  Exp : ", 11);
+        Utility.AlignLeft(" 🆙  lv : ", 11);
         Utility.AlignLeft($" {beforePlayer.TotalStats.Lv} -> {player.TotalStats.Lv}\n", 4);
         Utility.AlignLeft(" 💰  Gold : ", 11);
         Utility.AlignLeft($" {beforePlayer.Gold} -> {player.Gold}\n", 4);

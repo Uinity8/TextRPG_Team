@@ -47,13 +47,12 @@ public class BattleScene : IScene
         int input = Utility.GetInput(0, 1); // 사용자 입력 받음
         return input switch
         {
-            1 => new BattleScene(_gameState, State.PlayerPhase), // 플레이어 턴으로 이동
             0 => RunAway(),
+            1 => new BattleScene(_gameState, State.PlayerPhase), // 플레이어 턴으로 이동
             _ => null
         };
     }
-
-    private IScene RunAway()
+     private IScene RunAway()
     {
         var enemies = _gameState.Spawner.GetSpawnedEnemies();
 
@@ -83,11 +82,11 @@ public class BattleScene : IScene
             }
         }
 
-        // 플레이어가 살아있으면 메인 씬으로 이동
-        return _gameState.Player.IsDead()
-            ? new ResultScene(_gameState, ResultScene.State.Lose)
-            : new MainScene(_gameState);
-    }
+    // 플레이어가 살아있으면 메인 씬으로 이동
+    return _gameState.Player.IsDead() 
+        ? new ResultScene(_gameState, ResultScene.State.Lose) 
+        : new MainScene(_gameState);
+}
 
     private IScene? GetInputForPlayerPhase()
     {
@@ -255,7 +254,7 @@ public class BattleScene : IScene
         }
     }
 
-    public void ShowPlayerInfo()
+     public void ShowPlayerInfo()
     {
         Console.WriteLine(new string('-', Utility.Width));
         var player = _gameState.Player;

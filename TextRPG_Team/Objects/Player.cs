@@ -120,7 +120,7 @@ public class Player : ICharacter
 
         if (target.IsDead() && target is Enemy enemy)
         {
-            Exp += enemy.TotalStats.Lv;
+            Exp += enemy.TotalStats.Lv*2;
         }
     }
 
@@ -143,7 +143,13 @@ public class Player : ICharacter
 
         Utility.AddLog(log, Blue); // 로그 출력
     }
-
+    /// <summary>적 처치 시 경험치 획득</summary>
+    public void GainExp(int amount)
+    {
+        Utility.AddLog($"🆙 {Name}이(가) {amount} 경험치를 획득했습니다!\n", ConsoleColor.Yellow);
+        Exp += amount; // Exp 프로퍼티가 자동으로 레벨업 체크
+    }
+    
     /// 레벨업 체크 및 처리
     private void LevelUp()
     {
@@ -153,6 +159,9 @@ public class Player : ICharacter
         _stats.Atk += 0.5f; // 공격력 증가
         _stats.Def += 1; // 방어력 증가
         Health = _stats.MaxHp; // 체력 회복
+
+        Utility.AddLog($"🎉 {Name}이(가) 레벨업! (Lv.{_stats.Lv})\n", ConsoleColor.Green);
+        Utility.AddLog($" {Name}의 체력이 회복되며 모든 스텟이 상승합니다.\n", ConsoleColor.DarkCyan);
     }
 
     // 플레이어가 사망했는지 여부를 반환

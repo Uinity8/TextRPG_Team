@@ -9,7 +9,7 @@ public abstract class Item
     public int SellPrice { get; } // 판매 가격
     public string Icon { get; set; } // 아이템 아이콘
 
-    protected Item(int id, string name, string info, int price)
+    protected  Item(int id, string name, string info, int price)
     {
         Icon = "     ";
         Id = id;

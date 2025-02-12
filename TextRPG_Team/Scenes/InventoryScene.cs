@@ -121,7 +121,7 @@ public class InventoryScene : IScene
     private IScene? GetInputForEquip()
     {      
         var itemList = FilteredItemList(_gameState.Player.Inventory);
-        var pagedItems = GetPagedItemList(_gameState.Player.Inventory);
+        var pagedItems = GetPagedItemList(itemList);
         int input = Utility.GetInput(0, pagedItems.Count," 장착할 아이템을 선택하세요.");
         switch (input)
         {

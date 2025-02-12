@@ -36,6 +36,7 @@ public static class LoadManager
     
     public static void SaveItemsData(List<Item> items)
     {
+        // `TypeNameHandling` 옵션 활성화
         var settings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -51,7 +52,12 @@ public static class LoadManager
     public static void SavePlayerData(Player player)
     {
         
-        string json = JsonConvert.SerializeObject(player, Formatting.Indented);
+        // `TypeNameHandling` 옵션 활성화
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
+        string json = JsonConvert.SerializeObject(player, Formatting.None, settings);
         File.WriteAllText(playerFilePath, json);
         Console.WriteLine("플레이어 데이터가 저장되었습니다.");
         Thread.Sleep(1000);
@@ -60,15 +66,19 @@ public static class LoadManager
     public static Player LoadPlayerData()
     {
         Player defaultPlayer = new Player("Chad", new Stats(100, 10, 5, 1), 1500, "Job");
+        
+        // `TypeNameHandling` 옵션 활성화
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
         if (!File.Exists(playerFilePath))
         {
             Console.WriteLine("저장된 데이터가 없습니다.");
             return defaultPlayer;
         }
-
         string json = File.ReadAllText(playerFilePath);
-
-        return JsonConvert.DeserializeObject<Player>(json) ?? defaultPlayer;
+        return JsonConvert.DeserializeObject<Player>(json,settings) ?? defaultPlayer;
     }
 
     public static bool HasPlayData()

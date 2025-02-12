@@ -5,7 +5,6 @@ using static ConsoleColor;
 public class Player : ICharacter
 {
     // ====== 필드 ======
-
     // ====== 속성 ======
     /// <summary>캐릭터 이름</summary>
     public string Name { get; set; }

@@ -83,7 +83,7 @@ public class ResultScene : IScene
             player.Potion.Count += potionCount;
             Console.WriteLine($" 추가 보상: 포션 {potionCount}개 획득!");
         }
-        potionCount = 0;
+        _gameState.Spawner.clearNum += 1;
     }
     public IScene? GetNextScene()
     {

@@ -35,6 +35,7 @@ public class TitleScene(GameState gameState) : IScene
                 GameState loadState = LoadManager.LoadGameData(); //플레이어 데이터 로드
                 return new MainScene(loadState); // 메인 씬으로 돌아감
             case 2:
+                gameState.Init();
                 return new CharacterCreateScene(gameState); // 캐릭터 생성씬
         }
         return null;

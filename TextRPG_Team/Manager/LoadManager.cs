@@ -10,7 +10,9 @@ public static class LoadManager
 {
     private static readonly string ItemFilePath =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "items.json");
     private static readonly string PlayerFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "playerData.json");
+    private static readonly string questFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "quests.json");
     public static List<Item> AllItemList { get; private set; } = [];
+    public static List<Quest> AllQuestList { get; private set; } = [];
 
     public static List<Item> LoadItems()
     {
@@ -48,6 +50,44 @@ public static class LoadManager
         Console.WriteLine("아이템 데이터가 저장되었습니다.");
         Thread.Sleep(1000);
     }
+    
+    public static List<Quest> LoadQuests()
+    {
+        if (!File.Exists(ItemFilePath))
+        {
+            Console.WriteLine("퀘스트 데이터 파일이 없습니다.");
+            Thread.Sleep(1000);
+            return new();
+        }
+
+        string json = File.ReadAllText(questFilePath);
+
+        // `TypeNameHandling` 옵션 활성화
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
+
+        AllQuestList = JsonConvert.DeserializeObject<List<Quest>>(json, settings) ?? new();
+        Console.WriteLine("퀘스트 데이터 로드 완료!");
+        Thread.Sleep(1000);
+        return AllQuestList;
+    }
+    
+    public static void SaveQuests(List<Quest> Quests)
+    {
+        // `TypeNameHandling` 옵션 활성화
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
+
+        string json = JsonConvert.SerializeObject(Quests, Formatting.Indented, settings);
+        File.WriteAllText(questFilePath, json);
+        Console.WriteLine("퀘스트 데이터가 저장되었습니다.");
+        Thread.Sleep(1000);
+    }
+    
     
     public static void SaveGameData(GameState gameState)
     {
@@ -98,4 +138,9 @@ public static class LoadManager
         }
     }
 
+    public static void Load()
+    {
+        LoadItems();
+        LoadQuests();
+    }
 }

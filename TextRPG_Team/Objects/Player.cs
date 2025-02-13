@@ -1,4 +1,6 @@
-using TextRPG_Team.Manager;
+using TextRPG_Team.Objects.Items;
+using TextRPG_Team.Objects.Items.Consumable;
+using TextRPG_Team.Objects.Items.Equipable;
 
 namespace TextRPG_Team.Objects;
 
@@ -6,6 +8,8 @@ using static ConsoleColor;
 
 public class Player : ICharacter
 {
+    public event Action<object>? ItemUsed;
+
     // ====== 필드 ======
     int _exp; //현재 경험치
     float _health; //현재 체력
@@ -68,11 +72,11 @@ public class Player : ICharacter
 
 
     // ====== 스탯 ======
-    public Stats _stats; // 기본 스탯
+    public Stats Stats; // 기본 스탯
     public Stats AddStats { get; set; } // 추가 스탯
 
     /// <summary>기본 스탯과 추가 스탯을 합친 최종 스탯 반환</summary>
-    public Stats TotalStats => _stats + AddStats;
+    public Stats TotalStats => Stats + AddStats;
 
     // ====== 생성자 ======
     /// <summary>
@@ -85,9 +89,9 @@ public class Player : ICharacter
     public Player(string name, Stats stats, int gold, string job)
     {
         Name = name;
-        _stats = stats;
+        Stats = stats;
         Gold = gold;
-        Health = _stats.MaxHp;
+        Health = Stats.MaxHp;
         Job = job;
     }
 
@@ -115,7 +119,7 @@ public class Player : ICharacter
 
         if (target.IsDead() && target is Enemy enemy)
         {
-            Exp += enemy.TotalStats.Lv*2;
+            Exp += enemy.TotalStats.Lv * 2;
         }
     }
 
@@ -138,24 +142,25 @@ public class Player : ICharacter
 
         Utility.AddLog(log, Blue); // 로그 출력
     }
+
     /// <summary>적 처치 시 경험치 획득</summary>
     public void GainExp(int amount)
     {
         Utility.AddLog($"🆙 {Name}이(가) {amount} 경험치를 획득했습니다!\n", ConsoleColor.Yellow);
         Exp += amount; // Exp 프로퍼티가 자동으로 레벨업 체크
     }
-    
+
     /// 레벨업 체크 및 처리
     private void LevelUp()
     {
-        _stats.Lv++; // 레벨 증가
-        _stats.MaxExp = (5 * (_stats.Lv * _stats.Lv - _stats.Lv)) / 2 + 10;
-        _stats.MaxHp += 5; // 최대 체력 증가
-        _stats.Atk += 0.5f; // 공격력 증가
-        _stats.Def += 1; // 방어력 증가
-        Health = _stats.MaxHp; // 체력 회복
+        Stats.Lv++; // 레벨 증가
+        Stats.MaxExp = (5 * (Stats.Lv * Stats.Lv - Stats.Lv)) / 2 + 10;
+        Stats.MaxHp += 5; // 최대 체력 증가
+        Stats.Atk += 0.5f; // 공격력 증가
+        Stats.Def += 1; // 방어력 증가
+        Health = Stats.MaxHp; // 체력 회복
 
-        Utility.AddLog($"🎉 {Name}이(가) 레벨업! (Lv.{_stats.Lv})\n", ConsoleColor.Green);
+        Utility.AddLog($"🎉 {Name}이(가) 레벨업! (Lv.{Stats.Lv})\n", ConsoleColor.Green);
         Utility.AddLog($" {Name}의 체력이 회복되며 모든 스텟이 상승합니다.\n", ConsoleColor.DarkCyan);
     }
 
@@ -163,23 +168,34 @@ public class Player : ICharacter
     public bool IsDead() => Health <= 0f;
 
 
+    public void AddItem(Item item)
+    {
+        if (item is EquipableItem equipableItem) // 장비 아이템인지 확인
+        {
+            Inventory.Add(equipableItem);
+        }
+        else if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
+        {
+            AddPotion(consumableItem);
+        }
+    }
+
     /// <summary>아이템 구매 처리 메서드</summary>
     /// <param name="item">구매할 아이템</param>
-    public bool BuyItem(Item item)
+    public void BuyItem(Item item)
     {
-        
         if (item is EquipableItem equipableItem) // 장비 아이템인지 확인
         {
             if (Inventory.FindAll(i => i.Id == item.Id).FirstOrDefault() != null)
             {
                 Utility.AddLog("이미 보유한 아이템 입니다.\n", Red);
-                return false;
+                return;
             }
 
             if (Gold < item.Price)
             {
                 Utility.AddLog("골드가 부족합니다\n", Red);
-                return false;
+                return;
             }
 
             // 아이템 구매 성공
@@ -189,37 +205,29 @@ public class Player : ICharacter
         }
         else if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
         {
-            
             if (Gold < item.Price)
             {
                 Utility.AddLog("골드가 부족합니다\n", Red);
-                return false;
+                return;
             }
 
             // 아이템 구매 성공
             Gold -= item.Price;
 
-         
+            var addItem = AddPotion(consumableItem);
 
-           
-           var addItem = AddPotion(consumableItem);
-           
             Utility.AddLog($"성공적으로 구매하였습니다. (보유 개수 {addItem.Count}) -{addItem.Price} G\n", DarkBlue);
         }
-
-        return true;
     }
 
     //아이템 판매 메서드
     public void SellItem(Item item)
     {
-        if (item == null) return;
-
         //판매 아이템이 장착아이템&장착 중이라면 장착해제
-        if (item is EquipableItem equipableItem && equipableItem.itemEquip)
+        if (item is EquipableItem { itemEquip: true } equipableItem)
             equipableItem.Unequip(this);
 
-        Gold += (int)(item.SellPrice);
+        Gold += item.SellPrice;
         Inventory.Remove(item);
 
         //판매 로그 저장
@@ -252,18 +260,12 @@ public class Player : ICharacter
 
         Utility.AlignLeft($"\n HP", width);
         Console.Write($": ");
-        if (Health == TotalStats.MaxHp)
-            Utility.ColorWrite($"{Health} / {TotalStats.MaxHp}", DarkGreen);
-        else
-            Utility.ColorWrite($"{Health} / {TotalStats.MaxHp}", DarkRed);
+        Utility.ColorWrite($"{Health} / {TotalStats.MaxHp}", Health >= TotalStats.MaxHp ? DarkGreen : DarkRed);
         if (AddStats.MaxHp > 0) Utility.ColorWrite($"(+{AddStats.MaxHp})", DarkBlue);
 
         Utility.AlignLeft($"\n Exp", width);
         Console.Write($": ");
-        if (Exp == TotalStats.MaxExp)
-            Utility.ColorWrite($"{Exp} / {TotalStats.MaxExp}", DarkYellow);
-        else
-            Utility.ColorWrite($"{Exp} / {TotalStats.MaxExp}", Yellow);
+        Utility.ColorWrite($"{Exp} / {TotalStats.MaxExp}", Exp == TotalStats.MaxExp ? DarkYellow : Yellow);
 
         Utility.AlignLeft("\n 공격력", width);
         Console.Write($": {TotalStats.Atk}");
@@ -298,7 +300,7 @@ public class Player : ICharacter
     {
         // 인벤토리에서 동일한 ID의 아이템 검색
         var findItem = Inventory.OfType<ConsumableItem>().FirstOrDefault(i => i.Id == item.Id);
-    
+
         if (findItem != null)
         {
             // 기존 아이템이 있을 경우 수량만 증가
@@ -310,56 +312,59 @@ public class Player : ICharacter
             // 새로운 아이템 추가 (Count 초기화)
             item.Count = num; // `Count`는 직접 `num`만큼 설정
             Inventory.Add(item);
-            findItem = item;
             return item;
         }
-
-        return findItem;
     }
 
-    
+
     //아이템 사용
     public void UseItem(Item item)
     {
         if (item is EquipableItem equipableItem) // 장비 아이템인지 확인
         {
-            EquipItem(equipableItem);  
+            EquipItem(equipableItem);
         }
-       else  if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
+        else if (item is ConsumableItem consumableItem) // 소비 아이템인지 확인
         {
+            int temp = consumableItem.Count;
             consumableItem.Use(this);
-            if(consumableItem.Count <= 0)
+            if (consumableItem.Count <= 0)
                 Inventory.Remove(consumableItem);
+            if (temp != consumableItem.Count)
+            {
+                ItemUsed?.Invoke(this);
+            }
         }
     }
 
     /// <summary>아이템 장착/해제</summary>
-        public void EquipItem(EquipableItem item)
-        {
-            // 장비가 이미 장착되어 있으면 해제
-            if (item.itemEquip)
-                item.Unequip(this);
+    void EquipItem(EquipableItem item)
+    {
+        // 장비가 이미 장착되어 있으면 해제
+        if (item.itemEquip)
+            item.Unequip(this);
 
-            //장착중이 아니라면 조건 검사
-            else
+        //장착중이 아니라면 조건 검사
+        else
+        {
+            // 같은 클래스의 장비를 모두 해제
+            foreach (var invItem in Inventory.FindAll(i => i.GetType() == item.GetType()))
             {
-                // 같은 클래스의 장비를 모두 해제
-                foreach (var invItem in Inventory.FindAll(i => i.GetType() == item.GetType()))
+                if (invItem is EquipableItem otherEquipbable && otherEquipbable.itemEquip) // itemEquip에 안전하게 접근
                 {
-                    if (invItem is EquipableItem otherEquipable && otherEquipable.itemEquip) // itemEquip에 안전하게 접근
-                    {
-                        otherEquipable.Unequip(this); // 모든 같은 클래스의 아이템 해제
-                    }
+                    otherEquipbable.Unequip(this); // 모든 같은 클래스의 아이템 해제
                 }
-
-
-                // 선택된 아이템 장착
-                item.Equip(this);
             }
-        }
 
-        public void Heal(int healValue)
-        {
-            Health += healValue;
+
+            // 선택된 아이템 장착
+            item.Equip(this);
+            Utility.AddLog($"{item.Name}을 장착하였습니다. {item.GetEffectDisplay()}\n", DarkBlue);
         }
     }
+
+    public void Heal(int healValue)
+    {
+        Health += healValue;
+    }
+}

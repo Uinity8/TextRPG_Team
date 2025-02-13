@@ -1,4 +1,6 @@
-using TextRPG_Team.Objects;
+using TextRPG_Team.Objects.Items;
+using TextRPG_Team.Objects.Items.Consumable;
+using TextRPG_Team.Objects.Items.Equipable;
 
 namespace TextRPG_Team.Scenes;
 
@@ -21,14 +23,14 @@ public class InventoryScene : IScene
     }
 
 
-    private State _state; // 현재 상태
+    private readonly State _state; // 현재 상태
     private InvType _invType;
     private readonly GameState _gameState; // 게임 상태 공유
-    private string _strTitle = "";
+    private readonly string _strTitle = "";
     
     //page 관련 필드 추가
-    private int _maxPage = 0;
-    private int _page = 0;// 현재 페이지 번호
+    private readonly int _maxPage = 0;
+    private int _page;// 현재 페이지 번호
     private const int ItemsPerPage = 5; // 페이지당 표시할 항목 수
     int Page
     {
@@ -45,12 +47,14 @@ public class InventoryScene : IScene
     }
 
     // 생성자 (DI 의존성 주입)
-    public InventoryScene(GameState gameState, State state = State.Default, InvType invType = InvType.Equip)
+    public InventoryScene(GameState gameState,int page = 0, State state = State.Default, InvType invType = InvType.Equip)
     {
         _gameState = gameState;
         _state = state;
         _invType = invType;
-       // _maxPage = (int)Math.Ceiling(FilteredItemList(_gameState.Player.Inventory).Count / 6.0);
+        var itemList = FilteredItemList(_gameState.Player.Inventory);
+        _maxPage = (itemList.Count/ (ItemsPerPage+1));
+        _page = page;
         switch (_state)
         {
             case State.Default:
@@ -98,7 +102,7 @@ public class InventoryScene : IScene
         switch (input)
         {
             case 1:
-                return new InventoryScene(_gameState, State.Equip, _invType); // 장착 관리 상태로 이동
+                return new InventoryScene(_gameState, Page, State.Equip, _invType); // 장착 관리 상태로 이동
             case 2:
                 _invType++;
                 if (_invType >= InvType.End)
@@ -118,15 +122,18 @@ public class InventoryScene : IScene
     }
 
     // 장착 관리 상태에서 입력 처리
-    private IScene? GetInputForEquip()
+    private IScene GetInputForEquip()
     {      
         var itemList = FilteredItemList(_gameState.Player.Inventory);
         var pagedItems = GetPagedItemList(itemList);
-        int input = Utility.GetInput(0, pagedItems.Count," 장착할 아이템을 선택하세요.");
+
+        string inputMessage = _invType == InvType.Equip ? "장착할 아이템을 선택하세요." : "사용할 아이템을 선택하세요.";
+        
+        int input = Utility.GetInput(0, pagedItems.Count,inputMessage);
         switch (input)
         {
             case 0:
-                return new InventoryScene(_gameState); // 기본 상태로 복귀
+                return new InventoryScene(_gameState, Page); // 기본 상태로 복귀
             default:
                 Item item =pagedItems[input-1];
                     _gameState.Player.UseItem(item);
@@ -183,7 +190,7 @@ public class InventoryScene : IScene
 
     // 아이템 리스트 출력
     //화면에 아이템 리스트 표시
-    private void DisplayItemList(List<Item> allItems, bool isNumer = false)
+    private void DisplayItemList(List<Item> allItems, bool isNumber = false)
     {
         var itemList = FilteredItemList(allItems);
         var pagedItems = GetPagedItemList(itemList);
@@ -193,7 +200,7 @@ public class InventoryScene : IScene
         {
             Console.Write(item.Icon);
             string strNum = "";
-            if (isNumer)
+            if (isNumber)
                 strNum = i++.ToString() + ". ";
             Utility.ColorWrite(strNum, DarkMagenta);
 

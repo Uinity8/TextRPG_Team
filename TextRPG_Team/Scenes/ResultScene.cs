@@ -1,24 +1,17 @@
 namespace TextRPG_Team.Scenes;
 
-using TextRPG_Team.Objects;
 using static ConsoleColor;
 
-public class ResultScene : IScene
+public class ResultScene(GameState gameState, ResultScene.State state) : IScene
 {
-    private readonly GameState _gameState;
-    Random random = new Random();
+    readonly Random _random = new Random();
     public enum State
     {
         Victory, // 승리
         Lose, // 패배
     }
-    State _state;
 
-    public ResultScene(GameState gameState, State state) //DI 의존성 주입
-    {
-        _gameState = gameState;
-        _state = state;
-    }
+    //DI 의존성 주입
 
     public void Run()
     {
@@ -35,13 +28,13 @@ public class ResultScene : IScene
         Console.WriteLine(new string('=', Utility.Width));
         Console.WriteLine();
         
-        var player = _gameState.Player;
-        var beforePlayer = _gameState.PlayerBeforeDungeon ?? player;
+        var player = gameState.Player;
+        var beforePlayer = gameState.PlayerBeforeDungeon ?? player;
         
         if (beforePlayer.TotalStats.Lv < player.TotalStats.Lv)
             Utility.AddLog($"LEVEL UP!!! LV.{beforePlayer.TotalStats.Lv} -> Lv.{player.TotalStats.Lv}\n", Yellow);
 
-        if (_state == State.Victory)
+        if (state == State.Victory)
         {
             HandleVictoryRewards();
         }
@@ -54,11 +47,12 @@ public class ResultScene : IScene
 
         Console.WriteLine(" 0. 다음\n");
     }
-      public void HandleVictoryRewards()
+
+    void HandleVictoryRewards()
     {
         int totalGold = 0;
-        var player = _gameState.Player;
-        var enemies = _gameState.Spawner.GetSpawnedEnemies();
+        var player = gameState.Player;
+        var enemies = gameState.Spawner.GetSpawnedEnemies();
         string obtainedItem = "";
 
         foreach (var enemy in enemies)
@@ -68,14 +62,14 @@ public class ResultScene : IScene
                 totalGold += enemy.TotalStats.Lv * 100;
 
                 // 30% 확률로 아이템 획득
-                if (random.Next(0, 100) < 60)
+                if (_random.Next(0, 100) < 60)
                 {
                     string itemName = GetRandomItem();
                     obtainedItem += itemName + ", ";
-                    var item = _gameState._itemList.FirstOrDefault(i => i.Name == itemName);
+                    var item = gameState.ItemList.FirstOrDefault(i => i.Name == itemName);
                     if (item != null)
                     {
-                        player.Inventory.Add(item); // 인벤토리에 아이템 추가
+                        player.AddItem(item.ShallowCopy()); // 인벤토리에 아이템 추가
                     }
                 }
                 
@@ -91,30 +85,28 @@ public class ResultScene : IScene
             obtainedItem = obtainedItem.TrimEnd(',', ' ');
             Utility.AddLog($"획득한 아이템: {obtainedItem}\n", Green);
         }
-        _gameState.Spawner.clearNum += 1;
+        gameState.Spawner.ClearNum += 1;
     }
     
     private string GetRandomItem()
     {
-        // HealthPotion을 제외한 아이템들만 얻음
-        var nonHealthPotionItems = _gameState._itemList.Where(item => !(item is HealthPotion)).ToList();
-        string obtainedItem = nonHealthPotionItems[random.Next(0, nonHealthPotionItems.Count)].Name;
+        string obtainedItem = gameState.ItemList[_random.Next(0,  gameState.ItemList.Count)].Name;
         return obtainedItem;
     }
 
     public IScene? GetNextScene()
     {
         int input = Utility.GetInput(0, 0);
-        return input switch //  C#의 `switch 표현식` 입니다. 필요하신분 찾아 보세요
+        return input switch 
         {
-            0 => new MainScene(_gameState), // 메인 씬으로 돌아감
+            0 => new MainScene(gameState), // 메인 씬으로 돌아감
             _ => null // 잘못된 입력 시 종료
         };
     }
     private void ShowPlayerInfo()
     {
-        var player = _gameState.Player;
-        var beforePlayer = _gameState.PlayerBeforeDungeon ?? player;
+        var player = gameState.Player;
+        var beforePlayer = gameState.PlayerBeforeDungeon ?? player;
 
 
         Console.WriteLine(new string('-', Utility.Width));

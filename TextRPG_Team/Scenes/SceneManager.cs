@@ -1,13 +1,8 @@
 namespace TextRPG_Team.Scenes;
 
-public class SceneManager
+public class SceneManager(IScene startScene)
 {
-    private IScene? _currentScene;
-
-    public SceneManager(IScene startScene)
-    {
-        _currentScene = startScene; // 초기 씬 설정
-    }
+    private IScene? _currentScene = startScene; // 초기 씬 설정
 
     public void StartGame()
     {

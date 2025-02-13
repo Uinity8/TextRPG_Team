@@ -3,7 +3,7 @@ namespace TextRPG_Team;
 //수정원할시 사전 공지
 static class Utility
 {
-    public static int Width = 68;//Console.WindowWidth;
+    public static readonly int Width = Console.WindowWidth;
     private static Queue<(string, ConsoleColor)> Logs { get; } = new(); //Log Info를 저장할 Queue입니다.
 
     /// <summary>
@@ -15,26 +15,25 @@ static class Utility
     /// <returns></returns>
     public static int GetInput(int min, int max, string prompt = " 원하시는 행동을 입력해주세요.")
     {
-        int cursorTop = Console.GetCursorPosition().Top; // 커서 위치 저장
         Console.Write(prompt); // 줄바꿈 없이 출력
-        while (true)
-        {
-            Console.WriteLine();
-            ColorWrite(" >> ", ConsoleColor.Yellow);
+            while (true)
+            {
+                Console.WriteLine();
+                ColorWrite(" >> ", ConsoleColor.Yellow);
 
-            if (int.TryParse(Console.ReadLine(), out int input) && (input >= min) && (input <= max))
-                return input;
+                if (int.TryParse(Console.ReadLine(), out int input) && (input >= min) && (input <= max))
+                    return input;
 
-            // 이전 두 줄 지우기
-            Console.Write("\u001b[1A");  // 위로 이동
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.Write("\u001b[1A");  // 위로 이동
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.Write("\u001b[1A");  // 위로 이동
-            Console.Write("\r");
-            // 경고 메시지 출력
-            ColorWrite(" 잘못된 입력입니다. 다시 입력해주세요", ConsoleColor.Red);
-        }
+                // 이전 두 줄 지우기
+                Console.Write("\u001b[1A");  // 위로 이동
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.Write("\u001b[1A");  // 위로 이동
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.Write("\u001b[1A");  // 위로 이동
+                Console.Write("\r");
+                // 경고 메시지 출력
+                ColorWrite(" 잘못된 입력입니다. 다시 입력해주세요", ConsoleColor.Red);
+            }
     }
 
     /// <summary>
@@ -63,8 +62,7 @@ static class Utility
     }
     
     // 정렬 옵션 열거형
-    public enum Alignment { Left, Right, Center }
-    
+
     // 문자열 정렬 함수
     // 좌측 정렬(오른쪽공백)
     public static void AlignLeft(string text, int width,ConsoleColor color = ConsoleColor.White)
@@ -91,7 +89,7 @@ static class Utility
         if (spaces > 0)
         {
             int leftPadding = spaces / 2;
-            int rightPadding = spaces - leftPadding;
+            //int rightPadding = spaces - leftPadding;
             text = new string(' ', leftPadding) + text;// + new string(' ', rightPadding);
         }
         ColorWrite(text, color);

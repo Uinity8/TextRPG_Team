@@ -1,17 +1,25 @@
-﻿namespace TextRPG_Team;
+﻿using TextRPG_Team.Manager;
+
+namespace TextRPG_Team;
 
 using Scenes;
-class Program
+
+abstract class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        GameState gameState = new GameState(); //인스턴스 생성
+        LoadManager.LoadItems(); //아이템 데이터 로드
         
-        var initialScene = new ShopScene(gameState); // 첫 번째 씬 설정
+        GameState gameState = new GameState(); //인스턴스 생성
+        //LoadManager.SaveItemsData(gameState.ItemList);//아이템 데이터 로드
+        
+        // 첫 번째 씬 설정
+        var initialScene = new TitleScene(gameState);
 
         var sceneManager = new SceneManager(initialScene);
         
         sceneManager.StartGame(); // 게임 시작
+
 
     }
 }

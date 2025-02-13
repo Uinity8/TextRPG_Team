@@ -1,4 +1,4 @@
-﻿using TextRPG_Team.Objects;
+using TextRPG_Team.Objects;
 
 namespace TextRPG_Team.Scenes
 {

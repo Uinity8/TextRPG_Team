@@ -28,7 +28,7 @@ public class GameState
             false, false, false, 400, 2),
 
         new Quest("춥고 힘들고 배고프다...", "하루하루를 버티낸 당신! 허기를 채워야 다음을 버틸 수 있다.\n" +
-                                    "체력 포션 또는 MP 포션 중 하나를 사용해 보자." +
+                                    "체력 포션 또는 MP 포션 중 하나를 사용해 보자.\n" +
                                     "\n- 소비 아이템 사용하기 ",
             false, false, false, 1000, 3)
     ];

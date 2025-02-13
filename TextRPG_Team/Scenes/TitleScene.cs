@@ -32,9 +32,10 @@ public class TitleScene(GameState gameState) : IScene
         switch (input)
         {
             case 1:
-                gameState.Player = LoadManager.LoadPlayerData(); //플레이어 데이터 로드
-                return new MainScene(gameState); // 메인 씬으로 돌아감
+                GameState loadState = LoadManager.LoadGameData(); //플레이어 데이터 로드
+                return new MainScene(loadState); // 메인 씬으로 돌아감
             case 2:
+                gameState.Init();
                 return new CharacterCreateScene(gameState); // 캐릭터 생성씬
         }
         return null;

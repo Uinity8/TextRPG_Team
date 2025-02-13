@@ -1,0 +1,29 @@
+[
+  {
+    "Name": "앗 저 사람은...?!",
+    "Info": "길을 가다 우연히 상사, 선생님, 명절에 만난 친척 중 한 명과 눈이 마주쳤다…!\n피할 수 없다! 어서 대처하자!\n\n- 전투 1회 승리",
+    "Accep": false,
+    "Clear": false,
+    "Acquisition": false,
+    "Compensation": 200,
+    "Id": 1
+  },
+  {
+    "Name": "장비를 장착하고 사회의 방어력을 높여보자!",
+    "Info": "험난한 사회에서 살아남기 위해서는 적절한 장비가 필요하다.\n상점에서 아이템을 하나 장착해 보자.\n\n- 아이템 장착하기 ",
+    "Accep": false,
+    "Clear": false,
+    "Acquisition": false,
+    "Compensation": 400,
+    "Id": 2
+  },
+  {
+    "Name": "춥고 힘들고 배고프다...",
+    "Info": "하루하루를 버티낸 당신! 허기를 채워야 다음을 버틸 수 있다.\n체력 포션 또는 MP 포션 중 하나를 사용해 보자.\n\n- 소비 아이템 사용하기 ",
+    "Accep": false,
+    "Clear": false,
+    "Acquisition": false,
+    "Compensation": 1000,
+    "Id": 3
+  }
+]

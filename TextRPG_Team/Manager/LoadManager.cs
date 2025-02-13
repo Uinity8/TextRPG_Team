@@ -10,7 +10,9 @@ public static class LoadManager
 {
     private static readonly string ItemFilePath =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "items.json");
     private static readonly string PlayerFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "playerData.json");
+    private static readonly string questFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "resources", "quests.json");
     public static List<Item> AllItemList { get; private set; } = [];
+    public static List<Quest> AllQuestList { get; private set; } = [];
 
     public static List<Item> LoadItems()
     {
@@ -49,7 +51,45 @@ public static class LoadManager
         Thread.Sleep(1000);
     }
     
-    public static void SavePlayerData(Player player)
+    public static List<Quest> LoadQuests()
+    {
+        if (!File.Exists(ItemFilePath))
+        {
+            Console.WriteLine("퀘스트 데이터 파일이 없습니다.");
+            Thread.Sleep(1000);
+            return new();
+        }
+
+        string json = File.ReadAllText(questFilePath);
+
+        // `TypeNameHandling` 옵션 활성화
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
+
+        AllQuestList = JsonConvert.DeserializeObject<List<Quest>>(json, settings) ?? new();
+        Console.WriteLine("퀘스트 데이터 로드 완료!");
+        Thread.Sleep(1000);
+        return AllQuestList;
+    }
+    
+    public static void SaveQuests(List<Quest> Quests)
+    {
+        // `TypeNameHandling` 옵션 활성화
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
+
+        string json = JsonConvert.SerializeObject(Quests, Formatting.Indented, settings);
+        File.WriteAllText(questFilePath, json);
+        Console.WriteLine("퀘스트 데이터가 저장되었습니다.");
+        Thread.Sleep(1000);
+    }
+    
+    
+    public static void SaveGameData(GameState gameState)
     {
         
         // `TypeNameHandling` 옵션 활성화
@@ -57,16 +97,14 @@ public static class LoadManager
         {
             TypeNameHandling = TypeNameHandling.Auto
         };
-        string json = JsonConvert.SerializeObject(player, Formatting.None, settings);
+        string json = JsonConvert.SerializeObject(gameState, Formatting.None, settings);
         File.WriteAllText(PlayerFilePath, json);
         Console.WriteLine("플레이어 데이터가 저장되었습니다.");
         Thread.Sleep(1000);
     }
     
-    public static Player LoadPlayerData()
+    public static GameState LoadGameData()
     {
-        Player defaultPlayer = new Player("Chad", new Stats(100, 10, 5), 1500, "Job");
-        
         // `TypeNameHandling` 옵션 활성화
         var settings = new JsonSerializerSettings
         {
@@ -75,10 +113,10 @@ public static class LoadManager
         if (!File.Exists(PlayerFilePath))
         {
             Console.WriteLine("저장된 데이터가 없습니다.");
-            return defaultPlayer;
+            return new GameState();
         }
         string json = File.ReadAllText(PlayerFilePath);
-        return JsonConvert.DeserializeObject<Player>(json,settings) ?? defaultPlayer;
+        return JsonConvert.DeserializeObject<GameState>(json,settings) ?? new();
     }
 
     public static bool HasPlayData()
@@ -100,4 +138,9 @@ public static class LoadManager
         }
     }
 
+    public static void Load()
+    {
+        LoadItems();
+        LoadQuests();
+    }
 }

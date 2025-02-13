@@ -54,7 +54,7 @@ public class MainScene(GameState gameState) : IScene
                 gameState.Spawner.AddRandomEnemies();
                 return new BattleScene(gameState); // 배틀 시작
             case 0:// 저장 / 종료
-                LoadManager.SavePlayerData(gameState.Player);
+                LoadManager.SaveGameData(gameState);
                 Environment.Exit(0);
                 return null; 
             case 5:

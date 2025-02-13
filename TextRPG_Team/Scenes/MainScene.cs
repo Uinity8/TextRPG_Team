@@ -1,18 +1,11 @@
-
-
 namespace TextRPG_Team.Scenes;
-using static Utility.Alignment;
+
 using static ConsoleColor;
+using Objects;
+using Manager;
 
-public class MainScene : IScene
+public class MainScene(GameState gameState) : IScene
 {
-    private readonly GameState _gameState;
-
-    public MainScene(GameState gameState) // DI 의존성 주입
-    {
-        _gameState = gameState;
-    }
-
     // 씬 실행 메서드
     public void Run()
     {
@@ -36,7 +29,9 @@ public class MainScene : IScene
         Utility.AlignLeft(" 3.", width);
         Console.WriteLine("상 점\n");
         Utility.AlignLeft(" 4.", width);
-        Console.WriteLine("전투시작\n");
+        Console.WriteLine($"전투시작 (현재 층수 : {gameState.Spawner.ClearNum}층)\n");
+        Utility.AlignLeft(" 5.", width);
+        Console.WriteLine("퀘스트\n");
         Console.WriteLine(new string('-',Utility.Width));
         Console.WriteLine("\n 0. 💾 저장/종료\n");
     }
@@ -44,16 +39,28 @@ public class MainScene : IScene
     // 다음 씬 결정
     public IScene? GetNextScene()
     {
-        int input = Utility.GetInput(1, 4);
-        return input switch
+        int input = Utility.GetInput(0, 5);
+        switch (input)
         {
-            1 => new StatusScene(_gameState), //상태보기 
-            2 => new InventoryScene(_gameState), //인벤토리
-            3 => new ShopScene(_gameState), //상점
-            4 => new BattleScene(_gameState), //배틀 시작
-
-            0 => null, //저장/ 종료
-            _ => null,
-        };
+            case 1:
+                return new StatusScene(gameState); // 상태보기
+            case 2:
+                return new InventoryScene(gameState); // 인벤토리
+            case 3:
+                return new ShopScene(gameState); // 상점
+            case 4:
+                Player player = gameState.Player;
+                gameState.PlayerBeforeDungeon = new Player(player.Name, player.TotalStats, player.Gold, player.Job); 
+                gameState.Spawner.AddRandomEnemies();
+                return new BattleScene(gameState); // 배틀 시작
+            case 0:// 저장 / 종료
+                LoadManager.SaveGameData(gameState);
+                Environment.Exit(0);
+                return null; 
+            case 5:
+                return new QuestScene(gameState);
+            default:
+                return null; // 잘못된 입력 처리
+        }
     }
 }

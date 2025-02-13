@@ -1,65 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
 using TextRPG_Team.Objects;
 
 namespace TextRPG_Team.Manager
 {
     public class EnemySpawner
     {
-        private List<Enemy> enemies = new List<Enemy>(); // 적 리스트
-        private Random random = new Random(); // Random 객체를 클래스 전체에서 공유
+        public int ClearNum = 0;
+        private readonly List<Enemy> _baseEnemies = new List<Enemy>(); // 기본 적 리스트
+        private List<Enemy> _spawnedEnemies = new List<Enemy>(); // 랜덤 생성된 적 리스트
+        private readonly Random _random = new Random(); // Random 객체를 클래스 전체에서 공유
 
-        // 생성자에서 적 기본 리스트 초기화
+        // 생성자에서 초기화
         public EnemySpawner()
         {
-            InitializeEnemies();
+            InitializeBaseEnemies();
         }
 
-        // 기본 적 목록 초기화 메서드 (리팩토링)
-        private void InitializeEnemies()
+        // 기본 적 목록 초기화 메서드
+        private void InitializeBaseEnemies()
         {
-            enemies.Add(new Enemy("미니언", new Stats(15, 5, 0), 2)); // Lv 2
-            enemies.Add(new Enemy("공허충", new Stats(10, 9, 0), 3)); // Lv 3
-            enemies.Add(new Enemy("대포미니언", new Stats(25, 8, 0), 5)); // Lv 5
+            _baseEnemies.Clear();
+
+            int  i = ClearNum / 3;
+            _baseEnemies.Add(new Enemy("상사","밖에서 만나니 별로 기쁘지 않다. 아는 척 안 했으면...!", new Stats(15 + i, 5 + i, 0, 2 + i), 0)); // Lv 2
+            _baseEnemies.Add(new Enemy("선생님","야자를 튄게 들킨거 같다. 엄청난 기세를 가지고 다가온다.", new Stats(10 + i, 9 + i, 0, 3 + i), 1)); // Lv 3
+            _baseEnemies.Add(new Enemy("명절에 만난 친척","조언인 척 하는 잔소리를 자꾸 내뱉는다. 윽! 고통스러워! ", new Stats(25 + i, 8 + i, 0, 5 + i), 2)); // Lv 5
         }
 
-        // 적 리스트 가져오기
-        public List<Enemy> GetEnemies()
+        // 기본 적 리스트 가져오기
+        public List<Enemy> GetBaseEnemies()
         {
-            return enemies;
+            return _baseEnemies;
         }
 
-        // 랜덤한 수의 적 추가 (1~4마리)
+        // 현재 생성된 적 리스트 가져오기
+        public List<Enemy> GetSpawnedEnemies()
+        {
+            return _spawnedEnemies;
+        }
+
+        // 랜덤한 수의 적 생성 (1~4마리) 및 저장
         public void AddRandomEnemies()
         {
-            // 1~4 사이의 랜덤 숫자를 생성
-            int randomEnemyCount = random.Next(1, 5);
+            InitializeBaseEnemies();
+            
+            int minEnemy = 1 + ClearNum;
+            int maxEnemy = 5 + ClearNum;
 
+            _spawnedEnemies = new List<Enemy>();
+            // 1~4 사이의 랜덤 숫자를 생성
+            int randomEnemyCount = _random.Next(minEnemy, maxEnemy);
+            
             for (int i = 0; i < randomEnemyCount; i++)
             {
-                // 랜덤 적을 선택
-                var randomEnemy = enemies[random.Next(enemies.Count)];
+                // 기본 적 목록에서 랜덤 적 선택
+                var randomEnemy = _baseEnemies[_random.Next(_baseEnemies.Count)];
 
-                // 새 객체로 적을 추가 (기존 적이 변하지 않도록 복제)
-                enemies.Add(new Enemy(randomEnemy.Name, randomEnemy.GetStats, randomEnemy.GetStats.Lv));
+                // 새 객체로 적을 생성 (복제)
+                var newEnemy = new Enemy(randomEnemy.Name, randomEnemy.Info,randomEnemy.TotalStats, randomEnemy.Id);
+
+                // 생성된 적 리스트에 추가
+                _spawnedEnemies.Add(newEnemy);
             }
-        }
-
-        // 랜덤 적 리스트 반환
-        public List<Enemy> GetRandomEnemies(int enemyCount)
-        {
-            var randomEnemies = new List<Enemy>();
-
-            for (int i = 0; i < enemyCount; i++)
-            {
-                // 랜덤 적을 선택
-                var randomEnemy = enemies[random.Next(enemies.Count)];
-
-                // 복제하여 반환 (참조 공유 방지)
-                randomEnemies.Add(new Enemy(randomEnemy.Name, randomEnemy.GetStats, randomEnemy.GetStats.Lv));
-            }
-
-            return randomEnemies;
         }
     }
 }

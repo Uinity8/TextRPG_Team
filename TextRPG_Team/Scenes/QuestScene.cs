@@ -183,9 +183,6 @@ public class QuestScene : IScene
         }
         Utility.AddLog("\n퀘스트를 수락하셨습니다.\n", ConsoleColor.Blue);
         _gameState.QuestList[_select].Accep = !_gameState.QuestList[_select].Accep;
-        
-        if(_select == 2)
-            _gameState.Player.ItemUsed += _ => { _gameState.QuestList[2].Clear = true; };
     }
 
     public void ClearCheck(int input) // 클리어 확인
@@ -202,6 +199,9 @@ public class QuestScene : IScene
                     if (item.itemEquip)
                         _gameState.QuestList[input-1].Clear = true;
                 }
+                break;
+            case 3:
+                _gameState.Player.ItemUsed += _ => { _gameState.QuestList[input - 1].Clear = true; };
                 break;
         }
     }

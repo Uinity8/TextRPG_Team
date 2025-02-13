@@ -21,16 +21,7 @@ public class GameState
 
     public GameState()
     {
-        // ID가 10인 포션 가져오기
-        if (LoadManager.AllItemList.Find(i => i.Id == 10) is HealthPotion hpPotion)
-        {
-            // 초기 단계에서 플레이어에게 10번 포션을 주는 로직
-            Player.AddPotion(hpPotion, 3); 
-        }
-        else
-        {
-            Console.WriteLine("포션(ID: 10)을 찾을 수 없습니다.");
-        }
+    
     }
 
     public void Init()

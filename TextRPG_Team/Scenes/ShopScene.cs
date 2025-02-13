@@ -1,3 +1,4 @@
+using TextRPG_Team.Manager;
 using TextRPG_Team.Objects.Items;
 using TextRPG_Team.Objects.Items.Consumable;
 using TextRPG_Team.Objects.Items.Equipable;
@@ -46,11 +47,11 @@ public class ShopScene : IScene
         switch (_state)
         {
             case State.Default:
-                _allItems = _gameState.ItemList;
+                _allItems = LoadManager.AllItemList;
                 _strTitle = "필요한 아이템을 얻을 수 있는 상점입니다.\n";
                 break;
             case State.Buy:
-                _allItems = _gameState.ItemList;
+                _allItems = LoadManager.AllItemList;
                 _strTitle = "[ 구매하기 ]\n";
                 break;
             case State.Sell:
@@ -236,7 +237,8 @@ public class ShopScene : IScene
             // 플레이어가 소비 아이템을 보유 중이라면 "보유 개수" 표시 추가
             if (IsPlayerHaveItem(pagedItems[i].Id) && pagedItems[i] is ConsumableItem consumItem)
             {
-                strItem += $"  (보유 개수 {consumItem.Count})"; 
+                ConsumableItem item = _gameState.Player.Inventory.Find(x => x.Id == pagedItems[i].Id) as ConsumableItem;
+                strItem += $"  (보유 개수 {item.Count})"; 
             }
 
             Utility.AlignLeft(strItem, Utility.Width - (15 + strNum.Length));

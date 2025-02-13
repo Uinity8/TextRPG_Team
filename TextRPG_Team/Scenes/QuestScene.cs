@@ -114,7 +114,7 @@ public class QuestScene : IScene
         var quest= _gameState.QuestList;
         Console.WriteLine($"{quest[_select].Name}\n");
         Console.Write($"{quest[_select].Info}");
-        Utility.AlignRight(!quest[_select].Clear ? "N / Y\n" : "Y / Y\n", Utility.Width - 25);
+        Utility.AlignRight(!quest[_select].Clear || !quest[_select].Accep ? "N / Y\n" : "Y / Y\n", Utility.Width - 25);
         Utility.AlignCenter("- 보상 -\n");
         Utility.AlignCenter($"{quest[_select].Compensation}G\n");
         Console.WriteLine(new string('=', Utility.Width) + "\n");

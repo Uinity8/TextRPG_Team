@@ -194,13 +194,13 @@ public class QuestScene : IScene
         {
             case 1:
                 if(_gameState.Spawner.ClearNum > 0)
-                    _gameState.QuestList[input].Clear = true;
+                    _gameState.QuestList[input-1].Clear = true;
                 break;    
             case 2:
                 foreach (var item in _gameState.Player.Inventory.OfType<EquipableItem>())
                 {
                     if (item.itemEquip)
-                        _gameState.QuestList[input].Clear = true;
+                        _gameState.QuestList[input-1].Clear = true;
                 }
                 break;
         }
